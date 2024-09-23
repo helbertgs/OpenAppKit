@@ -163,18 +163,18 @@ public class NSWindow: NSResponder {
     // MARK: - Sizing Windows
 
     /// The window’s frame rectangle in screen coordinates, including the title bar.
-    public var frame: CGRect = CGRect()
+    public var frame: CoreGraphics.CGRect = CoreGraphics.CGRect()
 
     /// Positions the bottom-left corner of the window’s frame rectangle at a given point in screen coordinates.
     /// Note that the window server limits window position coordinates to ±16,000.
     /// - Parameter point: The new position of the window’s bottom-left corner in screen coordinates.
-    public func setFrameOrigin(_ point: CGPoint) {
+    public func setFrameOrigin(_ point: CoreGraphics.CGPoint) {
     }
 
     /// Positions the top-left corner of the window’s frame rectangle at a given point in screen coordinates.
     /// Note that the window server limits window position coordinates to ±16,000; if necessary, adjust aPoint relative to the window’s lower-left corner to account for this limit.
     /// - Parameter point: The new position of the window’s top-left corner in screen coordinates.
-    public func setFrameTopLeftPoint(_ point: CGPoint) {
+    public func setFrameTopLeftPoint(_ point: CoreGraphics.CGPoint) {
     }
 
     /// Modifies and returns a frame rectangle so that its top edge lies on a specific screen.
@@ -187,7 +187,7 @@ public class NSWindow: NSResponder {
     ///   - frameRect: The proposed frame rectangle to adjust.
     ///   - screen: The screen on which the top edge of the window’s frame is to lie.
     /// - Returns: The adjusted frame rectangle.
-    public func constrainFrameRect(_ frameRect: CGRect, to screen: NSScreen?) -> CGRect {
+    public func constrainFrameRect(_ frameRect: CoreGraphics.CGRect, to screen: NSScreen?) -> CoreGraphics.CGRect {
         .init()
     }
 
@@ -196,7 +196,7 @@ public class NSWindow: NSResponder {
     /// The returned point can be passed to a subsequent invocation of cascadeTopLeft(from:) to position the next window so the title bars of both windows are fully visible.
     /// - Parameter topLeftPoint: The new top-left point, in screen coordinates, for the window. When ``NSZeroPoint``, the window is not moved, except as needed to constrain to the visible screen
     /// - Returns: The point shifted from top left of the window in screen coordinates.
-    public func cascadeTopLeft(from topLeftPoint: NSPoint) -> NSPoint {
+    public func cascadeTopLeft(from topLeftPoint: CoreGraphics.CGPoint) -> CoreGraphics.CGPoint {
         .init()
     }
 
@@ -205,7 +205,7 @@ public class NSWindow: NSResponder {
     /// - Parameters:
     ///   - frameRect: The frame rectangle for the window, including the title bar.
     ///   - flag: Specifies whether the window redraws the views that need to be displayed. When true the window sends a ``displayIfNeeded()`` message down its view hierarchy, thus redrawing all views.
-    public func setFrame(_ frameRect: NSRect, display flag: Bool) {
+    public func setFrame(_ frameRect: CoreGraphics.CGRect, display flag: Bool) {
     }
 
     /// Sets the origin and size of the window’s frame rectangle, with optional animation, according to a given frame rectangle, thereby setting its position and size onscreen.
@@ -213,8 +213,318 @@ public class NSWindow: NSResponder {
     ///   - frameRect: The frame rectangle for the window, including the title bar.
     ///   - displayFlag: Specifies whether the window redraws the views that need to be displayed. When true the window sends a displayIfNeeded() message down its view hierarchy, thus redrawing all views.
     ///   - animateFlag: Specifies whether the window performs a smooth resize. true to perform the animation, whose duration is specified by animationResizeTime(_:).
-    public func setFrame(_ frameRect: NSRect, display displayFlag: Bool, animate animateFlag: Bool) {
+    public func setFrame(_ frameRect: CoreGraphics.CGRect, display displayFlag: Bool, animate animateFlag: Bool) {
     }
+
+    /// Specifies the duration of a smooth frame-size change.
+    /// - Parameter newFrame: The frame rectangle specified in ``setFrame(_:display:animate:)``.
+    /// - Returns: The duration of the frame size change.
+    public func animationResizeTime(_ newFrame: CoreGraphics.CGRect) -> TimeInterval {
+        0.20
+    }
+
+    /// The window’s aspect ratio, which constrains the size of its frame rectangle to integral multiples of this ratio when the user resizes it.
+    /// 
+    /// The size of the window’s frame rectangle is constrained to integral multiples of this ratio when the user resizes it. 
+    /// You can set an NSWindow object’s size to any ratio programmatically.
+    /// 
+    /// An NSWindow object’s aspect ratio and its resize increments are mutually exclusive attributes. 
+    /// In fact, setting one attribute cancels the setting of the other. 
+    /// For example, to cancel an established aspect ratio setting for an NSWindow object, you can set the ``resizeIncrements`` property with the width and height set to 1.0:
+    /// ```myWindow.resizeIncrements = NSSize(width: 1.0, height: 1.0);```
+    /// The contentAspectRatio property takes precedence over this property.
+    public var aspectRatio: CoreGraphics.CGSize = CoreGraphics.CGSize()
+
+    /// The minimum size to which the window’s frame (including its title bar) can be sized.
+    /// 
+    /// The minimum size constraint is enforced for resizing by the user as well as for the ``setFrame``... methods other than ``setFrame(_:display:)`` and ``setFrame(_:display:animate:)``.
+    /// The NSWindow method takes precedence over this property.
+    public var minSize: CoreGraphics.CGSize = CoreGraphics.CGSize()
+
+    /// The maximum size to which the window’s frame (including its title bar) can be sized.
+    /// 
+    /// The maximum size constraint is enforced for resizing by the user as well as for the setFrame... methods other than ``setFrame(_:display:)`` and ``setFrame(_:display:animate:)``. 
+    /// Note that the window server limits window sizes to 10,000.
+    /// 
+    /// The default maximum size of a window is CGSize(width: .inifity, height: .inifity).
+    /// When the maximum size of a window has been set, there is no way to reset it other than by specifying this default maximum size.
+    /// 
+    /// The contentMaxSize property takes precedence over this property.
+    public var maxSize: CoreGraphics.CGSize = CoreGraphics.CGSize()
+
+    /// A Boolean value that indicates whether the window is in a zoomed state.
+    /// 
+    /// The value of this property is true if the window is in a zoomed state; otherwise, false.
+    /// The zoomed state of the window is determined using the following steps:
+    /// 1. If the delegate or the window class implements ``windowWillUseStandardFrame(_:defaultFrame:)``, it is invoked to obtain the zoomed frame of the window. 
+    /// The value of isZoomed is then determined by whether or not the current window frame is equal to the zoomed frame.
+    /// 2. If the neither the delegate nor the window class implements ``windowWillUseStandardFrame(_:defaultFrame:)``, a default frame that nearly fits the screen is chosen. 
+    /// If the delegate or window class implements ``windowWillUseStandardFrame(_:defaultFrame:)``, it is invoked to validate the proposed zoomed frame. 
+    /// After the zoomed frame is validated, the value of isZoomed is determined by whether or not the current window frame is equal to the zoomed frame.
+    public var isZoomed: Bool = false
+
+    /// This action method simulates the user clicking the zoom box by momentarily highlighting the button and then zooming the window.
+    /// If the window doesn’t have a zoom box or can’t be zoomed for some reason, the computer beeps.
+    /// - Parameter sender: The object sending the message.
+    public func performZoom(_ sender: Any?) {
+    }
+
+    /// Toggles the size and location of the window between its standard state (which the application provides as the best size to display the window’s data) and its user state (a new size and location the user may have set by moving or resizing the window).
+    /// 
+    /// For more information on the standard and user states, see windowWillUseStandardFrame(_:defaultFrame:).
+    /// Typically, the system invokes the ``zoom(_:)`` method after a user clicks the window’s zoom box, and ``performZoom(_:)`` may also invoke ``zoom(_:)`` programmatically. It performs the following steps:
+    /// 1. Invokes the windowWillUseStandardFrame(_:defaultFrame:) method, if the delegate or the window class implements it, to obtain a “best fit” frame for the window. 
+    /// If neither the delegate nor the window class implements the method, zoom(_:) uses a default frame. The default frame nearly fills the current screen that contains the largest part of the window’s current frame.
+    /// 2. Adjusts the resulting frame, if necessary, to fit on the current screen.
+    /// 3. Compares the resulting frame to the current frame to determine whether the window’s standard frame is currently displayed. If the current frame is within a few pixels of the standard frame in size and location, the system considers it a match.
+    /// 4. Determines a new frame. If the window is currently in the standard state, the new frame represents the user state, saved during a previous zoom. 
+    /// If the window is currently in the user state, the new frame represents the standard state, computed in step 1 above. 
+    /// If there’s no saved user state because there has been no previous zoom, the size and location of the window don’t change.
+    /// 5. Determines whether the window currently allows zooming. By default, zooming is allowed. 
+    /// If the window’s delegate implements the ``windowShouldZoom(_:toFrame:)`` method, ``zoom(_:)`` invokes that method. 
+    /// If the delegate doesn’t implement the method but the window does, ``zoom(_:)`` invokes the window’s version. ``windowShouldZoom(_:toFrame:)`` returns false if zooming isn’t currently allowed.
+    /// 6. If the window currently allows zooming, sets the new frame.
+    /// - Parameter sender: The object sending the message.
+    public func zoom(_ sender: Any?) {
+    }
+
+    /// The flags field of the event record for the mouse-down event that initiated the resizing session.
+    /// 
+    /// The value of this property is a mask indicating which of the modifier keys was held down when the mouse-down event occurred. 
+    /// The flags are listed in ``NSEvent`` class's ``modifierFlags`` method description. The property is valid only while the window is being resized.
+    /// You can use this property to constrain the direction or amount of resizing. 
+    /// Because of its limited validity, this property should only be accessed from within an implementation of the delegate method ``windowWillResize(_:to:)``.
+    public var resizeFlags: NSEvent.ModifierFlags = .init(rawValue: 0)
+
+    /// The window’s resizing increments.
+    /// 
+    /// This property restricts the user’s ability to resize the window so the width and height change by multiples of width and height increments. 
+    /// As the user resizes the window, its size changes by multiples of increments.width and increments.height, which should be whole numbers, 1.0 or greater. 
+    /// Whatever the current resizing increments, you can set an NSWindow object’s size to any height and width programmatically.
+    /// Resize increments and aspect ratio are mutually exclusive attributes. For more information, see ``aspectRatio``.
+    /// The ``contentResizeIncrements`` property takes precedence over this property.
+    public var resizeIncrements: CoreGraphics.CGSize = .init()
+
+    /// A Boolean value that indicates whether the window tries to optimize user-initiated resize operations by preserving the content of views that have not changed.
+    /// 
+    /// The value of this property is true if the window tries to optimize live resize operations by preserving the content of views that have not moved; otherwise, false. 
+    /// By default, live-resize optimization is turned on.
+    /// When live-resize optimization is active, the window redraws only those views that moved (or do not support this optimization) during a live resize operation. 
+    /// You might consider disabling this optimization for the window if none of the window’s contained views can take advantage of it. 
+    /// Disabling the optimization for the window prevents it from checking each view to see if the optimization is supported.
+    /// See ``preservesContentDuringLiveResize`` in ``NSView`` for additional information on how to support this optimization.
+    public var preservesContentDuringLiveResize: Bool = true
+
+    /// A Boolean value that indicates whether the window is being resized by the user.
+    /// The value of this property is true if the window is being live resized; otherwise, false.
+    public var inLiveResize: Bool = false
+
+    // MARK: - Sizing Content
+
+    /// The window’s content aspect ratio.
+    /// 
+    /// By default, the content aspect ratio (that is, height in relation to width) is (0, 0). 
+    /// If you set the aspect ratio of a window’s content view, the dimensions of its content rectangle are constrained to integral multiples of that ratio when users resize it. 
+    /// You can set a window’s content view to any size programmatically, regardless of its aspect ratio. The value of this property takes precedence over aspectRatio.
+    public var contentAspectRatio: CoreGraphics.CGSize = .init()
+
+    /// The minimum size of the window’s content view in the window’s base coordinate system.
+    /// 
+    /// The minimum size constraint is enforced for resizing by the user as well as for the ``setContentSize(_:)`` method and the setFrame... methods other than ``setFrame(_:display:)`` and ``setFrame(_:display:animate:)``.
+    /// This method takes precedence over the minSize property.
+    public var contentMinSize: CoreGraphics.CGSize = .init()
+
+    /// Sets the size of the window’s content view to a given size, which is expressed in the window’s base coordinate system.
+    /// This size in turn alters the size of the NSWindow object itself. Note that the window server limits window sizes to 10,000; if necessary, be sure to limit aSize relative to the frame rectangle.
+    /// - Parameter size: The new size of the window’s content view in the window’s base coordinate system.
+    public func setContentSize(_ size: CoreGraphics.CGSize) {
+    }
+
+    /// The maximum size of the window’s content view in the window’s base coordinate system.
+    /// 
+    /// The maximum size constraint is enforced for resizing by the user as well as for the ``setContentSize(_:)`` method and the setFrame... methods other than ``setFrame(_:display:)`` and ``setFrame(_:display:animate:)``. 
+    /// This method takes precedence over the maxSize property.
+    public var contentMaxSize: CoreGraphics.CGSize = .init()
+
+    /// The window’s content-view resizing increments.
+    /// 
+    /// The value of this property restricts the user’s ability to resize the window so the width and height of its content view change by multiples of width and height increments. 
+    /// As the user resizes the window, the size of its content view changes by integral multiples of ``contentResizeIncrements.width`` and ``contentResizeIncrements.height``. 
+    /// However, you can set a window’s size to any width and height programmatically. 
+    /// This property takes precedence over ``resizeIncrements``.
+    public var contentResizeIncrements: CoreGraphics.CGSize = .init()
+
+    /// A value used by Auto Layout constraints to automatically bind to the value of ``contentLayoutRect``.
+    public var contentLayoutGuide: Any?
+
+    /// The area inside the window that is for non-obscured content, in window coordinates.
+    /// 
+    /// Typically, the area represented by this property is the same as the frame of the contentView. 
+    /// However, for windows with NSFullSizeContentViewWindowMask set, there needs to be a way to determine the portion that is not under the toolbar. 
+    /// The ``contentLayoutRect`` property contains the portion of the layout that is not obscured under the toolbar. 
+    /// This property is KVO compliant.
+    public var contentLayoutRect: CoreGraphics.CGRect = .init()
+
+    /// A maximum size that is used to determine if a window can fit when it is in full screen in a tile.
+    /// 
+    /// By default, the system uses Auto Layout to determine the maximum size, so applications that don’t change window content upon entering full screen should not need to set the value of maxFullScreenContentSize. 
+    /// (If Auto Layout is not used, the system queries ``contentMinSize`` and ``contentMaxSize``.) 
+    /// If an application does significant rework of the user interface in full screen, then it may be necessary to set the value of ``maxFullScreenContentSize``. 
+    /// You can use this property even if the window does not support full screen, but can be implicitly opted into supporting a full screen tile based on resizing behavior and window properties (for more information, see the ``collectionBehavior`` property).
+    public var maxFullScreenContentSize: CoreGraphics.CGSize = .init()
+
+    /// A minimum size that is used to determine if a window can fit when it is in full screen in a tile.
+    /// 
+    /// By default, the system uses Auto Layout to determine the minimum size, so applications that don’t change window content upon entering full screen should not need to set the value of minFullScreenContentSize. 
+    /// (If Auto Layout is not used, the system queries ``contentMinSize`` and ``contentMaxSize``.) 
+    /// If an application does significant rework of the user interface in full screen, then it may be necessary to set the value of ``minFullScreenContentSize``. 
+    /// You can use this property even if the window does not support full screen, but can be implicitly opted into supporting a full screen tile based on resizing behavior and window properties (for more information, see the collectionBehavior property).
+    public var minFullScreenContentSize: CoreGraphics.CGSize = .init()
+
+    // MARK: - Managing Window Layers
+
+    /// Removes the window from the screen list, which hides the window.
+    /// 
+    /// If the window is the key or main window, the window object immediately behind it is made key or main in its place. 
+    /// Calling ``orderOut(_:)`` causes the window to be removed from the screen, but does not cause it to be released. 
+    /// See the ``close()`` method for information on when a window is released. Calling ``orderOut(_:)`` on a child window causes the window to be removed from its parent window before being removed.
+    /// The default animation based on the window type will be used when the window is ordered out unless it has been modified by the ``animationBehavior`` property.
+    /// - Parameter sender: The window to remove.
+    public func orderOut(_ sender: Any?) {
+    }
+
+    /// Moves the window to the back of its level in the screen list, without changing either the key window or the main window.
+    /// - Parameter sender: Message originator.
+    public func orderBack(_ sender: Any?) {
+    }
+
+    /// Moves the window to the front of its level in the screen list, without changing either the key window or the main window.
+    /// 
+    /// The default animation based on the window type will be used when the window is ordered front unless it has been modified by the animationBehavior property.
+    /// - Parameter sender: The message’s sender.
+    public func orderFront(_ sender: Any?) {
+    }
+
+    /// Moves the window to the front of its level, even if its application isn’t active, without changing either the key window or the main window.
+    /// 
+    /// Normally an NSWindow object can’t be moved in front of the key window unless it and the key window are in the same application. 
+    /// You should rarely need to invoke this method; it’s designed to be used when applications are cooperating in such a way that an active application (with the key window) is using another application to display data.
+    public func orderFrontRegardless() {
+    }
+
+    /// Repositions the window’s window device in the window server’s screen list.
+    public func order(_ place: NSWindow.OrderingMode, relativeTo otherWin: Int) {
+    }
+
+    /// The window level of the window.
+    /// 
+    /// See Window Levels for a list of possible values.
+    /// Each level in the list groups windows within it in front of those in all preceding groups. 
+    /// Floating windows, for example, appear in front of all normal-level windows.
+    public var level: NSWindow.Level = .normal
+
+    // MARK: - Managing Window Visibility and Occlusion State
+    
+    /// A Boolean value that indicates whether the window is visible onscreen (even when it’s obscured by other windows).
+    /// The value of this property is true when the window is onscreen (even if it’s obscured by other windows); otherwise, false.
+    public var isVisible: Bool = false
+
+    /// The occlusion state of the window.
+    /// When the value of this property is ``visible``, at least part of the window is visible; otherwise, the window is fully occluded.
+    public var occlusionState: NSWindow.OcclusionState = .init(rawValue: 0)
+
+    // MARK: - Managing Key Status
+
+    /// A Boolean value that indicates whether the window is the key window for the application.
+    /// The value of this property is true if the window is the key window for the application; otherwise, false.
+    public var isKeyWindow: Bool = false
+
+    ///A Boolean value that indicates whether the window can become the key window.
+    /// 
+    /// The value of this property is true if the window can become the key window, otherwise, false.
+    /// Attempts to make the window the key window are abandoned if the value of this property is false. 
+    /// The value of this property is true if the window has a title bar or a resize bar, or false otherwise.
+    public var canBecomeKey: Bool = true
+
+    /// Makes the window the key window.
+    public func makeKey() {
+    }
+
+    /// Moves the window to the front of the screen list, within its level, and makes it the key window; that is, it shows the window.
+    /// - Parameter sender: The message’s sender.
+    public func makeKeyAndOrderFront(_ sender: Any?) {
+    }
+
+    /// Informs the window that it has become the key window.
+    /// 
+    /// This method reestablishes the window’s first responder, sends the becomeKeyWindow message to that object if it responds, and posts ``didBecomeKeyNotification`` to the default notification center. 
+    /// Never invoke this method directly.
+    public func becomeKey() {
+    }
+
+    /// Resigns the window’s key window status.
+    /// 
+    /// This method sends ``resignKey()`` to the window’s first responder, sends ``windowDidResignKey(_:)`` to the window’s delegate, and posts ``didResignKeyNotification`` to the default notification center.
+    /// Never invoke this method directly.
+    public func resignKey() {
+    }
+
+    // MARK: - Managing Main Status
+
+    /// A Boolean value that indicates whether the window is the application’s main window.
+    /// The value of this property is true when the window is the main window for the application; otherwise, false.
+    public var isMainWindow: Bool = false
+
+    /// A Boolean value that indicates whether the window can become the application’s main window.
+    /// 
+    /// The value of this property is true when the window can become the main window; otherwise, false.
+    /// Attempts to make the window the main window are abandoned if the value of this property is false. 
+    /// The value of the property is true if the window is visible, is not an NSPanel object, and has a title bar or a resize mechanism. 
+    /// Otherwise, the value is false.
+    public var canBecomeMain: Bool = true
+
+    /// Makes the window the main window.
+    public func makeMain() {
+    }
+
+    /// Informs the window that it has become the main window.
+    /// This method posts an ``didBecomeMainNotification`` to the default notification center.
+    /// Never invoke this method directly.
+    public func becomeMain() {
+    }
+
+    /// Resigns the window’s main window status.
+    /// This method sends ``windowDidResignMain(_:)`` to the window’s delegate and posts ``didResignMainNotification`` to the default notification center.
+    public func resignMain() {
+    }
+
+    // MARK: - Managing Attached Windows
+
+    /// An array of the window’s attached child windows.
+    public var childWindows: [NSWindow]?
+
+    /// Adds a given window as a child window of the window.
+    /// 
+    /// After the childWin is added as a child of the window, it is maintained in relative position indicated by place for subsequent ordering operations involving either window. 
+    /// While this attachment is active, moving childWin will not cause the window to move (as in sliding a drawer in or out), but moving the window will cause childWin to move.
+    /// Note that you should not create cycles between parent and child windows. 
+    /// For example, you should not add window B as child of window A, then add window A as a child of window B.
+    /// - Parameters:
+    ///   - childWin: The child window to order.
+    ///   - place: ``NSWindow.OrderingMode.above``: childWin is ordered immediately in front of the window. ``NSWindow.OrderingMode.below``: childWin is ordered immediately behind the window.
+    public func addChildWindow(_ childWin: NSWindow, ordered place: NSWindow.OrderingMode) {
+    }
+
+    /// Detaches a given child window from the window.
+    /// - Parameter childWin: The child window to detach.
+    public func removeChildWindow(_ childWin: NSWindow) {
+    }
+
+    /// The parent window to which the window is attached as a child.
+    /// 
+    /// This property should be set from a subclass when it is overridden by a subclass’s implementation. It should not be set otherwise.
+    /// Note that calling orderOut(_:) on a child window causes the window to be removed from its parent window before it is itself removed.
+    public var parent: NSWindow?
 }
 
 extension NSWindow {
@@ -356,5 +666,94 @@ extension NSWindow {
         
         /// The corresponding value is an NSValue object containing a value of type NSSize that gives the size of the window’s frame rectangle.
         case size
+    }
+}
+
+extension NSWindow {
+    /// Constants that let you specify how a window is ordered relative to another window.
+    public enum OrderingMode: Sendable {
+        
+        // MARK: - Constants
+        
+        /// Moves the window above the indicated window.
+        case above
+        
+        /// Moves the window below the indicated window.
+        case below
+        
+        /// Moves the window off the screen.
+        case out
+    }
+}
+
+extension NSWindow {
+    /// The standard window levels
+    /// 
+    /// The stacking of levels takes precedence over the stacking of windows within each level. 
+    /// That is, even the bottom window in a level will obscure the top window of the next level down. 
+    /// Levels are listed in order from lowest to highest.
+    public struct Level: Hashable, RawRepresentable, Sendable {
+
+        // MARK: - Constants
+
+        /// Useful for floating palettes.
+        public static let floating = Level(rawValue: 1)
+
+        /// Reserved for the application’s main menu.
+        public static let mainMenu = Level(rawValue: 2)
+
+        /// The level for a modal panel.
+        public static let modalPanel = Level(rawValue: 4)
+
+        /// The default level for NSWindow objects.
+        public static let normal = Level(rawValue: 8)
+
+        /// The level for a pop-up menu.
+        public static let popUpMenu = Level(rawValue: 16)
+
+        /// The level for a screen saver.
+        public static let screenSaver = Level(rawValue: 32)
+
+        /// The level for a status window.
+        public static let statusBar = Level(rawValue: 64)
+
+        // MARK: - Accessing the Raw Value
+        
+        /// The corresponding value of the raw type.
+        public let rawValue: Int
+
+        // MARK: - Creating a Window Level
+
+        /// Creates a window level using the given raw value.
+        /// - Parameter rawValue: The raw integer value of the window level.
+        public init(rawValue: Int) {
+            self.rawValue = rawValue
+        }
+    }
+}
+
+extension NSWindow {
+    /// Specifies whether the window is occluded.
+    public struct OcclusionState: OptionSet, Sendable {
+
+        // MARK: - Constants
+
+        /// If set, at least part of the window is visible; if not set, the entire window is occluded. 
+        /// A window that has a nonrectangular shape can be entirely occluded onscreen, but if its bounding box falls into a visible region, the window is considered to be visible. 
+        /// Note that a completely transparent window may also be considered visible.
+        public static let visible = OcclusionState(rawValue: 1)
+
+        // MARK: - Accessing the Raw Value
+        
+        /// The corresponding value of the raw type.
+        public let rawValue: Int
+
+        // MARK: - Occlusion State Creation
+
+        /// Creates an occlusion state using the given raw value.
+        /// - Parameter rawValue: The raw unsigned integer value of the occlusion state.
+        public init(rawValue: Int) {
+            self.rawValue = rawValue
+        }
     }
 }

@@ -37,7 +37,7 @@ public class NSNib {
     ///   - owner: The object to set as the Nib’s owner (File’s Owner).
     ///   - topLevelObjects: On return, an array containing the top-level objects of the nib.
     /// - Returns: true if the nib is instantiated; otherwise false.
-    func instantiate(withOwner owner: Any?, topLevelObjects: AutoreleasingUnsafeMutablePointer<NSArray?>?) -> Bool {
+    func instantiate(withOwner owner: Any?, topLevelObjects: Any?) -> Bool {
         true
     }
 }
