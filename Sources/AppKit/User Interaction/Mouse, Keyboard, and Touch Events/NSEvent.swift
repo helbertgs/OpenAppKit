@@ -49,3 +49,8 @@ extension NSEvent {
         }
     }
 }
+
+extension NSEvent {
+    public struct EventTypeMask {
+    }
+}

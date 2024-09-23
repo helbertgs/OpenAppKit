@@ -525,6 +525,350 @@ public class NSWindow: NSResponder {
     /// This property should be set from a subclass when it is overridden by a subclass’s implementation. It should not be set otherwise.
     /// Note that calling orderOut(_:) on a child window causes the window to be removed from its parent window before it is itself removed.
     public var parent: NSWindow?
+
+    // MARK: - Handling Events
+
+    /// The event currently being processed by the application.
+    /// The value of this property is given by calling by invoking the ``NSApplication`` method ``currentEvent``.
+    public var currentEvent: NSEvent?
+
+    /// Returns the next event matching a given mask.
+    /// 
+    /// This method calls the ``nextEvent(matching:until:inMode:dequeue:)`` method, where the matching mask parameter is the specified mask, the until parameter is ``distantFuture``, the ``inMode`` parameter is ``eventTracking``, and the dequeue parameter is true.
+    /// - Parameter mask: The mask that the event to return must match. Events with non-matching masks are left in the queue. See ``discardEvents(matching:before:)`` in ``NSApplication`` for the list of mask values.
+    /// - Returns: The next event whose mask matches mask; nil when no matching event was found.
+    public func nextEvent(matching mask: NSEvent.EventTypeMask) -> NSEvent? {
+        nil
+    }
+
+    /// Forwards the message to the global application object.
+    /// - Parameters:
+    ///   - mask: The mask that the event to return must match.
+    ///   - expiration: The date until which to wait for events.
+    ///   - mode: The run loop mode to use while waiting for events
+    ///   - deqFlag: true to remove the returned event from the event queue; false to leave the returned event in the queue.
+    /// - Returns: The next event whose mask matches the specified mask; otherwise, nil.
+    public func nextEvent(matching mask: NSEvent.EventTypeMask, until expiration: Date?, inMode mode: RunLoop.Mode, dequeue deqFlag: Bool) -> NSEvent? {
+        nil
+    }
+
+    /// Forwards the message to the global application object.
+    /// - Parameters:
+    ///   - mask: The mask of the events to discard.
+    ///   - lastEvent: The event up to which queued events are discarded from the queue.
+    public func discardEvents(matching mask: NSEvent.EventTypeMask,before lastEvent: NSEvent?) {
+    }
+
+    /// Forwards the message to the global application object.
+    /// - Parameters:
+    ///   - event: The event to add to the window’s event queue.
+    ///   - flag: true to place the event in the front of the queue; false to place it in the back.
+    public func postEvent(_ event: NSEvent, atStart flag: Bool) {
+    }
+
+    /// This action method dispatches mouse and keyboard events the global application object sends to the window.
+    /// 
+    /// Never invoke this method directly. A right mouse-down event in a window of an inactive application isn’t delivered to the corresponding ``NSWindow`` object. 
+    /// Instead, a ``sendEvent(_:)`` message with a window number of 0 delivers it to the ``NSApplication`` object.
+    /// - Parameter event: The mouse or keyboard event to process.
+    public func sendEvent(_ event: NSEvent) {
+    }
+
+    /// Dispatches action messages with a given argument.
+    /// 
+    /// The window tries to perform the method action using its inherited ``NSResponder`` method ``tryToPerform(_:with:)``. 
+    /// If the window doesn’t perform action, the delegate is given the opportunity to perform it using its inherited NSObject method ``perform(_:with:)``.
+    /// - Parameters:
+    ///   - action: The selector to attempt to execute.
+    ///   - object: The message’s argument.
+    /// - Returns: true when the window or its delegate perform action with object; otherwise, false.
+    public func tryToPerform(_ action: Selector, with object: Any?) -> Bool {
+        false
+    }
+
+    // MARK: - Managing Responders
+
+    /// The view that’s made first responder (also called the key view) the first time the window is placed onscreen.
+    public weak var initialFirstResponder: NSView?
+
+    /// The window’s first responder.
+    /// 
+    /// The first responder is usually the first object in a responder chain to receive an event or action message. 
+    /// In most cases, the first responder is a view object that the user selects or activates with the mouse or keyboard.
+    /// You can use the ``firstResponder`` property in custom subclasses of responder classes (``NSWindow``, ``NSApplication``, ``NSView``, and subclasses) to determine if an instance of the subclass is currently the first responder. 
+    /// You can also use it to help locate a text field that currently has first-responder status. For more on this subject, see Event Handling Basics. 
+    /// This property is key-value observing compliant.
+    public weak var firstResponder: NSResponder?
+
+    /// Attempts to make a given responder the first responder for the window.
+    /// 
+    /// If responder isn’t already the first responder, this method first sends a ``resignFirstResponder()`` message to the object that is the first responder. 
+    /// If that object refuses to resign, it remains the first responder, and this method immediately returns false. 
+    /// If the current first responder resigns, this method sends a becomeFirstResponder() message to responder. 
+    /// If responder does not accept first responder status, the ``NSWindow`` object becomes first responder; in this case, the method returns true even if responder refuses first responder status.
+    /// 
+    /// If responder is nil, this method still sends ``resignFirstResponder()`` to the current first responder. 
+    /// If the current first responder refuses to resign, it remains the first responder and this method immediately returns false. 
+    /// If the current first responder returns true from ``resignFirstResponder()``, the window is made its own first responder and this method returns true.
+    /// 
+    /// The Application Kit framework uses this method to alter the first responder in response to mouse-down events; you can also use it to explicitly set the first responder from within your program. 
+    /// The responder object is typically an ``NSView`` object in the window’s view hierarchy. 
+    /// If this method is called explicitly, first send acceptsFirstResponder to responder, and do not call ``makeFirstResponder(_:)`` if acceptsFirstResponder returns false.
+    /// 
+    /// Use initialFirstResponder to the set the first responder to be used when the window is brought onscreen for the first time.
+    /// - Parameter responder: The responder to set as the window’s first responder. nil makes the window its first responder.
+    /// - Returns: true when the operation is successful; otherwise, false.
+    public func makeFirstResponder(_ responder: NSResponder?) -> Bool {
+        true
+    }
+
+    // MARK: - Drawing Windows
+
+    /// Passes a display message down the window’s view hierarchy, thus redrawing all views within the window.
+    /// 
+    /// You rarely need to invoke this method. 
+    /// ``NSWindow`` objects normally record which of their views need displaying and display them automatically on each pass through the event loop.
+    /// 
+    /// This method includes the frame view that draws the border, title bar, and other peripheral elements.
+    public func display() {
+    }
+
+    /// Passes a display message down the window’s view hierarchy, thus redrawing all views that need displaying.
+    /// 
+    /// This method includes the frame view that draws the border, title bar, and other peripheral elements. 
+    /// It’s useful when you want to modify some number of views and then display only the ones that you modified.
+    /// 
+    /// You rarely need to invoke this method. 
+    /// NSWindow objects normally record which of their views need displaying and display them automatically on each pass through the event loop.
+    public func displayIfNeeded() {
+    }
+
+    /// A Boolean value that indicates whether any of the window’s views need to be displayed.
+    /// The value of this property is true when any of the window’s views need to be displayed; otherwise, false. 
+    /// You should rarely need to set this property; the ``NSView`` method needsDisplay and similar methods set it automatically.
+    public var viewsNeedDisplay: Bool = true
+
+    /// A Boolean value that indicates whether the window allows multithreaded view drawing.
+    /// The value of this property is true if the window allows multithreaded view drawing; otherwise, false. 
+    /// The default value is true.
+    public var allowsConcurrentViewDrawing: Bool = true
+
+    // MARK: - Updating Windows
+
+    /// Updates the window.
+    /// 
+    /// The NSWindow implementation of this method does nothing more than post an ``didUpdateNotification`` notification to the default notification center. 
+    /// A subclass can override this method to perform specialized operations, but it should send an update message to super just before returning. 
+    /// For example, the ``NSMenu`` class implements this method to disable and enable menu commands.
+    /// 
+    /// An ``NSWindow`` object is automatically sent an update message on every pass through the event loop and before it’s displayed onscreen. 
+    /// You can manually cause an update message to be sent to all visible NSWindow objects through the ``NSApplication`` ``updateWindows()`` method.
+    public func update() {
+    }
+
+
+    // MARK: - Managing Titles
+    
+    /// The string that appears in the title bar of the window or the path to the represented file.
+    /// If the title has been set using setTitleWithRepresentedFilename(_:), this property contains the file’s path. 
+    /// Setting this property also sets the title of the window’s miniaturized window.
+    public var title: String = ""
+    
+    /// A secondary line of text that appears in the title bar of the window.
+    /// When this property is an empty string, the system removes the subtitle from the window layout.
+    public var subtitle: String = ""
+    
+    /// A value that indicates the visibility of the window’s title and title bar buttons.
+    /// By default, the value of this property is NSWindow.TitleVisibility.visible.
+    public var titleVisibility: TitleVisibility = .visible
+
+    // MARK: - Accessing Screen Information
+
+    /// The screen the window is on.
+    /// The value of this property is the screen where most of the window is on; it is nil when the window is offscreen.
+    public private(set) var screen: NSScreen?
+
+    /// The deepest screen the window is on (it may be split over several screens).
+    /// The value of this property is nil when the window is offscreen.
+    public private(set) var deepestScreen: NSScreen? 
+
+    /// A Boolean value that indicates whether the window context should be updated when the screen profile changes or when the window moves to a different screen.
+    /// 
+    /// The value of this property is true when the window context should be updated when the ColorSync profile of the current screen changes or when a majority of the window is moved to a different screen whose profile is different than the previous screen; otherwise, false. 
+    /// The default value is false.
+    /// 
+    /// After the window context is updated, the window is told to display itself. 
+    /// If you need to update offscreen caches for the window, you should register to receive the ``didChangeScreenProfileNotification`` notification.
+    public var displaysWhenScreenProfileChanges: Bool = false
+
+    // MARK: - Moving Windows
+
+    /// A Boolean value that indicates whether the window is movable by clicking and dragging anywhere in its background.
+    /// 
+    /// The value of this property is true when the window is movable by clicking and dragging anywhere in its background; otherwise, false.
+    /// A window with a style mask of ``NSTexturedBackgroundWindowMask`` is movable by background by default. Sheets and drawers cannot be movable by window background.
+    public var isMovableByWindowBackground: Bool = true
+    
+    /// A Boolean value that indicates whether the window can be dragged by clicking in its title bar or background.
+    /// The value of this property is true if the window can be moved by the user; otherwise, false.
+    /// 
+    /// When a window’s isMovable property is false, the value of the ``isMovableByWindowBackground`` property is ignored. When the value of ``isMovable`` is false, the window can only be dragged between spaces in F8 mode, and its relative screen position is always preserved. 
+    /// Note that a resizable window may still be resized, and the window frame may be changed programmatically. 
+    /// A nonmovable window will not be moved or resized by the system in response to a display reconfiguration. 
+    /// Applications may choose to enable application-controlled window dragging after disabling user-initiating dragging by handling the ``mouseDown(with:)``/``mouseDragged(with:)``/``mouseUp(with:)`` sequence in ``sendEvent(_:)`` in an ``NSWindow`` subclass.
+    public var isMovable: Bool = true
+    
+    /// Sets the window’s location to the center of the screen.
+    /// 
+    /// The window is placed exactly in the center horizontally and somewhat above center vertically. 
+    /// Such a placement carries a certain visual immediacy and importance. 
+    /// This method doesn’t put the window onscreen, however; use ``makeKeyAndOrderFront(_:)`` to do that.
+    /// 
+    /// You typically use this method to place a window—most likely an alert dialog—where the user can’t miss it. 
+    /// This method is invoked automatically when a panel is placed on the screen by the ``runModal(for:)`` method of the ``NSApplication`` class.
+    public func center() {
+    }
+
+    // MARK: - Closing Windows
+    
+    /// Simulates the user clicking the close button by momentarily highlighting the button and then closing the window.
+    /// 
+    /// If the window’s delegate or the window itself implements ``windowShouldClose(_:)``, the window sends that message with the window as the argument. 
+    /// The window sends only one such message; if both the delegate and the window implement the method, the delegate receives the message. 
+    /// If the ``windowShouldClose(_:)`` method returns false, the window doesn’t close. 
+    /// If neither the window nor the delegate implement ``windowShouldClose(_:)``, or it returns true, this method invokes ``close()`` to close the window.
+    /// 
+    /// If the window doesn’t have a close button or can’t close (for example, if the delegate replies false to a ``windowShouldClose(_:)`` message), the system emits the alert sound.
+    /// - Parameter sender: The message’s sender.
+    public func performClose(_ sender: Any?) {
+    }
+
+    /// Removes the window from the screen.
+    /// 
+    /// If the window is set to be released when closed, a release message is sent to the object after the current event is completed. 
+    /// For an NSWindow object, the default is to be released on closing, while for an NSPanel object, the default is not to be released. 
+    /// You can use the ``isReleasedWhenClosed`` property to change the default behavior.
+    /// 
+    /// A window doesn’t have to be visible to receive the close message. 
+    /// For example, when the application terminates, it sends the close message to all windows in its window list, even those that are not currently visible.
+    /// 
+    /// The close method posts a ``willCloseNotification`` notification to the default notification center.
+    /// The close method differs in two important ways from the ``performClose(_:)`` method:
+    /// - It does not attempt to send a ``windowShouldClose(_:)`` message to the window or its delegate.
+    /// - It does not simulate the user clicking the close button by momentarily highlighting the button.
+    /// Use ``performClose(_:)`` if you need these features.
+    public func close() {
+    }
+
+    /// A Boolean value that indicates whether the window is released when it receives the close message.
+    /// 
+    /// The value of this property is true if the window is automatically released after being closed; false if it’s simply removed from the screen.
+    /// 
+    /// The default for ``NSWindow`` is true; the default for ``NSPanel`` is false. 
+    /// Release when closed, however, is ignored for windows owned by window controllers. 
+    /// Another strategy for releasing an ``NSWindow`` object is to have its delegate autorelease it on receiving a ``windowShouldClose(_:)`` message.
+    public var isReleasedWhenClosed: Bool = true
+
+    // MARK: - Minimizing Windows
+
+    /// A Boolean value that indicates whether the window is minimized.
+    /// 
+    /// The value of this property is true if the window is minimized; otherwise, false. 
+    /// A minimized window is removed from the screen and replaced by a image, icon, or button that represents it, called the counterpart.
+    public var isMiniaturized: Bool = false
+
+    /// Simulates the user clicking the minimize button by momentarily highlighting the button, then minimizing the window.
+    /// 
+    /// If the window doesn’t have a minimize button or can’t be minimized for some reason, the system emits the alert sound.
+    /// - Parameter sender: The message’s sender.
+    public func performMiniaturize(_ sender: Any?) {
+    }
+
+    ///  Removes the window from the screen list and displays the minimized window in the Dock.
+    /// - Parameter sender: The message’s sender.
+    public func miniaturize(_ sender: Any?) {
+    }
+
+    /// De-minimizes the window.
+    /// 
+    /// Invoke this method to programmatically deminimize a minimized window in the Dock.
+    /// - Parameter sender: The message’s sender.
+    public func deminiaturize(_ sender: Any?){
+    }
+
+    /// The custom miniaturized window image of the window.
+    /// 
+    /// The miniaturized window image is the image displayed in the Dock when the window is minimized. 
+    /// If you did not assign a custom image to the window, the value of this property is nil.
+    /// 
+    /// When the user minimizes the window, the Dock displays miniwindowImage in the corresponding Dock tile, scaling it as needed to fit in the tile. 
+    /// If you do not specify a custom image using this property, the Dock creates one for you automatically.
+    /// 
+    /// You can also set this property as needed to change the minimized window image. 
+    /// Typically, you would specify a custom image immediately prior to a window being minimized—when the system posts ``willMiniaturizeNotification``. 
+    /// You can set this property while the window is minimized to update the current image in the Dock. 
+    /// However, you should not use this property to create complex animations in the Dock.
+    public var miniwindowImage: NSImage?
+
+    /// The title displayed in the window’s minimized window.
+    /// 
+    /// A minimized window’s title usually reflects that of its full-size counterpart, abbreviated to fit if necessary. 
+    /// Although this property allows you to set the minimized window’s title explicitly, changing the full-size ``NSWindow`` object’s title (through title or ``setTitleWithRepresentedFilename(_:)``) automatically changes the minimized window’s title as well.
+    public var miniwindowTitle: String!
+
+    // MARK: - Triggering Constraint-Based Layout
+    
+    /// Updates the constraints based on changes to views in the window since the last layout.
+    /// 
+    /// When a new layout pass is triggered for a window, the system invokes this method to ensure that any constraints for views in the window are updated with information from the current view hierarchy and its constraints. 
+    /// This method is called automatically by the system, but may be invoked manually if you need to examine the most up to date constraints.
+    /// 
+    /// Subclasses should not override this method.
+    public func updateConstraintsIfNeeded() {
+    }
+
+    /// Updates the layout of views in the window based on the current views and constraints.
+    /// 
+    /// Before displaying a window that uses constraints-based layout the system invokes this method to ensure that the layout of all views is up to date. 
+    /// This method updates the layout if needed, first invoking ``updateConstraintsIfNeeded()`` to ensure that all constraints are up to date. 
+    /// This method is called automatically by the system, but may be invoked manually if you need to examine the most up to date layout.
+    /// 
+    /// Subclasses should not override this method.
+    public func layoutIfNeeded() {
+    }
+
+    // MARK: - Getting Information About Scripting Attributes
+
+    /// A Boolean value that indicates if the window has a close box.
+    public var hasCloseBox: Bool = false
+
+    /// A Boolean value that indicates if the window has a title bar.
+    public var hasTitleBar: Bool = false
+
+    /// A Boolean value that indicates whether the window is a modal panel.
+    /// This property is key-value coding compliant.
+    public var isModalPanel: Bool = false
+
+    /// A Boolean value that indicates whether the window is a floating panel.
+    /// This property is key-value coding compliant.
+    public var isFloatingPanel: Bool = false
+
+    /// A Boolean value that indicates whether the window allows zooming.
+    /// This property is key-value coding compliant.
+    public var isZoomable: Bool = false
+
+    /// A Boolean value that indicates if the user can resize the window.
+    /// This property is key-value coding compliant.
+    public var isResizable: Bool = false
+
+    /// A Boolean value that indicates whether the window can minimize.
+    /// This property is key-value coding compliant.
+    public var isMiniaturizable: Bool = false
+
+    /// The zero-based position of the window, based on its order from front to back among all visible application windows.
+    /// If you set this property to an index that’s out of range, the system sets the position to the nearest value that’s in range.
+    public var orderedIndex: Int = 1
+
 }
 
 extension NSWindow {
@@ -755,5 +1099,13 @@ extension NSWindow {
         public init(rawValue: Int) {
             self.rawValue = rawValue
         }
+    }
+}
+
+extension NSWindow {
+    /// Specifies the appearance of the window’s title bar area.
+    public enum TitleVisibility: Sendable {
+        case visible
+        case hidden
     }
 }
