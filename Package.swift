@@ -4,11 +4,11 @@
 import PackageDescription
 
 let package = Package(
-    name: "AppKits",
+    name: "AppKit",
     products: [
         .library(
-            name: "AppKits",
-            targets: ["AppKits"]),
+            name: "AppKit",
+            targets: ["AppKit"]),
         .library(
             name: "CoreGraphics",
             targets: ["CoreGraphics"]),
@@ -25,7 +25,7 @@ let package = Package(
             dependencies: [  ]
         ),
         .target(
-            name: "AppKits",
+            name: "AppKit",
             dependencies: [ 
                 "CoreGraphics",
                 .product(name: "OpenGLFW", package: "OpenGLFW")
@@ -33,11 +33,11 @@ let package = Package(
         ),
         .executableTarget(
             name: "Sample",
-            dependencies: [ "AppKits" ]
+            dependencies: [ "AppKit" ]
         ),
         .testTarget(
             name: "AppKitTests",
-            dependencies: ["AppKits"]
+            dependencies: ["AppKit"]
         ),
     ]
 )

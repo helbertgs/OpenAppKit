@@ -1,4 +1,4 @@
-import AppKits
+import AppKit
 
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
