@@ -13,8 +13,8 @@ let package = Package(
             name: "CoreGraphics",
             targets: ["CoreGraphics"]),
         .executable(
-            name: "Sample",
-            targets: ["Sample"]),
+            name: "AppKitSample",
+            targets: ["AppKitSample"]),
     ],
     dependencies: [
         .package(url: "https://github.com/helbertgs/OpenGLFW.git", branch: "main")
@@ -32,7 +32,7 @@ let package = Package(
             ]
         ),
         .executableTarget(
-            name: "Sample",
+            name: "AppKitSample",
             dependencies: [ "AppKit" ]
         ),
         .testTarget(
