@@ -4,30 +4,40 @@
 import PackageDescription
 
 let package = Package(
-    name: "AppKit",
+    name: "AppKits",
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "AppKit",
-            targets: ["AppKit"]),
+            name: "AppKits",
+            targets: ["AppKits"]),
         .library(
             name: "CoreGraphics",
             targets: ["CoreGraphics"]),
+        .executable(
+            name: "Sample",
+            targets: ["Sample"]),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/helbertgs/OpenGLFW.git", branch: "main")
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "CoreGraphics",
             dependencies: [  ]
         ),
         .target(
-            name: "AppKit",
-            dependencies: [ "CoreGraphics" ]
+            name: "AppKits",
+            dependencies: [ 
+                "CoreGraphics",
+                .product(name: "OpenGLFW", package: "OpenGLFW")
+            ]
+        ),
+        .executableTarget(
+            name: "Sample",
+            dependencies: [ "AppKits" ]
         ),
         .testTarget(
             name: "AppKitTests",
-            dependencies: ["AppKit"]
+            dependencies: ["AppKits"]
         ),
     ]
 )

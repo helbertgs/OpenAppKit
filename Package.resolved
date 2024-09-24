@@ -1,0 +1,15 @@
+{
+  "originHash" : "1cb0dd94c73d51e9e8d69da6fc3a9ae65940c77242e4ca9c7040aa628dd678c7",
+  "pins" : [
+    {
+      "identity" : "openglfw",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/helbertgs/OpenGLFW.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "b9e460b44570d88031770fe44ab73b70d435687c"
+      }
+    }
+  ],
+  "version" : 3
+}

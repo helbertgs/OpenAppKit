@@ -1,5 +1,6 @@
 import Foundation
 import CoreGraphics
+import OpenGLFW
 
 /// A window that an app displays on the screen.
 public class NSWindow: NSResponder {
@@ -16,6 +17,52 @@ public class NSWindow: NSResponder {
     public init(contentViewController: NSViewController) {
         self.contentViewController = contentViewController
         self.contentView = self.contentViewController?.view
+
+        guard let _context = glfwCreateWindow(900, 450, "My Title", nil, nil) else {
+            fatalError("Fail to create a GLFW Window")
+        }
+
+        self._context = _context
+
+        glfwSetWindowFocusCallback(_context) { window, isFocused in
+            print("glfwSetWindowFocusCallback")
+        }
+
+        glfwSetWindowSizeCallback(_context) { window, width, height in
+            print("glfwSetWindowSizeCallback")
+        }
+
+        glfwSetWindowPosCallback(_context) { window, x, y in
+            print("glfwSetWindowSizeCallback")
+        }
+
+        glfwSetWindowRefreshCallback(_context) { window in
+            print("glfwSetWindowRefreshCallback")
+        }
+
+        glfwSetKeyCallback(_context) { window, key, scancode, action, mods in
+            print("glfwSetKeyCallback")
+        }
+
+        glfwSetCursorPosCallback(_context) { window, x, y in
+            print("glfwSetCursorPosCallback")
+        }
+
+        glfwSetMouseButtonCallback(_context) { window, button, action, mods in
+            print("glfwSetMouseButtonCallback")
+        }
+
+        glfwSetScrollCallback(_context) { window, xOffset, yOffset in 
+            print("glfwSetScrollCallback")
+        }
+
+        glfwSetDropCallback(_context) { window, count, paths in
+            print("glfwSetDropCallback")
+        }
+    }
+
+    deinit {
+        print("\(Self.self).\(#function)")
     }
 
     // MARK: - Managing the Window's Behavior
@@ -27,6 +74,8 @@ public class NSWindow: NSResponder {
     public weak var delegate: (any NSWindowDelegate)?
 
     // MARK: - Configuring the Window's Content
+
+    private var _context: OpaquePointer
 
     /// The main content view controller for the window.
     /// 
@@ -68,7 +117,7 @@ public class NSWindow: NSResponder {
     public var alphaValue: Float = 1.0
 
     /// The color of the window’s background.
-    public var backgroundColor: NSColor = NSColor()
+    public var backgroundColor: NSColor = NSColor(red: 1, green: 0, blue: 0)
 
     /// The window’s color space.
     /// The value of this property is nil if the window does not have a backing store, and is off-screen.
@@ -391,11 +440,13 @@ public class NSWindow: NSResponder {
     /// The default animation based on the window type will be used when the window is ordered out unless it has been modified by the ``animationBehavior`` property.
     /// - Parameter sender: The window to remove.
     public func orderOut(_ sender: Any?) {
+        print("\(Self.self).\(#function)")
     }
 
     /// Moves the window to the back of its level in the screen list, without changing either the key window or the main window.
     /// - Parameter sender: Message originator.
     public func orderBack(_ sender: Any?) {
+        print("\(Self.self).\(#function)")
     }
 
     /// Moves the window to the front of its level in the screen list, without changing either the key window or the main window.
@@ -403,6 +454,12 @@ public class NSWindow: NSResponder {
     /// The default animation based on the window type will be used when the window is ordered front unless it has been modified by the animationBehavior property.
     /// - Parameter sender: The message’s sender.
     public func orderFront(_ sender: Any?) {
+        print("\(Self.self).\(#function)")
+        if !NSApplication.shared.windows.contains(where: { $0 === self }) {
+            NSApplication.shared.windows.append(self)
+        }
+
+        glfwMakeContextCurrent(_context)
     }
 
     /// Moves the window to the front of its level, even if its application isn’t active, without changing either the key window or the main window.
@@ -410,10 +467,12 @@ public class NSWindow: NSResponder {
     /// Normally an NSWindow object can’t be moved in front of the key window unless it and the key window are in the same application. 
     /// You should rarely need to invoke this method; it’s designed to be used when applications are cooperating in such a way that an active application (with the key window) is using another application to display data.
     public func orderFrontRegardless() {
+        print("\(Self.self).\(#function)")
     }
 
     /// Repositions the window’s window device in the window server’s screen list.
     public func order(_ place: NSWindow.OrderingMode, relativeTo otherWin: Int) {
+        print("\(Self.self).\(#function)")
     }
 
     /// The window level of the window.
@@ -437,7 +496,11 @@ public class NSWindow: NSResponder {
 
     /// A Boolean value that indicates whether the window is the key window for the application.
     /// The value of this property is true if the window is the key window for the application; otherwise, false.
-    public var isKeyWindow: Bool = false
+    public var isKeyWindow: Bool {
+        NSApplication
+            .shared
+            .keyWindow === self
+    }
 
     ///A Boolean value that indicates whether the window can become the key window.
     /// 
@@ -448,32 +511,58 @@ public class NSWindow: NSResponder {
 
     /// Makes the window the key window.
     public func makeKey() {
+        print("\(Self.self).\(#function)")
+
+        if canBecomeKey {
+            if let oldWindow = NSApplication.shared.keyWindow {
+                oldWindow.resignKey()
+            }
+
+            NSApplication.shared.keyWindow = self
+            
+        }
     }
 
     /// Moves the window to the front of the screen list, within its level, and makes it the key window; that is, it shows the window.
     /// - Parameter sender: The message’s sender.
     public func makeKeyAndOrderFront(_ sender: Any?) {
+        print("\(Self.self).\(#function)")
+
+        makeKey()
+        orderFront(sender)
     }
 
     /// Informs the window that it has become the key window.
     /// 
     /// This method reestablishes the window’s first responder, sends the becomeKeyWindow message to that object if it responds, and posts ``didBecomeKeyNotification`` to the default notification center. 
     /// Never invoke this method directly.
-    public func becomeKey() {
+    open func becomeKey() {
+        print("\(Self.self).\(#function)")
+
+        NotificationCenter.default.post(name: .init("NSWindowDidBecomeKeyNotification"), object: self)
+        delegate?.windowDidBecomeKey(self)
     }
 
     /// Resigns the window’s key window status.
     /// 
     /// This method sends ``resignKey()`` to the window’s first responder, sends ``windowDidResignKey(_:)`` to the window’s delegate, and posts ``didResignKeyNotification`` to the default notification center.
     /// Never invoke this method directly.
-    public func resignKey() {
+    open func resignKey() {
+        print("\(Self.self).\(#function)")
+
+        NotificationCenter.default.post(name: .init("NSWindowDidResignKeyNotification"), object: self)
+        delegate?.windowDidResignKey(self)
     }
 
     // MARK: - Managing Main Status
 
     /// A Boolean value that indicates whether the window is the application’s main window.
     /// The value of this property is true when the window is the main window for the application; otherwise, false.
-    public var isMainWindow: Bool = false
+    public var isMainWindow: Bool {
+        NSApplication
+            .shared
+            .mainWindow === self
+    }
 
     /// A Boolean value that indicates whether the window can become the application’s main window.
     /// 
@@ -485,17 +574,34 @@ public class NSWindow: NSResponder {
 
     /// Makes the window the main window.
     public func makeMain() {
+        print("\(Self.self).\(#function)")
+
+        if canBecomeMain {
+            if let oldWindow = NSApplication.shared.mainWindow {
+                oldWindow.resignMain()
+            }
+
+            NSApplication.shared.mainWindow = self
+        }
     }
 
     /// Informs the window that it has become the main window.
     /// This method posts an ``didBecomeMainNotification`` to the default notification center.
     /// Never invoke this method directly.
-    public func becomeMain() {
+    open func becomeMain() {
+        print("\(Self.self).\(#function)")
+
+        NotificationCenter.default.post(name: .init("NSWindowDidBecomeMainNotification"), object: self)
+        delegate?.windowDidBecomeMain(self)
     }
 
     /// Resigns the window’s main window status.
     /// This method sends ``windowDidResignMain(_:)`` to the window’s delegate and posts ``didResignMainNotification`` to the default notification center.
-    public func resignMain() {
+    open func resignMain() {
+        print("\(Self.self).\(#function)")
+
+        NotificationCenter.default.post(name: .init("NSWindowDidResignMainNotification"), object: self)
+        delegate?.windowDidResignMain(self)
     }
 
     // MARK: - Managing Attached Windows
@@ -513,11 +619,18 @@ public class NSWindow: NSResponder {
     ///   - childWin: The child window to order.
     ///   - place: ``NSWindow.OrderingMode.above``: childWin is ordered immediately in front of the window. ``NSWindow.OrderingMode.below``: childWin is ordered immediately behind the window.
     public func addChildWindow(_ childWin: NSWindow, ordered place: NSWindow.OrderingMode) {
+        print("\(Self.self).\(#function)")
+        childWindows?.append(childWin)
     }
 
     /// Detaches a given child window from the window.
     /// - Parameter childWin: The child window to detach.
     public func removeChildWindow(_ childWin: NSWindow) {
+        print("\(Self.self).\(#function)")
+        childWindows?
+            .removeAll { window in
+                window === childWin
+            }
     }
 
     /// The parent window to which the window is attached as a child.
@@ -538,7 +651,8 @@ public class NSWindow: NSResponder {
     /// - Parameter mask: The mask that the event to return must match. Events with non-matching masks are left in the queue. See ``discardEvents(matching:before:)`` in ``NSApplication`` for the list of mask values.
     /// - Returns: The next event whose mask matches mask; nil when no matching event was found.
     public func nextEvent(matching mask: NSEvent.EventTypeMask) -> NSEvent? {
-        nil
+        print("\(Self.self).\(#function)")
+        return nil
     }
 
     /// Forwards the message to the global application object.
@@ -549,7 +663,8 @@ public class NSWindow: NSResponder {
     ///   - deqFlag: true to remove the returned event from the event queue; false to leave the returned event in the queue.
     /// - Returns: The next event whose mask matches the specified mask; otherwise, nil.
     public func nextEvent(matching mask: NSEvent.EventTypeMask, until expiration: Date?, inMode mode: RunLoop.Mode, dequeue deqFlag: Bool) -> NSEvent? {
-        nil
+        print("\(Self.self).\(#function)")
+        return nil
     }
 
     /// Forwards the message to the global application object.
@@ -557,6 +672,7 @@ public class NSWindow: NSResponder {
     ///   - mask: The mask of the events to discard.
     ///   - lastEvent: The event up to which queued events are discarded from the queue.
     public func discardEvents(matching mask: NSEvent.EventTypeMask,before lastEvent: NSEvent?) {
+        print("\(Self.self).\(#function)")
     }
 
     /// Forwards the message to the global application object.
@@ -564,6 +680,7 @@ public class NSWindow: NSResponder {
     ///   - event: The event to add to the window’s event queue.
     ///   - flag: true to place the event in the front of the queue; false to place it in the back.
     public func postEvent(_ event: NSEvent, atStart flag: Bool) {
+        print("\(Self.self).\(#function)")
     }
 
     /// This action method dispatches mouse and keyboard events the global application object sends to the window.
@@ -572,6 +689,7 @@ public class NSWindow: NSResponder {
     /// Instead, a ``sendEvent(_:)`` message with a window number of 0 delivers it to the ``NSApplication`` object.
     /// - Parameter event: The mouse or keyboard event to process.
     public func sendEvent(_ event: NSEvent) {
+        print("\(Self.self).\(#function)")
     }
 
     /// Dispatches action messages with a given argument.
@@ -583,7 +701,8 @@ public class NSWindow: NSResponder {
     ///   - object: The message’s argument.
     /// - Returns: true when the window or its delegate perform action with object; otherwise, false.
     public func tryToPerform(_ action: Selector, with object: Any?) -> Bool {
-        false
+        print("\(Self.self).\(#function)")
+        return false
     }
 
     // MARK: - Managing Responders
@@ -619,7 +738,8 @@ public class NSWindow: NSResponder {
     /// - Parameter responder: The responder to set as the window’s first responder. nil makes the window its first responder.
     /// - Returns: true when the operation is successful; otherwise, false.
     public func makeFirstResponder(_ responder: NSResponder?) -> Bool {
-        true
+        print("\(Self.self).\(#function)")
+        return true
     }
 
     // MARK: - Drawing Windows
@@ -631,6 +751,7 @@ public class NSWindow: NSResponder {
     /// 
     /// This method includes the frame view that draws the border, title bar, and other peripheral elements.
     public func display() {
+        print("\(Self.self).\(#function)")
     }
 
     /// Passes a display message down the window’s view hierarchy, thus redrawing all views that need displaying.
@@ -641,6 +762,12 @@ public class NSWindow: NSResponder {
     /// You rarely need to invoke this method. 
     /// NSWindow objects normally record which of their views need displaying and display them automatically on each pass through the event loop.
     public func displayIfNeeded() {
+        if viewsNeedDisplay {
+            print("\(Self.self).\(#function)")
+
+            display()
+            viewsNeedDisplay = false
+        }
     }
 
     /// A Boolean value that indicates whether any of the window’s views need to be displayed.
@@ -664,6 +791,14 @@ public class NSWindow: NSResponder {
     /// An ``NSWindow`` object is automatically sent an update message on every pass through the event loop and before it’s displayed onscreen. 
     /// You can manually cause an update message to be sent to all visible NSWindow objects through the ``NSApplication`` ``updateWindows()`` method.
     public func update() {
+        guard glfwWindowShouldClose(_context) == GLFW_FALSE else {
+            close()
+            return
+        }
+
+        displayIfNeeded()
+        glfwSwapBuffers(_context)
+        glfwPollEvents()
     }
 
 
@@ -727,6 +862,7 @@ public class NSWindow: NSResponder {
     /// You typically use this method to place a window—most likely an alert dialog—where the user can’t miss it. 
     /// This method is invoked automatically when a panel is placed on the screen by the ``runModal(for:)`` method of the ``NSApplication`` class.
     public func center() {
+        print("\(Self.self).\(#function)")
     }
 
     // MARK: - Closing Windows
@@ -741,6 +877,7 @@ public class NSWindow: NSResponder {
     /// If the window doesn’t have a close button or can’t close (for example, if the delegate replies false to a ``windowShouldClose(_:)`` message), the system emits the alert sound.
     /// - Parameter sender: The message’s sender.
     public func performClose(_ sender: Any?) {
+        print("\(Self.self).\(#function)")
     }
 
     /// Removes the window from the screen.
@@ -758,6 +895,10 @@ public class NSWindow: NSResponder {
     /// - It does not simulate the user clicking the close button by momentarily highlighting the button.
     /// Use ``performClose(_:)`` if you need these features.
     public func close() {
+        print("\(Self.self).\(#function)")
+        glfwDestroyWindow(_context)
+
+        NSApplication.shared.terminate(self)
     }
 
     /// A Boolean value that indicates whether the window is released when it receives the close message.
@@ -782,18 +923,21 @@ public class NSWindow: NSResponder {
     /// If the window doesn’t have a minimize button or can’t be minimized for some reason, the system emits the alert sound.
     /// - Parameter sender: The message’s sender.
     public func performMiniaturize(_ sender: Any?) {
+        print("\(Self.self).\(#function)")
     }
 
     ///  Removes the window from the screen list and displays the minimized window in the Dock.
     /// - Parameter sender: The message’s sender.
     public func miniaturize(_ sender: Any?) {
+        print("\(Self.self).\(#function)")
     }
 
     /// De-minimizes the window.
     /// 
     /// Invoke this method to programmatically deminimize a minimized window in the Dock.
     /// - Parameter sender: The message’s sender.
-    public func deminiaturize(_ sender: Any?){
+    public func deminiaturize(_ sender: Any?) {
+        print("\(Self.self).\(#function)")
     }
 
     /// The custom miniaturized window image of the window.
@@ -825,6 +969,7 @@ public class NSWindow: NSResponder {
     /// 
     /// Subclasses should not override this method.
     public func updateConstraintsIfNeeded() {
+        print("\(Self.self).\(#function)")
     }
 
     /// Updates the layout of views in the window based on the current views and constraints.
@@ -835,6 +980,7 @@ public class NSWindow: NSResponder {
     /// 
     /// Subclasses should not override this method.
     public func layoutIfNeeded() {
+        print("\(Self.self).\(#function)")
     }
 
     // MARK: - Getting Information About Scripting Attributes
@@ -859,7 +1005,10 @@ public class NSWindow: NSResponder {
 
     /// A Boolean value that indicates if the user can resize the window.
     /// This property is key-value coding compliant.
-    public var isResizable: Bool = false
+    public var isResizable: Bool {
+        get { glfwGetWindowAttrib(_context, GLFW_RESIZABLE) == GLFW_TRUE ? true : false }
+        set { glfwSetWindowAttrib(_context, GLFW_RESIZABLE, newValue == true ? GLFW_TRUE : GLFW_FALSE) }
+    }
 
     /// A Boolean value that indicates whether the window can minimize.
     /// This property is key-value coding compliant.
