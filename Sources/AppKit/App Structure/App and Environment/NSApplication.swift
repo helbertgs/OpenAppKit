@@ -1,31 +1,27 @@
 import Foundation
-import OpenGLFW
 
 /// An object that manages an app’s main event loop and resources used by all of that app’s objects.
-@MainActor public class NSApplication {
+@MainActor open class NSApplication {
 
     // MARK: - Accessing the shared application
 
     /// The singleton app instance.
     public static let shared = NSApplication()
 
+    /// The global variable for the shared app instance.
+    /// The value in this global variable is the same as accessing the shared property of the app.
+    public var NSApp: NSApplication!
+
     // MARK: - Configuring your app’s behavior
 
     /// The delegate of the app object.
     /// The app object and app delegate work in tandem to manage the app’s overall behavior. 
-    public var delegate: (any NSApplicationDelegate)?
+    public var delegate: (any NSApplicationDelegate)?   
 
     // MARK: - Create a NSApplication
 
-    private init() {
+    public required init() {
         print("\(Self.self).\(#function)")
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3)
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3)
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
-
-        guard glfwInit() == GLFW_TRUE else {
-            return
-        }
     }
 
     deinit {
@@ -53,6 +49,11 @@ import OpenGLFW
     /// After creating the ``NSApplication`` object, the main function should load your app’s main nib file and then start the event loop by sending the ``NSApplication`` object a ``run()`` message. 
     public func run() {
         print("\(Self.self).\(#function)")
+        
+        if NSApp == nil {
+            NSApp = self
+        }
+        
         if !isRunning {
             isRunning = true
         }
@@ -62,8 +63,6 @@ import OpenGLFW
         while isRunning {
             updateWindows()
         }
-
-        glfwTerminate()
     }
 
     /// Activates the app, opens any files specified by the NSOpen user default, and unhighlights the app’s icon.
@@ -76,8 +75,8 @@ import OpenGLFW
             return
         }
 
-        delegate.applicationWillFinishLaunching(NSApplication.shared)
-        delegate.applicationDidFinishLaunching(NSApplication.shared)
+        delegate.applicationWillFinishLaunching(NSApp)
+        delegate.applicationDidFinishLaunching(NSApp)
 
         // Initialize GLAD
     }

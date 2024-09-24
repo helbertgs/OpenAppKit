@@ -18,6 +18,14 @@ public class NSWindow: NSResponder {
         self.contentViewController = contentViewController
         self.contentView = self.contentViewController?.view
 
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3)
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3)
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
+
+        guard glfwInit() == GLFW_TRUE else {
+            fatalError("Fail to initialize GLFW")
+        }
+
         guard let _context = glfwCreateWindow(900, 450, "My Title", nil, nil) else {
             fatalError("Fail to create a GLFW Window")
         }
@@ -63,6 +71,7 @@ public class NSWindow: NSResponder {
 
     deinit {
         print("\(Self.self).\(#function)")
+        glfwTerminate()
     }
 
     // MARK: - Managing the Window's Behavior
