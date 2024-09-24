@@ -1,14 +1,14 @@
 import Foundation
 
 /// An abstract class that forms the basis of event and command processing in AppKit.
-@MainActor public class NSResponder {
+@MainActor open class NSResponder {
 
     // MARK: - Changing the First Responder
 
     /// A Boolean value that indicates whether the responder accepts first responder status.
     /// As first responder, the receiver is the first object in the responder chain to be sent key events and action messages. 
     /// By default, this property is false. Subclasses set this property to true if the receiver accepts first responder status.
-    public var acceptsFirstResponder: Bool = false
+    open var acceptsFirstResponder: Bool = false
 
     /// Notifies the receiver that it’s about to become first responder in its NSWindow.
     /// 
@@ -16,7 +16,7 @@ import Foundation
     /// Subclasses can override this method to update state or perform some action such as highlighting the selection, or to return false, refusing first responder status.
     /// Use the ``NSWindow.makeFirstResponder(_:)`` method, not this method, to make an object the first responder. 
     /// Never invoke this method directly.
-    public func becomeFirstResponder() -> Bool {
+    open func becomeFirstResponder() -> Bool {
         true
     }
     
@@ -26,7 +26,7 @@ import Foundation
     /// Subclasses can override this method to update state or perform some action such as unhighlighting the selection, or to return false, refusing to relinquish first responder status.
     /// Use the ``NSWindow.makeFirstResponder(_:)`` method, not this method, to make an object the first responder. 
     /// Never invoke this method directly.
-    public func resignFirstResponder() -> Bool {
+    open func resignFirstResponder() -> Bool {
         true
     }
 
@@ -41,7 +41,7 @@ import Foundation
     ///   - responder: The first responder.
     ///   - event: The event to validate. May be nil if there is no applicable event.
     /// - Returns: true if the control should become first responder, otherwise false.
-    public func validateProposedFirstResponder(_ responder: NSResponder, for event: NSEvent?) -> Bool {
+    open func validateProposedFirstResponder(_ responder: NSResponder, for event: NSEvent?) -> Bool {
         true
     }
 }

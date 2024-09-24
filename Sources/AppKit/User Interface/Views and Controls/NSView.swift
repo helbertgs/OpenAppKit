@@ -1,4 +1,4 @@
 import Foundation
 
-@MainActor public class NSView: NSResponder {
+@MainActor open class NSView: NSResponder {
 }

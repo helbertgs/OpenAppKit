@@ -1,7 +1,7 @@
 import Foundation
 
 @MainActor
-public class NSViewController: NSResponder {
+open class NSViewController: NSResponder {
 
     // MARK: - Creating A View Controller
 
@@ -16,7 +16,7 @@ public class NSViewController: NSResponder {
     // MARK: - View Properties
 
     /// The view controller’s primary view.
-    public var view: NSView = NSView()
+    public var view: NSView!
 
     /// The localized title of the receiver’s primary view.
     public var title: String?

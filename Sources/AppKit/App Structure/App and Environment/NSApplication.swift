@@ -8,10 +8,6 @@ import Foundation
     /// The singleton app instance.
     public static let shared = NSApplication()
 
-    /// The global variable for the shared app instance.
-    /// The value in this global variable is the same as accessing the shared property of the app.
-    public var NSApp: NSApplication!
-
     // MARK: - Configuring your app’s behavior
 
     /// The delegate of the app object.
@@ -49,11 +45,6 @@ import Foundation
     /// After creating the ``NSApplication`` object, the main function should load your app’s main nib file and then start the event loop by sending the ``NSApplication`` object a ``run()`` message. 
     public func run() {
         print("\(Self.self).\(#function)")
-        
-        if NSApp == nil {
-            NSApp = self
-        }
-        
         if !isRunning {
             isRunning = true
         }
@@ -75,8 +66,8 @@ import Foundation
             return
         }
 
-        delegate.applicationWillFinishLaunching(NSApp)
-        delegate.applicationDidFinishLaunching(NSApp)
+        delegate.applicationWillFinishLaunching(NSApplication.shared)
+        delegate.applicationDidFinishLaunching(NSApplication.shared)
 
         // Initialize GLAD
     }
