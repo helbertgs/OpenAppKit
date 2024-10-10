@@ -62,14 +62,9 @@ import Foundation
     /// If you override ``finishLaunching()``, the subclass method should invoke the superclass method.
     public func finishLaunching() {
         print("\(Self.self).\(#function)")
-        guard let delegate else {
-            return
-        }
 
-        delegate.applicationWillFinishLaunching(NSApplication.shared)
-        delegate.applicationDidFinishLaunching(NSApplication.shared)
-
-        // Initialize GLAD
+        delegate?.applicationWillFinishLaunching(NSApplication.shared)
+        delegate?.applicationDidFinishLaunching(NSApplication.shared) 
     }
 
     /// Stops the main event loop.

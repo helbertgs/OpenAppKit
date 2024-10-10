@@ -31,42 +31,9 @@ public class NSWindow: NSResponder {
         }
 
         self._context = _context
+        super.init()
 
-        glfwSetWindowFocusCallback(_context) { window, isFocused in
-            print("glfwSetWindowFocusCallback")
-        }
-
-        glfwSetWindowSizeCallback(_context) { window, width, height in
-            print("glfwSetWindowSizeCallback")
-        }
-
-        glfwSetWindowPosCallback(_context) { window, x, y in
-            print("glfwSetWindowSizeCallback")
-        }
-
-        glfwSetWindowRefreshCallback(_context) { window in
-            print("glfwSetWindowRefreshCallback")
-        }
-
-        glfwSetKeyCallback(_context) { window, key, scancode, action, mods in
-            print("glfwSetKeyCallback")
-        }
-
-        glfwSetCursorPosCallback(_context) { window, x, y in
-            print("glfwSetCursorPosCallback")
-        }
-
-        glfwSetMouseButtonCallback(_context) { window, button, action, mods in
-            print("glfwSetMouseButtonCallback")
-        }
-
-        glfwSetScrollCallback(_context) { window, xOffset, yOffset in 
-            print("glfwSetScrollCallback")
-        }
-
-        glfwSetDropCallback(_context) { window, count, paths in
-            print("glfwSetDropCallback")
-        }
+        self.setupCallbacks()
     }
 
     deinit {
@@ -352,7 +319,7 @@ public class NSWindow: NSResponder {
     /// The flags are listed in ``NSEvent`` class's ``modifierFlags`` method description. The property is valid only while the window is being resized.
     /// You can use this property to constrain the direction or amount of resizing. 
     /// Because of its limited validity, this property should only be accessed from within an implementation of the delegate method ``windowWillResize(_:to:)``.
-    public var resizeFlags: NSEvent.ModifierFlags = .init(rawValue: 0)
+    public var resizeFlags: NSEvent.ModifierFlags = .none
 
     /// The window’s resizing increments.
     /// 
@@ -680,7 +647,7 @@ public class NSWindow: NSResponder {
     /// - Parameters:
     ///   - mask: The mask of the events to discard.
     ///   - lastEvent: The event up to which queued events are discarded from the queue.
-    public func discardEvents(matching mask: NSEvent.EventTypeMask,before lastEvent: NSEvent?) {
+    public func discardEvents(matching mask: NSEvent.EventTypeMask, before lastEvent: NSEvent?) {
         print("\(Self.self).\(#function)")
     }
 
@@ -1265,5 +1232,52 @@ extension NSWindow {
     public enum TitleVisibility: Sendable {
         case visible
         case hidden
+    }
+}
+
+extension NSWindow {
+    private func setupCallbacks() {
+        glfwSetWindowUserPointer(_context, Unmanaged.passUnretained(self).toOpaque())
+
+        glfwSetWindowFocusCallback(_context) { window, isFocused in
+            // print("glfwSetWindowFocusCallback")
+        }
+
+        glfwSetWindowSizeCallback(_context) { window, width, height in
+            // print("glfwSetWindowSizeCallback")
+        }
+
+        glfwSetWindowPosCallback(_context) { window, x, y in
+            // print("glfwSetWindowSizeCallback")
+        }
+
+        glfwSetWindowRefreshCallback(_context) { window in
+            // print("glfwSetWindowRefreshCallback")
+            // let win = Unmanaged<NSWindow>.fromOpaque(glfwGetWindowUserPointer(window)!).takeUnretainedValue()
+            // win.update()
+        }
+
+        glfwSetKeyCallback(_context) { window, key, scancode, action, mods in
+            print("glfwSetKeyCallback: [key: \(key), scancode: \(scancode), action: \(action), mods: \(mods)]")
+            
+            // let win = Unmanaged<Window>.fromOpaque(glfwGetWindowUserPointer(window)!).takeUnretainedValue()
+            // let event = NSEvent.keyEvent(with: .keyDown, characters: String, charactersIgnoringModifiers: String, keyCode: Int)
+        }
+
+        glfwSetCursorPosCallback(_context) { window, x, y in
+            // print("glfwSetCursorPosCallback")
+        }
+
+        glfwSetMouseButtonCallback(_context) { window, button, action, mods in
+            // print("glfwSetMouseButtonCallback")
+        }
+
+        glfwSetScrollCallback(_context) { window, xOffset, yOffset in 
+            // print("glfwSetScrollCallback")
+        }
+
+        glfwSetDropCallback(_context) { window, count, paths in
+            // print("glfwSetDropCallback")
+        }
     }
 }

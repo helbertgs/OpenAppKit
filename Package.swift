@@ -10,24 +10,41 @@ let package = Package(
             name: "AppKit",
             targets: ["AppKit"]),
         .library(
+            name: "CoreAnimation",
+            targets: ["CoreAnimation"]),
+        .library(
             name: "CoreGraphics",
             targets: ["CoreGraphics"]),
+        .library(
+            name: "CoreImage",
+            targets: ["CoreImage"]),
         .executable(
             name: "AppKitSample",
             targets: ["AppKitSample"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/helbertgs/OpenGLFW.git", branch: "main")
+        .package(url: "https://github.com/helbertgs/OpenGLFW.git", branch: "main"),
+        .package(url: "https://github.com/helbertgs/OpenGLAD.git", branch: "main")
     ],
     targets: [
         .target(
-            name: "CoreGraphics",
+            name: "CoreImage",
             dependencies: [  ]
+        ),
+        .target(
+            name: "CoreGraphics",
+            dependencies: [ "CoreImage" ]
+        ),
+        .target(
+            name: "CoreAnimation",
+            dependencies: [ "CoreGraphics" ]
         ),
         .target(
             name: "AppKit",
             dependencies: [ 
+                "CoreAnimation",
                 "CoreGraphics",
+                "CoreImage",
                 .product(name: "OpenGLFW", package: "OpenGLFW")
             ]
         ),

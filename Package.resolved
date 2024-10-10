@@ -1,6 +1,15 @@
 {
-  "originHash" : "1cb0dd94c73d51e9e8d69da6fc3a9ae65940c77242e4ca9c7040aa628dd678c7",
+  "originHash" : "bed62bbf6b706bbff9db8b28e234da892588b1e848a133600721a3aa4a9928d7",
   "pins" : [
+    {
+      "identity" : "openglad",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/helbertgs/OpenGLAD.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "3b59ea77d020d556744cd7c4a322da693cb95bc5"
+      }
+    },
     {
       "identity" : "openglfw",
       "kind" : "remoteSourceControl",
