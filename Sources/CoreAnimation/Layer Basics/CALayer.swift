@@ -73,12 +73,12 @@ open class CALayer {
     /// You can use a delegate object to provide the layer’s contents, handle the layout of any sublayers, and provide custom actions in response to layer-related changes. 
     /// The object you assign to this property should implement one or more of the methods of the ``CALayerDelegate`` informal protocol. 
     /// For more information about that protocol, see ``CALayerDelegate``
-    /// In Windows, if the layer is associated with a UIView object, this property must be set to the view that owns the layer.
+    /// In Windows, if the layer is associated with a NSView object, this property must be set to the view that owns the layer.
     public weak var delegate: (any CALayerDelegate)?
 
     // MARK: - Providing the Layer’s Content
 
-    /// An object that provides the contents of the layer. Animatable.
+    /// An object that provides the contents of the layer.
     /// 
     /// The default value of this property is nil.
     /// 
@@ -90,14 +90,14 @@ open class CALayer {
     /// The interplay between views and layers usually results in the view replacing the contents of this property during a subsequent update.
     public var contents: Any?
 
-    /// The rectangle, in the unit coordinate space, that defines the portion of the layer’s contents that should be used. Animatable.
+    /// The rectangle, in the unit coordinate space, that defines the portion of the layer’s contents that should be used.
     /// 
     /// Defaults to the unit rectangle (0.0, 0.0, 1.0, 1.0).
     /// If pixels outside the unit rectangle are requested, the edge pixels of the contents image will be extended outwards.
     /// If an empty rectangle is provided, the results are undefined.
     public var contentsRect: CoreGraphics.CGRect = .init(x: 0, y: 0, width: 1, height: 1)
 
-    /// The rectangle that defines how the layer contents are scaled if the layer’s contents are resized. Animatable.
+    /// The rectangle that defines how the layer contents are scaled if the layer’s contents are resized.
     /// 
     /// You can use this property to subdivide the layer’s content into a 3x3 grid. 
     /// The value in this property specifies the location and size of the center rectangle in that grid. 
