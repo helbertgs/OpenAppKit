@@ -275,7 +275,7 @@ public class NSWindow: NSResponder {
     /// When the maximum size of a window has been set, there is no way to reset it other than by specifying this default maximum size.
     /// 
     /// The contentMaxSize property takes precedence over this property.
-    public var maxSize: CoreGraphics.CGSize = CoreGraphics.CGSize()
+    public var maxSize: CoreGraphics.CGSize = CoreGraphics.CGSize(width: .infinity, height: .infinity)
 
     /// A Boolean value that indicates whether the window is in a zoomed state.
     /// 
@@ -613,7 +613,7 @@ public class NSWindow: NSResponder {
     /// 
     /// This property should be set from a subclass when it is overridden by a subclass’s implementation. It should not be set otherwise.
     /// Note that calling orderOut(_:) on a child window causes the window to be removed from its parent window before it is itself removed.
-    public var parent: NSWindow?
+    public weak var parent: NSWindow?
 
     // MARK: - Handling Events
 
