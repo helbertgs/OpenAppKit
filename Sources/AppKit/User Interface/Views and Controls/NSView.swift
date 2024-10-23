@@ -1,3 +1,6 @@
+import CoreAnimation
+import CoreImage
+import CoreGraphics
 import Foundation
 
 /// The infrastructure for drawing, printing, and handling events in an app.
@@ -487,5 +490,563 @@ import Foundation
     /// - Parameter angle: A float value specifying the angle of rotation, in degrees.
     public func rotate(byDegrees angle: CGFloat) {
         fatalError("not implemented yet")
+    }
+
+    // MARK: - Converting Coordinate Values
+
+    /// Returns a backing store pixel-aligned rectangle in local view coordinates.
+    /// 
+    /// Uses the ``NSIntegralRectWithOptions(_:_:)`` function and the given input rectangle and options to produce a backing store pixel-aligned rectangle in the view’s interior coordinates.
+    /// - Parameters:
+    ///   - rect: The rectangle in the view’s interior coordinate system.
+    ///   - options: The alignment options. See AlignmentOptions for possible values. (Note that although the alignment options specify integral values, the rectangle returned by this method is pixel-aligned.)
+    /// - Returns: A rectangle in the view’s interior coordinate system that is aligned to the backing store pixels using the specified options.
+    public func backingAlignedRect(_ rect: NSRect, options: AlignmentOptions = []) -> NSRect {
+        fatalError("not implemented yet")
+    }
+
+    /// Converts a point from its pixel aligned backing store coordinate system to the view’s interior coordinate system.
+    /// - Parameter point: The point in the pixel backing store aligned coordinate system.
+    /// - Returns: A point in the view’s interior coordinate system.
+    public func convertFromBacking(_ point: NSPoint) -> NSPoint {
+        fatalError("not implemented yet")
+    }
+
+    /// Converts a point from the view’s interior coordinate system to its pixel aligned backing store coordinate system.
+    /// - Parameter point: The point in the view’s interior coordinate system.
+    /// - Returns: A point in its pixel aligned backing store coordinate system.
+    public func convertToBacking(_ point: NSPoint) -> NSPoint {
+        fatalError("not implemented yet")
+    }
+
+    /// Convert the point from the layer’s interior coordinate system to the view’s interior coordinate system.
+    /// 
+    /// The layer’s space is virtual, and doesn’t take into account the layer’s ``contentsScale`` setting.
+    /// - Parameter point: The point in the layer’s interior coordinate system.
+    /// - Returns: The point in the view’s interior coordinate system.
+    public func convertFromLayer(_ point: NSPoint) -> NSPoint {
+        fatalError("not implemented yet")
+    }
+
+    /// Convert the size from the view’s interior coordinate system to the layer’s interior coordinate system.
+    /// 
+    /// The layer’s space is virtual, and doesn’t take into account the layer’s ``contentsScale`` setting.
+    /// - Parameter point: A point in the view’s interior coordinate system.
+    /// - Returns: A point in the view’s layer interior coordinate system.
+    public func convertToLayer(_ point: NSPoint) -> NSPoint {
+        fatalError("not implemented yet")
+    }
+
+    /// Converts a rectangle from its pixel aligned backing store coordinate system to the view’s interior coordinate system.
+    /// - Parameter rect: The rectangle in the pixel backing store coordinate system.
+    /// - Returns: A rectangle in the view’s interior coordinate system.
+    public func convertFromBacking(_ rect: NSRect) -> NSRect {
+        fatalError("not implemented yet")
+    }
+
+    /// Converts a rectangle from the view’s interior coordinate system to its pixel aligned backing store coordinate system.
+    /// - Parameter rect: A rectangle in the view’s interior coordinate system.
+    /// - Returns: A rectangle in its pixel aligned backing store coordinate system.
+    public func convertToBacking(_ rect: NSRect) -> NSRect {
+        fatalError("not implemented yet")
+    }
+
+    /// Convert the rectangle from the layer’s interior coordinate system to the view’s interior coordinate system.
+    /// 
+    /// The layer’s space is virtual, and doesn’t take into account the layer’s ``contentsScale`` setting.
+    /// - Parameter rect: A rectangle in the layer’s interior coordinate system.
+    /// - Returns: A rectangle in the view’s interior coordinate system.
+    public func convertFromLayer(_ rect: NSRect) -> NSRect {
+        fatalError("not implemented yet")
+    }
+
+    /// Convert the size from the view’s interior coordinate system to the layer’s interior coordinate system.
+    /// 
+    /// The layer’s space is virtual, and doesn’t take into account the layer’s ``contentsScale`` setting.
+    /// - Parameter rect: A rectangle in the view’s interior coordinate system.
+    /// - Returns: A rectangle in the layer's interior coordinate system.
+    public func convertToLayer(_ rect: NSRect) -> NSRect {
+        fatalError("not implemented yet")
+    }
+
+    /// Converts a size from its pixel aligned backing store coordinate system to the view’s interior coordinate system.
+    /// - Parameter size: The size in the pixel aligned coordinate system.
+    /// - Returns: The size in the view’s interior coordinate system.
+    public func convertFromBacking(_ size: NSSize) -> NSSize {
+        fatalError("not implemented yet")
+    }
+
+    /// Converts a size from the view’s interior coordinate system to its pixel aligned backing store coordinate system.
+    /// - Parameter size: The size in the view’s interior coordinate system.
+    /// - Returns: The size in the pixel aligned coordinate system.
+    public func convertToBacking(_ size: NSSize) -> NSSize {
+        fatalError("not implemented yet")
+    }
+
+    /// Convert the size from the layer’s interior coordinate system to the view’s interior coordinate system.
+    /// 
+    /// The layer’s space is virtual, and doesn’t take into account the layer’s ``contentsScale`` setting.
+    /// The returned NSSize values are always forced to have positive a width and height.
+    /// - Parameter size: A size in the layer’s interior coordinate system.
+    /// - Returns: A size in the view’s interior coordinate system.
+    public func convertFromLayer(_ size: NSSize) -> NSSize {
+        fatalError("not implemented yet")
+    }
+
+    /// Convert the size from the view’s interior coordinate system to the layer’s interior coordinate system.
+    /// 
+    /// The layer’s space is virtual, and doesn’t take into account the layer’s ``contentsScale`` setting.
+    /// The returned NSSize values are always forced to have positive a width and height.
+    /// - Parameter size: A size in the view’s interior coordinate system.
+    /// - Returns: A size in the layer's interior coordinate system.
+    public func convertToLayer(_ size: NSSize) -> NSSize {
+        fatalError("not implemented yet")
+    }
+
+    /// Converts a point from the coordinate system of a given view to that of the view.
+    /// - Parameters:
+    ///   - point: A point specifying a location in the coordinate system of view.
+    ///   - view: The view with point in its coordinate system. Both view and the view must belong to the same ``NSWindow`` object, and that window must not be nil. If view is nil, this method converts from window coordinates instead.
+    /// - Returns: The point converted to the coordinate system of the view.
+    public func convert(_ point: NSPoint, from view: NSView?) -> NSPoint {
+        fatalError("not implemented yet")
+    }
+
+    /// Converts a point from the view’s coordinate system to that of a given view.
+    /// - Parameters:
+    ///   - point: A point specifying a location in the coordinate system of the view.
+    ///   - view: The view into whose coordinate system point is to be converted. Both view and the view must belong to the same ``NSWindow`` object, and that window must not be nil. If view is nil, this method converts to window coordinates instead.
+    /// - Returns: The point converted to the coordinate system of view.
+    public func convert(_ point: NSPoint, to view: NSView?) -> NSPoint {
+        fatalError("not implemented yet")
+    }
+
+    /// Converts a size from another view’s coordinate system to that of the view.
+    /// 
+    /// The returned ``NSSize`` values are always forced to have positive a width and height.
+    /// You can also use this method to get a view’s current magnification or zoom level, if it’s been changed from the default scale. 
+    /// Specifically, if you convert a known size from the window’s base coordinate space to that of view, the result is the current zoom level.
+    /// - Parameters:
+    ///   - size: The size (width and height) in view’s coordinate system.
+    ///   - view: The view with size in its coordinate system. Both view and the view must belong to the same ``NSWindow`` object, and that window must not be nil. If view is nil, this method converts from window coordinates instead.
+    /// - Returns: The converted size, as an ``NSSize`` structure.
+    public func convert(_ size: NSSize, from view: NSView?) -> NSSize {
+        fatalError("not implemented yet")
+    }
+
+    /// Converts a size from the view’s coordinate system to that of another view.
+    /// 
+    /// The returned ``NSSize`` values are always forced to have positive a width and height.
+    /// - Parameters:
+    ///   - size: The size (width and height) in the view’s coordinate system.
+    ///   - view: The view that’s the target of the conversion operation. Both view and the view must belong to the same ``NSWindow`` object, and that window must not be nil. If view is nil, this method converts to window coordinates instead.
+    /// - Returns: The converted size, as an ``NSSize`` structure.
+    public func convert(_ size: NSSize, to view: NSView?) -> NSSize {
+        fatalError("not implemented yet")
+    }
+
+    /// Converts a rectangle from the coordinate system of another view to that of the view.
+    /// - Parameters:
+    ///   - rect: The rectangle in the view coordinate system.
+    ///   - view: The view with rect in its coordinate system. Both view and the view must belong to the same ``NSWindow`` object, and that window must not be nil. If view is nil, this method converts from window coordinates instead.
+    /// - Returns: The converted rectangle.
+    public func convert(_ rect: NSRect, from view: NSView?) -> NSRect {
+        fatalError("not implemented yet")
+    }
+
+    /// Converts a rectangle from the view’s coordinate system to that of another view.
+    /// - Parameters:
+    ///   - rect: A rectangle in the view’s coordinate system.
+    ///   - view: The view that’s the target of the conversion operation. Both view and the view must belong to the same ``NSWindow`` object, and that window must not be nil. If view is nil, this method converts the rectangle to window coordinates instead.
+    /// - Returns: The converted rectangle.
+    public func convert(_ rect: NSRect, to view: NSView?) -> NSRect {
+        fatalError("not implemented yet")
+    }
+
+    /// Converts the corners of a specified rectangle to lie on the center of device pixels, which is useful in compensating for rendering overscanning when the coordinate system has been scaled.
+    /// 
+    /// This method converts the given rectangle to device coordinates, adjusts the rectangle to lie in the center of the pixels, and converts the resulting rectangle back to the view’s coordinate system. 
+    /// Note that this method does not take into account any transformations performed using the NSAffineTransform class or Quartz 2D routines.
+    /// - Parameter rect: The rectangle whose corners are to be converted.
+    /// - Returns: The adjusted rectangle.
+    public func centerScanRect(_ rect: NSRect) -> NSRect {
+        fatalError("not implemented yet")
+    }
+
+    // MARK: - Appereance
+    // MARK: - Showing and Hiding the View
+
+    /// A Boolean value indicating whether the view is hidden.
+    /// 
+    /// This property reflects the state of the current view only, as set in Interface Builder or through the most recent change to this property. 
+    /// The property does not account for the state of the view’s ancestors in the view hierarchy. 
+    /// Thus, if the view has a hidden ancestor, the value of this property may still be false even though the view itself is not visible. 
+    /// To determine whether a view is effectively hidden, for whatever reason, get the value of the ``isHiddenOrHasHiddenAncestor`` property instead.
+    /// 
+    /// A hidden view disappears from its window and does not receive input events. 
+    /// It remains in its superview’s list of subviews, however, and participates in autoresizing as usual. 
+    /// AppKit also disables any cursor rectangle, tool-tip rectangle, or tracking rectangle associated with a hidden view. 
+    /// Hiding a view with subviews has the effect of hiding those subviews and any view descendants they might have. 
+    /// This effect is implicit and does not alter the hidden state of the view’s descendants as reported by this property.
+    /// 
+    /// Hiding the view that is the window’s current first responder causes the view’s next valid key view (nextValidKeyView) to become the new first responder. 
+    /// A hidden view remains in the nextKeyView chain of views it was previously part of, but is ignored during keyboard navigation.
+    public var isHidden: Bool = false
+
+    /// A Boolean value indicating whether the view is hidden from sight because it, or one of its ancestors, is marked as hidden.
+    /// 
+    /// The value of this property is true if the value of the ``isHidden`` property is true for the current view or any of its ancestors in the view hierarchy. 
+    /// This property does not account for other reasons why a view might be considered hidden, such as being positioned outside its superview’s bounds, not having a window, or residing in a window that is offscreen or overlapped by another window.
+    public var isHiddenOrHasHiddenAncestor: Bool = false
+
+    /// Invoked when the view is hidden, either directly, or in response to an ancestor being hidden.
+    /// 
+    /// The view receives this message when its ``isHiddenOrHasHiddenAncestor`` property changes from false to true.
+    ///  This happens when the view or an ancestor is marked as hidden, or when the view or an ancestor is inserted into a new view hierarchy.
+    open func viewDidHide() {
+        fatalError("not implemented yet")
+    }
+
+    /// Invoked when the view is unhidden, either directly, or in response to an ancestor being unhidden
+    /// 
+    /// The view receives this message when its ``isHiddenOrHasHiddenAncestor`` state goes from true to false.  
+    /// This can happen when the view or an ancestor is marked as not hidden, or when the view or an ancestor is removed from its containing view hierarchy.
+    open func viewDidUnhide() {
+        fatalError("not implemented yet")
+    }
+
+    // MARK: - Responding to Appearance Changes
+
+    /// Informs the view that its effective appearance changed.
+    open func viewDidChangeEffectiveAppearance() {
+        fatalError("not implemented yet")
+    }
+
+    /// Responds when the view’s backing store properties change.
+    /// 
+    /// The view gets this message when the backing store scale or color space changes. 
+    /// Provide an implementation if you need to swap assets or make other adjustments when a view’s backing store properties change.
+    open func viewDidChangeBackingProperties() {
+        fatalError("not implemented yet")
+    }
+
+    // MARK: - Getting the Vibrancy Setting
+    
+    /// A Boolean value indicating whether the view ensures it is vibrant on top of other content.
+    /// 
+    /// AppKit checks this property when the view is incorporated into a view hierarchy that uses vibrancy. 
+    /// If the property is true, the view takes appropriate measures to ensure its content is vibrant on top of any underlying material. 
+    /// The default value of this property is false. However, some of AppKit’s view subclasses change the value of this property based on the artwork they draw.
+    public private(set) var allowsVibrancy: Bool = false
+
+    // MARK: - Drawing the Focus Ring
+
+    /// The type of focus ring drawn around the view.
+    /// 
+    /// Use this property to specify the type of focus ring to draw. For a list of possible values, see ``NSFocusRingType``.
+    /// To disable drawing of a view’s focus ring, set the value of this property to ``NSFocusRingType.none``. 
+    /// You should only disable the default drawing of a view’s focus ring when you want the view to draw its own focus ring. 
+    /// For example, you might disable focus ring drawing when the view uses its background color to indicate focus or when the view does not have sufficient space to display a focus ring.
+    /// 
+    /// Changing the value in this property does not cause the view to draw the actual focus ring. 
+    /// You are responsible for drawing the focus ring in your view’s ``draw(_:)`` method whenever your view is made the first responder.
+    /// 
+    /// To ensure the correct redrawing of focus rings, note that AppKit may automatically draw parts of a window in addition to those that are marked as needing display.
+    /// For example, AppKit may redraw parts of the first responder view in an app's key window, if that view's focusRingType property is set to a value other than NSFocusRingType.none. 
+    /// If your view can become first responder, but doesn't draw a focus ring, set focusRingType to ``NSFocusRingType.none`` to prevent AppKit from unnecessarily redrawing the view’s focus ring.
+    public var focusRingType: NSFocusRingType = .none
+
+    /// The focus ring mask bounds, specified in the view’s coordinate space.
+    /// 
+    /// The rectangle in this property is specified relative to the view’s interior (bounds) coordinate space. 
+    /// The mask bounds allows the focus ring’s overall size and position to be determined before it is drawn. 
+    /// Override this property if your view requires the display of a focus ring. The default value of this property is NSZeroRect.
+    public var focusRingMaskBounds: NSRect = .zero
+
+    /// Draws the focus ring mask for the view.
+    /// 
+    /// This method provides the shape of the focus ring mask by drawing the focus ring mask. 
+    /// An implementation of this method should draw in the view’s interior (bounds) coordinate space, that the focus ring style has been set (it will be set it to ``NSFocusRingPlacement.only`` to capture the focus ring itself), and that the fill and stroke colors have been set to an arbitrary fully opaque color.
+    /// Subclasses that find the default behavior insufficient should only draw the focus ring shape.
+    /// The ``NSView`` implementation of this method simply fills self.bounds.
+    public func drawFocusRingMask() {
+        fatalError("not implemented yet")
+    }
+
+    /// Invoked to notify the view that the focus ring mask requires updating.
+    /// 
+    /// It is important to note that it is only necessary for developers to invoke this method when some internal state change of their application, that AppKit can’t determine, affects the shape of the focus ring mask.
+    /// It is assumed that if the view is marked as needing display, or is resized, its focus ring shape is likely to have changed, and there is no need for clients to explicitly send this message in such cases, they are handled automatically.
+    /// If, however, a view is showing a focus ring around some part of its content (an NSImage, perhaps), and that content changes, the client must provide notification by invoking this method so that focusRingMaskBounds and drawFocusRingMask() will be invoked to redraw the focus ring.
+    public func noteFocusRingMaskChanged() {
+        fatalError("not implemented yet")
+    }
+
+    /// Invalidates the area around the focus ring.
+    /// - Parameter rect: The rectangle of the control or cell defining the area around the focus ring. rect will be expanded to include the focus ring for invalidation.
+    public func setKeyboardFocusRingNeedsDisplay(_ rect: NSRect) {
+        fatalError("not implemented yet")
+    }
+
+    /// Returns the default focus ring type.
+    /// 
+    /// If the value in the focusRingType property is ``NSFocusRingType.default``, the view can call this class method to find out what type of focus ring is the default. 
+    /// The view is free to ignore the default setting.
+    public static var defaultFocusRingType: NSFocusRingType = .default
+
+    // MARK: - Core Animation Support
+    // MARK: - Managing the View’s Layer
+
+    /// A Boolean value indicating whether the view uses a layer as its backing store.
+    /// 
+    /// Setting the value of this property to true turns the view into a layer-backed view—that is, the view uses a CALayer object to manage its rendered content. 
+    /// Creating a layer-backed view implicitly causes the entire view hierarchy under that view to become layer-backed. 
+    /// Thus, the view and all of its subviews (including subviews of subviews) become layer-backed. The default value of this property is false.
+    /// 
+    /// In a layer-backed view, any drawing done by the view is cached to the underlying layer object. 
+    /// This cached content can then be manipulated in ways that are more performant than redrawing the view contents explicitly. 
+    /// AppKit automatically creates the underlying layer object (using the ``makeBackingLayer()`` method) and handles the caching of the view’s content. 
+    /// If the wantsUpdateLayer method returns false, you should not interact with the underlying layer object directly. 
+    /// Instead, use the methods of this class to make any changes to the view and its layer. 
+    /// If wantsUpdateLayer returns true, it is acceptable (and appropriate) to modify the layer in the view’s ``updateLayer()`` method.
+    /// 
+    /// For layer-backed views, you can flatten the layer hierarchy by setting the ``canDrawSubviewsIntoLayer`` property to true. 
+    /// To prevent a subview from having its contents flattened into this view’s layer, explicitly set the value of the subview’s wantsLayer property to true.
+    /// 
+    /// In addition to creating a layer-backed view, you can create a layer-hosting view by assigning a layer directly to the view’s layer property. 
+    /// In a layer-hosting view, you are responsible for managing the view’s layer. 
+    /// To create a layer-hosting view, you must set the layer property first and then set this property to true. 
+    /// The order in which you set the values of these properties is crucial.
+    /// 
+    /// In a layer-hosting view, do not rely on the view for drawing. Similarly, do not add subviews to a layer-hosting view. 
+    /// The root layer—that is, the layer you set using the layer property—becomes the root layer of the layer tree. 
+    /// Any manipulations of that layer tree must be done using the Core Animation interfaces. 
+    /// You still use the view for handling mouse and keyboard events, but drawing must be handled by Core Animation.
+    public var wantsLayer: Bool = true
+
+    /// A Boolean value indicating which drawing path the view takes when updating its contents.
+    /// 
+    /// A view can update its contents using one of two techniques. 
+    /// It can draw those contents using its ``draw(_:)`` method or it can modify its underlying layer object directly. 
+    /// During the view update cycle, each dirty view calls this method on itself to determine which technique to use. 
+    /// The default implementation of this method returns false, which causes the view to use its ``draw(_:)`` method.
+    /// 
+    /// If your view is layer-backed and updates itself by modifying its layer, override this property and change the return value to true. 
+    /// Modifying the layer is significantly faster than redrawing the layer contents using ``draw(_:)``. 
+    /// If you override this property to be true, you must also override the ``updateLayer()`` method of your view and use it to make the changes to your layer. 
+    /// Do not modify your layer in your implementation of this property. 
+    /// Your implementation should return true or false quickly and not perform other tasks.
+    /// 
+    /// If the ``canDrawSubviewsIntoLayer`` property is set to true, the view ignores the value returned by this method. 
+    /// Instead, the view always uses its ``draw(_:)`` method to draw its content.
+    public private(set) var wantsUpdateLayer: Bool = false
+
+    /// The Core Animation layer that the view uses as its backing store.
+    /// 
+    /// Use this property to set or get the layer associated with the view, if any. 
+    /// When set, the layer serves as the backing store for the view’s contents.
+    public var layer: CALayer?
+
+    /// Creates the view’s backing layer.
+    /// - Returns: The layer to use as the view’s backing layer.
+    open func makeBackingLayer() -> CALayer {
+        fatalError("not implemented yet")
+    }
+
+    /// The current layer contents placement policy.
+    /// 
+    /// The content placement determines how the backing layer’s existing cached content image will be mapped into the layer as the layer is resized. 
+    /// It is analogous to, and underpinned by, the ``contentsGravity`` property of the ``CALayer`` class. 
+    /// The default value of this property is ``NSView.LayerContentsPlacement.scaleAxesIndependently``. 
+    /// For a list of supported values, see ``NSView.LayerContentsPlacement.``
+    /// 
+    /// For additional information about the performance impacts of this property, see the ``layerContentsRedrawPolicy`` property.
+    public var layerContentsPlacement: NSView.LayerContentsPlacement = .scaleAxesIndependently
+
+    /// The contents redraw policy for the view’s layer.
+    /// 
+    /// The ``layerContentsRedrawPolicy`` and ``layerContentsPlacement`` settings can have significant impacts on performance. 
+    /// If you do not need to redraw your view during each frame update cycle, or if you are willing to accept an approximation of the view’s intermediate appearance during potentially brief animations in exchange for an animation performance and smoothness benefit, you can change the value of this property to one of the modes that does not require constant redrawing. 
+    /// When you do so, you must also specify the desired layer content placement for the view. 
+    /// The content placement determines how the backing layer’s existing cached content image will be mapped into the layer as the layer is resized. 
+    /// It is analogous to, and underpinned by, the contentsGravity property of the CALayer class.
+    /// 
+    /// For a view that has no associated layer, or that has been assigned a developer-provided layer (a layer-hosting view) using the layer property, the default contents redraw policy is ``NSView.LayerContentsRedrawPolicy.never`` and the ``layerContentsPlacement`` property is set to ``NSView.LayerContentsPlacement.scaleAxesIndependently``. 
+    /// These policies tell AppKit not to replace the layer’s content and to provide the same content placement as the resize option.For a layer-backed view—that is, a view for which AppKit created the layer—AppKit sets the contents redraw policy to ``NSView.LayerContentsRedrawPolicy.duringViewResize`` by default. 
+    /// This policy forces the view’s content to be continually redrawn into the view’s backing layer during animated resizing of the view, which produces correct but not optimal performance results.
+    public var layerContentsRedrawPolicy: NSView.LayerContentsRedrawPolicy = .never
+
+    /// A Boolean value indicating whether the view incorporates content from its subviews into its own layer.
+    /// 
+    /// When the value of this property is true, any subviews that have an implicitly created layer—that is, layers for which you did not explicitly set the wantsLayer property to true—draw their contents into the current view’s layer. 
+    /// In other words, the subviews do not get a layer of their own. Instead, they draw their content into the parent view’s layer. 
+    /// All views involved in the operation draw their content using their ``draw(_:)`` method. 
+    /// They do not use the ``updateLayer()`` method to update their layer contents, even if the ``wantsUpdateLayer`` property is set to true.
+    /// 
+    /// Use this property to flatten the layer hierarchy for a layer-backed view and its subviews. 
+    /// Flattening a layer hierarchy reduces the number of layers (and may reduce the amount of memory) used by your view hierarchy. 
+    /// Reducing the number of layers can be more efficient in situations where there is significant overlap among the subviews or where the content of the view and subviews does not change significantly. 
+    /// For example, flattening a hierarchy reduces the amount of time spent compositing your views together. 
+    /// Do not flatten a view hierarchy if you plan to animate one or more subviews in that hierarchy.
+    /// 
+    /// When changing the value of this property, the current view must have a layer object. 
+    /// The default value of this property is false.
+    public var canDrawSubviewsIntoLayer: Bool = false
+
+    /// A Boolean value indicating whether the view’s layer uses Core Image filters and needs in-process rendering.
+    /// 
+    /// If your view uses a custom layer and you assigned Core Image to that layer directly, you must set this property to true to let AppKit know of that fact. 
+    /// In macOS 10.9 and later, AppKit prefers to render layer trees out-of-process but cannot do so if any layers have Core Image filters attached to them. 
+    /// Specifying true for property lets AppKit know that it must move rendering of the layer hierarchy back into your app’s process. 
+    /// If the value of this property is false, adding a filter to the view’s layer triggers an exception.
+    /// 
+    /// You do not need to modify this property if you assigned the filters using the ``backgroundFilters``, ``compositingFilter``, or ``contentFilters`` properties of the view. 
+    /// Those methods automatically let AppKit know that it needs to render the layer hierarchy in-process. 
+    /// Set it only if you set the filters on the layer directly.
+    public var layerUsesCoreImageFilters: Bool = false
+
+    // MARK: - Managing Layer-Related Properties
+
+    /// The opacity of the view.
+    /// 
+    /// This property contains the opacity value from the view’s layer. 
+    /// The acceptable range of values for this property are between 0.0 (transparent) and 1.0 (opaque). 
+    /// The default value of this property is 1.0.
+    public var alphaValue: Float = 1
+
+    /// The rotation angle of the view around the center of its layer.
+    /// 
+    /// This property contains the angle of rotation of the view’s frame around its center. 
+    /// If you changed the underlying layer’s ``anchorPoint`` property, the result of setting this property is undefined.
+    public var frameCenterRotation: Float = 0
+
+    /// An array of Core Image filters to apply to the view’s background.
+    /// 
+    /// This property contains an array of ``CIFilter`` objects. 
+    /// This array represents the background filters stored in the ``backgroundFilters`` property of the view’s layer. 
+    /// If the view does not have a layer, setting the value of this property has no effect.
+    /// 
+    /// The default value of this property is an empty array.
+    public var backgroundFilters: [CIFilter] = []
+
+    /// The Core Image filter used to composite the view’s contents with its background.
+    /// 
+    /// This property contains the compositing filter stored in the ``compositingFilter`` property of the view’s layer. 
+    /// If the view does not have a layer, setting the value of this property has no effect.
+    /// 
+    /// The default value of this property is nil, which causes content to be rendered without any special compositing effects.
+    public var compositingFilter: CIFilter?
+
+    /// An array of Core Image filters to apply to the contents of the view and its sublayers.
+    /// 
+    /// This property contains an array of ``CIFilter`` objects. 
+    /// This array represents the filters stored in the ``filters`` property of the view’s layer. 
+    /// If the view does not have a layer, setting the value of this property has no effect.
+    /// 
+    /// The default value of this property is an empty array.
+    public var contentFilters: [CIFilter] = []
+
+    /// The shadow displayed underneath the view.
+    /// 
+    /// The default value of this property is normally nil. 
+    /// When you configure any of the shadow-related properties on the view’s layer, such as the ``shadowColor``, ``shadowOffset``, ``shadowOpacity`` or ``shadowRadius`` properties, this property contains the ``NSShadow`` object that encapsulates that information. 
+    /// Assigning a new shadow object to this property sets the corresponding shadow-related properties on the view’s layer.
+    /// 
+    /// If the view does not have a layer, setting the value of this property has no effect.
+    public var shadow: NSShadow?
+
+    // MARK: - Layout
+    // MARK: - Managing the view’s content
+    // MARK: - Respecting the View’s Safe Area
+
+    /// A rectangle in the view’s coordinate system that contains the unobscured portion of the view.
+    /// 
+    /// The safe area of a view reflects the area not covered by navigation bars, tab bars, toolbars, and other ancestor views that might obscure the current view. 
+    /// Draw content inside this rectangle to ensure it isn’t covered by other content.
+    public var safeAreaRect: NSRect = .zero
+
+    /// The distances from the edges of your view that define the safe area.
+    /// 
+    /// A view’s safe area reflects the portion of the view not covered by the window’s title bar or any ancestor views. 
+    /// This property reflects the superview’s safe area plus any additional insets you specify in the additionalSafeAreaInsets property. 
+    /// If the view is not currently installed in a view hierarchy, or is not yet visible onscreen, the insets in this property are 0.
+    public var safeAreaInsets: NSEdgeInsets = .init(top: 0, left: 0, bottom: 0, right: 0)
+
+    /// Custom insets that you specify to modify your view’s safe area.
+    /// 
+    /// Use this property to adjust the safe area insets of your view by the specified amount. 
+    /// The safe area defines the portion of your view’s visible area that is guaranteed to be unobscured by the bars or other ancestor-provided views.
+    /// 
+    /// You might use this property if your view contains content that obscures its subviews. 
+    /// For example, a view that draws a custom tool palette might extend the safe area to prevent subviews from displaying their content underneath the palette.
+    public var additionalSafeAreaInsets: NSEdgeInsets = .init(top: 0, left: 0, bottom: 0, right: 0)
+
+    /// The layout guide you use to position content inside your view’s safe area.
+    /// 
+    /// The layout guide in this property reflects the view’s frame minus its safe area insets. 
+    /// Use this guide to configure layout rules relative to this safe area.
+    public var safeAreaLayoutGuide: NSLayoutGuide
+}
+
+extension NSView {
+    /// These constants specify the location of the layer content when the content is not rerendered in response to view resizing. 
+    /// For more information, see the ``layerContentsPlacement`` property.
+    @MainActor public enum LayerContentsPlacement: Sendable {
+        /// The content is resized to fit the entire bounds rectangle.
+        case scaleAxesIndependently
+
+        /// The content is resized to fit the bounds rectangle, preserving the aspect of the content. If the content does not completely fill the bounds rectangle, the content is centered in the partial axis.
+        case scaleProportionallyToFit
+
+        /// The content is resized to completely fill the bounds rectangle, while still preserving the aspect of the content. The content is centered in the axis it exceeds.
+        case scaleProportionallyToFill
+
+        /// The content is horizontally and vertically centered in the bounds rectangle.
+        case center
+
+        /// The content is horizontally centered at the top-edge of the bounds rectangle.
+        case top
+
+        /// The content is positioned in the top-right corner of the bounds rectangle.
+        case topRight
+
+        /// The content is vertically centered at the right-edge of the bounds rectangle.
+        case right
+
+        /// The content is positioned in the bottom-right corner of the bounds rectangle.
+        case bottomRight
+
+        /// The content is horizontally centered at the bottom-edge of the bounds rectangle.
+        case bottom
+
+        /// The content is positioned in the bottom-left corner of the bounds rectangle.
+        case bottomLeft
+
+        /// The content is vertically centered at the left-edge of the bounds rectangle.
+        case left
+
+        /// The content is positioned in the top-left corner of the bounds rectangle.
+        case topLeft  
+    }
+}
+
+extension NSView {
+    /// Constants that specify how layer resizing is handled when a view is layer-backed or layer-hosting. 
+    /// For more information, see the ``layerContentsRedrawPolicy`` property.
+    @MainActor public enum LayerContentsRedrawPolicy: Sendable {
+        /// Leave the layer's contents alone. Never mark the layer as needing display, or draw the view's contents to the layer. This is how developer created layers (layer-hosting views) are treated.
+        case never
+
+        /// Any of the setNeedsDisplay methods sent to the view will cause the view redraw the affected layer parts by invoking the view's draw(_:), but neither the layer or the view are marked as needing display when the view's size changes.
+        case onSetNeedsDisplay
+
+        /// Resize the view’s backing-layer and redraw the view to the layer when the view's size changes. If the resize is animated, AppKit will drive the resize animation itself and will do this resize and redraw at each step of the animation. Affected parts of the layer will also be redrawn when the view is marked as needing display. This mode is a superset of NSView.LayerContentsRedrawPolicy.onSetNeedsDisplay. This is the way that layer-backed views are currently treated.
+        case duringViewResize
+
+        /// Resize the layer and redraw the view to the layer when the view's size changes. This will be done just once at the beginning of a resize animation, not at each frame of the animation. Affected parts of the layer will also be redrawn when the view is marked as needing display. This mode is a superset of NSView.LayerContentsRedrawPolicy.onSetNeedsDisplay.
+        case beforeViewResize
+
+        /// Redraw the layer contents at the new size and crossfade from the old contents to the new contents. Use this in conjunction with the NSView.LayerContentsPlacement constants to get a nice crossfade animation for complex layer-backed views that cannot update correctly at each step of the animation.
+        case crossfade        
     }
 }

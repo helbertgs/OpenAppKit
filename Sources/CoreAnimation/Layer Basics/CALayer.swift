@@ -643,7 +643,7 @@ open class CALayer {
 
     /// The object responsible for laying out the layer’s sublayers.
     /// 
-    /// The object you assign to this property must nominally implement the ``CALayoutManager`` Informal Protocol informal protocol. 
+    /// The object you assign to this property must nominally implement the ``CALayoutManager`` informal protocol. 
     /// If the layer’s delegate does not handle layout updates, the object assigned to this property is given a chance to update the layout of the layer’s sublayers.
     /// 
     /// In macOS, assign an instance of the ``CAConstraintLayoutManager`` class to this property if your layer uses layer-based constraints to handle layout changes.

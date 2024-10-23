@@ -1,12 +1,12 @@
 import Foundation
 
 /// An object that stores color data and sometimes opacity (alpha value).
-public class NSColor {
+@MainActor public struct NSColor: Equatable, Hashable, Sendable {
 
-    package let red: Float
-    package let green: Float
-    package let blue: Float
-    package let alpha: Float
+    let red: Float
+    let green: Float
+    let blue: Float
+    let alpha: Float
 
     public init(red: Float, green: Float, blue: Float, alpha: Float = 0) {
         self.red = red

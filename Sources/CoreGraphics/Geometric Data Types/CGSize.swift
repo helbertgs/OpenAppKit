@@ -4,7 +4,7 @@ import Foundation
 /// 
 /// A CGSize structure is sometimes used to represent a distance vector, rather than a physical size. As a vector, its values can be negative. 
 /// To normalize a CGRect structure so that its size is represented by positive values, call the CGRectStandardize(_:) function.
-@MainActor public struct CGSize {
+@MainActor public struct CGSize: Equatable, Hashable {
 
     // MARK: - Geometric Properties
 
