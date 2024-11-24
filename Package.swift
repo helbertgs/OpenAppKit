@@ -4,23 +4,23 @@
 import PackageDescription
 
 let package = Package(
-    name: "AppKit",
+    name: "OpenAppKit",
     products: [
         .library(
-            name: "AppKit",
-            targets: ["AppKit"]),
+            name: "OpenAppKit",
+            targets: ["OpenAppKit"]),
         .library(
-            name: "CoreAnimation",
-            targets: ["CoreAnimation"]),
+            name: "OpenCoreAnimation",
+            targets: ["OpenCoreAnimation"]),
         .library(
-            name: "CoreGraphics",
-            targets: ["CoreGraphics"]),
+            name: "OpenCoreGraphics",
+            targets: ["OpenCoreGraphics"]),
         .library(
-            name: "CoreImage",
-            targets: ["CoreImage"]),
+            name: "OpenCoreImage",
+            targets: ["OpenCoreImage"]),
         .executable(
-            name: "AppKitSample",
-            targets: ["AppKitSample"]),
+            name: "OpenAppKitSample",
+            targets: ["OpenAppKitSample"]),
     ],
     dependencies: [
         .package(url: "https://github.com/helbertgs/OpenGLFW.git", branch: "main"),
@@ -28,33 +28,33 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "CoreImage",
+            name: "OpenCoreImage",
             dependencies: [  ]
         ),
         .target(
-            name: "CoreGraphics",
-            dependencies: [ "CoreImage" ]
+            name: "OpenCoreGraphics",
+            dependencies: [ "OpenCoreImage" ]
         ),
         .target(
-            name: "CoreAnimation",
-            dependencies: [ "CoreGraphics" ]
+            name: "OpenCoreAnimation",
+            dependencies: [ "OpenCoreGraphics" ]
         ),
         .target(
-            name: "AppKit",
+            name: "OpenAppKit",
             dependencies: [ 
-                "CoreAnimation",
-                "CoreGraphics",
-                "CoreImage",
+                "OpenCoreAnimation",
+                "OpenCoreGraphics",
+                "OpenCoreImage",
                 .product(name: "OpenGLFW", package: "OpenGLFW")
             ]
         ),
         .executableTarget(
-            name: "AppKitSample",
-            dependencies: [ "AppKit" ]
+            name: "OpenAppKitSample",
+            dependencies: [ "OpenAppKit" ]
         ),
         .testTarget(
-            name: "AppKitTests",
-            dependencies: ["AppKit"]
+            name: "OpenAppKitTests",
+            dependencies: ["OpenAppKit"]
         ),
     ]
 )
