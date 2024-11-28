@@ -18,22 +18,20 @@ public class NSWindow: NSResponder {
         self.contentViewController = contentViewController
         self.contentView = self.contentViewController?.view
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3)
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3)
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
+//        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3)
+//        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3)
+//        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
+//
+//        guard glfwInit() == GLFW_TRUE else {
+//            fatalError("Fail to initialize GLFW")
+//        }
+//
+//        guard let _context = glfwCreateWindow(900, 450, "My Title", nil, nil) else {
+//            fatalError("Fail to create a GLFW Window")
+//        }
 
-        guard glfwInit() == GLFW_TRUE else {
-            fatalError("Fail to initialize GLFW")
-        }
-
-        guard let _context = glfwCreateWindow(900, 450, "My Title", nil, nil) else {
-            fatalError("Fail to create a GLFW Window")
-        }
-
-        self._context = _context
         super.init()
-
-        self.setupCallbacks()
+        self.graphicsContext = NSGraphicsContext(window: self)
     }
 
     deinit {
@@ -51,7 +49,8 @@ public class NSWindow: NSResponder {
 
     // MARK: - Configuring the Window's Content
 
-    private var _context: OpaquePointer
+    /// The graphics context associated with the window for the current thread.
+    public private(set) var graphicsContext: NSGraphicsContext?
 
     /// The main content view controller for the window.
     /// 
@@ -435,7 +434,7 @@ public class NSWindow: NSResponder {
             NSApplication.shared.windows.append(self)
         }
 
-        glfwMakeContextCurrent(_context)
+//        glfwMakeContextCurrent(_context)
     }
 
     /// Moves the window to the front of its level, even if its application isn’t active, without changing either the key window or the main window.
@@ -767,14 +766,14 @@ public class NSWindow: NSResponder {
     /// An ``NSWindow`` object is automatically sent an update message on every pass through the event loop and before it’s displayed onscreen. 
     /// You can manually cause an update message to be sent to all visible NSWindow objects through the ``NSApplication`` ``updateWindows()`` method.
     public func update() {
-        guard glfwWindowShouldClose(_context) == GLFW_FALSE else {
-            close()
-            return
-        }
-
-        displayIfNeeded()
-        glfwSwapBuffers(_context)
-        glfwPollEvents()
+//        guard glfwWindowShouldClose(_context) == GLFW_FALSE else {
+//            close()
+//            return
+//        }
+//
+//        displayIfNeeded()
+//        glfwSwapBuffers(_context)
+//        glfwPollEvents()
     }
 
 
@@ -872,7 +871,7 @@ public class NSWindow: NSResponder {
     /// Use ``performClose(_:)`` if you need these features.
     public func close() {
         print("\(Self.self).\(#function)")
-        glfwDestroyWindow(_context)
+//        glfwDestroyWindow(_context)
 
         NSApplication.shared.terminate(self)
     }
@@ -982,8 +981,9 @@ public class NSWindow: NSResponder {
     /// A Boolean value that indicates if the user can resize the window.
     /// This property is key-value coding compliant.
     public var isResizable: Bool {
-        get { glfwGetWindowAttrib(_context, GLFW_RESIZABLE) == GLFW_TRUE ? true : false }
-        set { glfwSetWindowAttrib(_context, GLFW_RESIZABLE, newValue == true ? GLFW_TRUE : GLFW_FALSE) }
+//        get { glfwGetWindowAttrib(_context, GLFW_RESIZABLE) == GLFW_TRUE ? true : false }
+//        set { glfwSetWindowAttrib(_context, GLFW_RESIZABLE, newValue == true ? GLFW_TRUE : GLFW_FALSE) }
+        true
     }
 
     /// A Boolean value that indicates whether the window can minimize.
@@ -1235,49 +1235,49 @@ extension NSWindow {
     }
 }
 
-extension NSWindow {
-    private func setupCallbacks() {
-        glfwSetWindowUserPointer(_context, Unmanaged.passUnretained(self).toOpaque())
-
-        glfwSetWindowFocusCallback(_context) { window, isFocused in
-            // print("glfwSetWindowFocusCallback")
-        }
-
-        glfwSetWindowSizeCallback(_context) { window, width, height in
-            // print("glfwSetWindowSizeCallback")
-        }
-
-        glfwSetWindowPosCallback(_context) { window, x, y in
-            // print("glfwSetWindowSizeCallback")
-        }
-
-        glfwSetWindowRefreshCallback(_context) { window in
-            // print("glfwSetWindowRefreshCallback")
-            // let win = Unmanaged<NSWindow>.fromOpaque(glfwGetWindowUserPointer(window)!).takeUnretainedValue()
-            // win.update()
-        }
-
-        glfwSetKeyCallback(_context) { window, key, scancode, action, mods in
-            print("glfwSetKeyCallback: [key: \(key), scancode: \(scancode), action: \(action), mods: \(mods)]")
-            
-            // let win = Unmanaged<Window>.fromOpaque(glfwGetWindowUserPointer(window)!).takeUnretainedValue()
-            // let event = NSEvent.keyEvent(with: .keyDown, characters: String, charactersIgnoringModifiers: String, keyCode: Int)
-        }
-
-        glfwSetCursorPosCallback(_context) { window, x, y in
-            // print("glfwSetCursorPosCallback")
-        }
-
-        glfwSetMouseButtonCallback(_context) { window, button, action, mods in
-            // print("glfwSetMouseButtonCallback")
-        }
-
-        glfwSetScrollCallback(_context) { window, xOffset, yOffset in 
-            // print("glfwSetScrollCallback")
-        }
-
-        glfwSetDropCallback(_context) { window, count, paths in
-            // print("glfwSetDropCallback")
-        }
-    }
-}
+//extension NSWindow {
+//    private func setupCallbacks() {
+//        glfwSetWindowUserPointer(_context, Unmanaged.passUnretained(self).toOpaque())
+//
+//        glfwSetWindowFocusCallback(_context) { window, isFocused in
+//            // print("glfwSetWindowFocusCallback")
+//        }
+//
+//        glfwSetWindowSizeCallback(_context) { window, width, height in
+//            // print("glfwSetWindowSizeCallback")
+//        }
+//
+//        glfwSetWindowPosCallback(_context) { window, x, y in
+//            // print("glfwSetWindowSizeCallback")
+//        }
+//
+//        glfwSetWindowRefreshCallback(_context) { window in
+//            // print("glfwSetWindowRefreshCallback")
+//            // let win = Unmanaged<NSWindow>.fromOpaque(glfwGetWindowUserPointer(window)!).takeUnretainedValue()
+//            // win.update()
+//        }
+//
+//        glfwSetKeyCallback(_context) { window, key, scancode, action, mods in
+//            print("glfwSetKeyCallback: [key: \(key), scancode: \(scancode), action: \(action), mods: \(mods)]")
+//            
+//            // let win = Unmanaged<Window>.fromOpaque(glfwGetWindowUserPointer(window)!).takeUnretainedValue()
+//            // let event = NSEvent.keyEvent(with: .keyDown, characters: String, charactersIgnoringModifiers: String, keyCode: Int)
+//        }
+//
+//        glfwSetCursorPosCallback(_context) { window, x, y in
+//            // print("glfwSetCursorPosCallback")
+//        }
+//
+//        glfwSetMouseButtonCallback(_context) { window, button, action, mods in
+//            // print("glfwSetMouseButtonCallback")
+//        }
+//
+//        glfwSetScrollCallback(_context) { window, xOffset, yOffset in 
+//            // print("glfwSetScrollCallback")
+//        }
+//
+//        glfwSetDropCallback(_context) { window, count, paths in
+//            // print("glfwSetDropCallback")
+//        }
+//    }
+//}
