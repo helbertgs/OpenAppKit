@@ -1,6 +1,6 @@
 import Foundation
 import OpenCoreGraphics
-import OpenGLFW
+
 
 /// A window that an app displays on the screen.
 public class NSWindow: NSResponder {
@@ -18,25 +18,8 @@ public class NSWindow: NSResponder {
         self.contentViewController = contentViewController
         self.contentView = self.contentViewController?.view
 
-//        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3)
-//        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3)
-//        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
-//
-//        guard glfwInit() == GLFW_TRUE else {
-//            fatalError("Fail to initialize GLFW")
-//        }
-//
-//        guard let _context = glfwCreateWindow(900, 450, "My Title", nil, nil) else {
-//            fatalError("Fail to create a GLFW Window")
-//        }
-
         super.init()
         self.graphicsContext = NSGraphicsContext(window: self)
-    }
-
-    deinit {
-        print("\(Self.self).\(#function)")
-        glfwTerminate()
     }
 
     // MARK: - Managing the Window's Behavior
@@ -193,6 +176,7 @@ public class NSWindow: NSResponder {
     /// Note that the window server limits window position coordinates to ±16,000.
     /// - Parameter point: The new position of the window’s bottom-left corner in screen coordinates.
     public func setFrameOrigin(_ point: OpenCoreGraphics.CGPoint) {
+        self.frame.origin = point
     }
 
     /// Positions the top-left corner of the window’s frame rectangle at a given point in screen coordinates.
@@ -230,6 +214,10 @@ public class NSWindow: NSResponder {
     ///   - frameRect: The frame rectangle for the window, including the title bar.
     ///   - flag: Specifies whether the window redraws the views that need to be displayed. When true the window sends a ``displayIfNeeded()`` message down its view hierarchy, thus redrawing all views.
     public func setFrame(_ frameRect: OpenCoreGraphics.CGRect, display flag: Bool) {
+        self.frame = frameRect
+        if flag {
+            self.displayIfNeeded()
+        }
     }
 
     /// Sets the origin and size of the window’s frame rectangle, with optional animation, according to a given frame rectangle, thereby setting its position and size onscreen.
@@ -766,16 +754,8 @@ public class NSWindow: NSResponder {
     /// An ``NSWindow`` object is automatically sent an update message on every pass through the event loop and before it’s displayed onscreen. 
     /// You can manually cause an update message to be sent to all visible NSWindow objects through the ``NSApplication`` ``updateWindows()`` method.
     public func update() {
-//        guard glfwWindowShouldClose(_context) == GLFW_FALSE else {
-//            close()
-//            return
-//        }
-//
-//        displayIfNeeded()
-//        glfwSwapBuffers(_context)
-//        glfwPollEvents()
+        graphicsContext?.render()
     }
-
 
     // MARK: - Managing Titles
     
@@ -1234,50 +1214,3 @@ extension NSWindow {
         case hidden
     }
 }
-
-//extension NSWindow {
-//    private func setupCallbacks() {
-//        glfwSetWindowUserPointer(_context, Unmanaged.passUnretained(self).toOpaque())
-//
-//        glfwSetWindowFocusCallback(_context) { window, isFocused in
-//            // print("glfwSetWindowFocusCallback")
-//        }
-//
-//        glfwSetWindowSizeCallback(_context) { window, width, height in
-//            // print("glfwSetWindowSizeCallback")
-//        }
-//
-//        glfwSetWindowPosCallback(_context) { window, x, y in
-//            // print("glfwSetWindowSizeCallback")
-//        }
-//
-//        glfwSetWindowRefreshCallback(_context) { window in
-//            // print("glfwSetWindowRefreshCallback")
-//            // let win = Unmanaged<NSWindow>.fromOpaque(glfwGetWindowUserPointer(window)!).takeUnretainedValue()
-//            // win.update()
-//        }
-//
-//        glfwSetKeyCallback(_context) { window, key, scancode, action, mods in
-//            print("glfwSetKeyCallback: [key: \(key), scancode: \(scancode), action: \(action), mods: \(mods)]")
-//            
-//            // let win = Unmanaged<Window>.fromOpaque(glfwGetWindowUserPointer(window)!).takeUnretainedValue()
-//            // let event = NSEvent.keyEvent(with: .keyDown, characters: String, charactersIgnoringModifiers: String, keyCode: Int)
-//        }
-//
-//        glfwSetCursorPosCallback(_context) { window, x, y in
-//            // print("glfwSetCursorPosCallback")
-//        }
-//
-//        glfwSetMouseButtonCallback(_context) { window, button, action, mods in
-//            // print("glfwSetMouseButtonCallback")
-//        }
-//
-//        glfwSetScrollCallback(_context) { window, xOffset, yOffset in 
-//            // print("glfwSetScrollCallback")
-//        }
-//
-//        glfwSetDropCallback(_context) { window, count, paths in
-//            // print("glfwSetDropCallback")
-//        }
-//    }
-//}

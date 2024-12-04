@@ -1,8 +1,8 @@
 import Foundation
 
 /// Constants that describe compositing operators in terms of source and destination images, each having an opaque and transparent region.
-public enum NSCompositingOperation {
-
+@MainActor public enum NSCompositingOperation: Sendable {
+    
     // MARK: - Operations for Compositing
 
     /// Transparency everywhere.
@@ -87,5 +87,5 @@ public enum NSCompositingOperation {
     case color
 
     /// Uses the luminosity of the source and the hue and saturation of the destination.
-    case luminosity 
+    case luminosity   
 }
