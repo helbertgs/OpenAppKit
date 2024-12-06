@@ -176,7 +176,12 @@ public class NSGraphicsContext {
                 .fromOpaque(pointer)
                 .takeUnretainedValue()
             
-            context.window.setFrame(CGRect(x: 0, y: 0, width: Int(width), height: Int(height)), display: true)
+            context.window.setFrame(CGRect(
+                x: context.window.frame.origin.x, 
+                y: context.window.frame.origin.y, 
+                width: Double(width), 
+                height: Double(height)), 
+                display: true)
         }
         
         glfwSetWindowCloseCallback(windowRef) { window in
@@ -189,13 +194,136 @@ public class NSGraphicsContext {
             context.window.close()
         }
         
-        // Adicione outros callbacks conforme necessário
-    }
+        // glfwSetWindowFocusCallback(windowRef) { window, isFocused in
+        //    // print("glfwSetWindowFocusCallback")
+        // }
+
+        glfwSetWindowPosCallback(windowRef) { window, x, y in
+            guard let pointer = glfwGetWindowUserPointer(window) else { return }
+            
+            let context = Unmanaged<NSGraphicsContext>
+                .fromOpaque(pointer)
+                .takeUnretainedValue()
+            
+            context.window.setFrame(CGRect(
+                x: Double(x), 
+                y: Double(y), 
+                width: context.window.frame.width, 
+                height: context.window.frame.height), 
+                display: true)
+        }
+
+        // glfwSetWindowRefreshCallback(windowRef) { window in
+        //     guard let pointer = glfwGetWindowUserPointer(window) else { return }
+            
+        //     let context = Unmanaged<NSGraphicsContext>
+        //         .fromOpaque(pointer)
+        //         .takeUnretainedValue()
+            
+        //     context.window.update()
+        // }
+
+        glfwSetKeyCallback(windowRef) { window, key, scancode, action, mods in
+            //print("glfwSetKeyCallback: [key: \(key), scancode: \(scancode), action: \(action), mods: \(mods)]")
+            
+            guard let pointer = glfwGetWindowUserPointer(window) else { return }
+            
+            let context = Unmanaged<NSGraphicsContext>
+                .fromOpaque(pointer)
+                .takeUnretainedValue()
+
+            var eventType: NSEvent.EventType = .systemDefined
+
+            switch action {
+            case GLFW_PRESS:
+                eventType = .keyDown
+            case GLFW_RELEASE:
+                eventType = .keyUp
+            default:
+                break
+            }
+
+            if let event = NSEvent.keyEvent(
+                with: eventType,
+                characters: "",
+                charactersIgnoringModifiers: "",
+                keyCode: Int(key)
+            ) {
+                event.window = context.window
+                NSApplication.shared.sendEvent(event)
+            }
+        }
+
+        glfwSetCursorPosCallback(windowRef) { window, x, y in
+            // print("glfwSetCursorPosCallback")
+        }
+
+        glfwSetMouseButtonCallback(windowRef) { window, button, action, mods in
+            // print("glfwSetMouseButtonCallback: [button: \(button), action: \(action), mods: \(mods)]")
+            
+            guard let pointer = glfwGetWindowUserPointer(window) else { return }
+            
+            let context = Unmanaged<NSGraphicsContext>
+                .fromOpaque(pointer)
+                .takeUnretainedValue()
+
+            var eventType: NSEvent.EventType = .systemDefined
+
+            switch (button, action) {
+            case (GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS):
+                eventType = .leftMouseDown
+            case (GLFW_MOUSE_BUTTON_LEFT, GLFW_RELEASE):
+                eventType = .leftMouseUp
+            case (GLFW_MOUSE_BUTTON_RIGHT, GLFW_PRESS):
+                eventType = .rightMouseDown
+            case (GLFW_MOUSE_BUTTON_RIGHT, GLFW_RELEASE):
+                eventType = .rightMouseUp
+            default:
+                break
+            }
+
+            var xpos: Double = 0
+            var ypos: Double = 0
+            glfwGetCursorPos(window, &xpos, &ypos)
+
+            if let event = NSEvent.mouseEvent(
+                with: eventType, 
+                location: .init(x: xpos, y: ypos), 
+                modifierFlags: .init(rawValue: Int(mods))
+            ) {
+                event.window = context.window
+                NSApplication.shared.sendEvent(event)
+            }
+        }
+
+        // glfwSetCursorPosCallback(windowRef) { window, x, y in
+        //     print("glfwSetCursorPosCallback")
+        // }
+
+        glfwSetScrollCallback(windowRef) { window, xOffset, yOffset in 
+            // print("glfwSetScrollCallback")
+        }
+
+        glfwSetDropCallback(windowRef) { window, count, paths in
+            // print("glfwSetDropCallback")
+        }
+
+        glfwSetWindowIconifyCallback(windowRef) { window, iconified in
+            guard let pointer = glfwGetWindowUserPointer(window) else { return }
+            
+            let context = Unmanaged<NSGraphicsContext>
+                .fromOpaque(pointer)
+                .takeUnretainedValue()
+
+            context.window.isMiniaturized = iconified == GLFW_TRUE
+        }
+    }   
     
     /// Atualiza o frame da janela
     public func updateFrame() {
         glfwSwapBuffers(windowRef)
-        glfwPollEvents()
+        // glfwPollEvents()
+        glfwWaitEvents()
     }
     
     /// Limpa o buffer da janela com uma cor específica
@@ -232,50 +360,3 @@ extension NSGraphicsContext {
         }
     }
 }
-
-//extension NSWindow {
-//    private func setupCallbacks() {
-//        glfwSetWindowUserPointer(_context, Unmanaged.passUnretained(self).toOpaque())
-//
-//        glfwSetWindowFocusCallback(_context) { window, isFocused in
-//            // print("glfwSetWindowFocusCallback")
-//        }
-//
-//        glfwSetWindowSizeCallback(_context) { window, width, height in
-//            // print("glfwSetWindowSizeCallback")
-//        }
-//
-//        glfwSetWindowPosCallback(_context) { window, x, y in
-//            // print("glfwSetWindowSizeCallback")
-//        }
-//
-//        glfwSetWindowRefreshCallback(_context) { window in
-//            // print("glfwSetWindowRefreshCallback")
-//            // let win = Unmanaged<NSWindow>.fromOpaque(glfwGetWindowUserPointer(window)!).takeUnretainedValue()
-//            // win.update()
-//        }
-//
-//        glfwSetKeyCallback(_context) { window, key, scancode, action, mods in
-//            print("glfwSetKeyCallback: [key: \(key), scancode: \(scancode), action: \(action), mods: \(mods)]")
-//            
-//            // let win = Unmanaged<Window>.fromOpaque(glfwGetWindowUserPointer(window)!).takeUnretainedValue()
-//            // let event = NSEvent.keyEvent(with: .keyDown, characters: String, charactersIgnoringModifiers: String, keyCode: Int)
-//        }
-//
-//        glfwSetCursorPosCallback(_context) { window, x, y in
-//            // print("glfwSetCursorPosCallback")
-//        }
-//
-//        glfwSetMouseButtonCallback(_context) { window, button, action, mods in
-//            // print("glfwSetMouseButtonCallback")
-//        }
-//
-//        glfwSetScrollCallback(_context) { window, xOffset, yOffset in 
-//            // print("glfwSetScrollCallback")
-//        }
-//
-//        glfwSetDropCallback(_context) { window, count, paths in
-//            // print("glfwSetDropCallback")
-//        }
-//    }
-//}

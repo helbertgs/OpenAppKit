@@ -19,6 +19,8 @@ public class NSWindow: NSResponder {
         self.contentView = self.contentViewController?.view
 
         super.init()
+
+        self.contentView?.window = self
         self.graphicsContext = NSGraphicsContext(window: self)
     }
 
@@ -139,7 +141,6 @@ public class NSWindow: NSResponder {
     /// A different, and non-dynamic, depth limit can be set using the depthLimit property.
     public var hasDynamicDepthLimit: Bool = true
 
-
     /// The window number of the window’s window device.
     /// 
     /// ach window device in an application is given a unique window number—note that this isn’t the same as the global window number assigned by the window server. 
@@ -215,9 +216,7 @@ public class NSWindow: NSResponder {
     ///   - flag: Specifies whether the window redraws the views that need to be displayed. When true the window sends a ``displayIfNeeded()`` message down its view hierarchy, thus redrawing all views.
     public func setFrame(_ frameRect: OpenCoreGraphics.CGRect, display flag: Bool) {
         self.frame = frameRect
-        if flag {
-            self.displayIfNeeded()
-        }
+        self.viewsNeedDisplay = flag
     }
 
     /// Sets the origin and size of the window’s frame rectangle, with optional animation, according to a given frame rectangle, thereby setting its position and size onscreen.
@@ -225,7 +224,9 @@ public class NSWindow: NSResponder {
     ///   - frameRect: The frame rectangle for the window, including the title bar.
     ///   - displayFlag: Specifies whether the window redraws the views that need to be displayed. When true the window sends a displayIfNeeded() message down its view hierarchy, thus redrawing all views.
     ///   - animateFlag: Specifies whether the window performs a smooth resize. true to perform the animation, whose duration is specified by animationResizeTime(_:).
-    public func setFrame(_ frameRect: OpenCoreGraphics.CGRect, display displayFlag: Bool, animate animateFlag: Bool) {
+    public func setFrame(_ frameRect: OpenCoreGraphics.CGRect, display displayFlag: Bool, animate animateFlag: Bool) { 
+        self.frame = frameRect
+        self.viewsNeedDisplay = displayFlag
     }
 
     /// Specifies the duration of a smooth frame-size change.
@@ -245,7 +246,7 @@ public class NSWindow: NSResponder {
     /// For example, to cancel an established aspect ratio setting for an NSWindow object, you can set the ``resizeIncrements`` property with the width and height set to 1.0:
     /// ```myWindow.resizeIncrements = OpenCoreGraphics.CGSize(width: 1.0, height: 1.0);```
     /// The contentAspectRatio property takes precedence over this property.
-    public var aspectRatio: OpenCoreGraphics.CGSize = CGSize()
+    public var aspectRatio: OpenCoreGraphics.CGSize = CGSize(width: 1.0, height: 1.0)
 
     /// The minimum size to which the window’s frame (including its title bar) can be sized.
     /// 
@@ -350,6 +351,7 @@ public class NSWindow: NSResponder {
     /// This size in turn alters the size of the NSWindow object itself. Note that the window server limits window sizes to 10,000; if necessary, be sure to limit aSize relative to the frame rectangle.
     /// - Parameter size: The new size of the window’s content view in the window’s base coordinate system.
     public func setContentSize(_ size: OpenCoreGraphics.CGSize) {
+        self.contentView?.frame.size = size
     }
 
     /// The maximum size of the window’s content view in the window’s base coordinate system.
@@ -421,8 +423,6 @@ public class NSWindow: NSResponder {
         if !NSApplication.shared.windows.contains(where: { $0 === self }) {
             NSApplication.shared.windows.append(self)
         }
-
-//        glfwMakeContextCurrent(_context)
     }
 
     /// Moves the window to the front of its level, even if its application isn’t active, without changing either the key window or the main window.
@@ -482,7 +482,6 @@ public class NSWindow: NSResponder {
             }
 
             NSApplication.shared.keyWindow = self
-            
         }
     }
 
@@ -833,6 +832,7 @@ public class NSWindow: NSResponder {
     /// - Parameter sender: The message’s sender.
     public func performClose(_ sender: Any?) {
         print("\(Self.self).\(#function)")
+        self.close()
     }
 
     /// Removes the window from the screen.
@@ -871,7 +871,7 @@ public class NSWindow: NSResponder {
     /// 
     /// The value of this property is true if the window is minimized; otherwise, false. 
     /// A minimized window is removed from the screen and replaced by a image, icon, or button that represents it, called the counterpart.
-    public var isMiniaturized: Bool = false
+    public internal(set) var isMiniaturized: Bool = false
 
     /// Simulates the user clicking the minimize button by momentarily highlighting the button, then minimizing the window.
     /// 
@@ -879,12 +879,14 @@ public class NSWindow: NSResponder {
     /// - Parameter sender: The message’s sender.
     public func performMiniaturize(_ sender: Any?) {
         print("\(Self.self).\(#function)")
+        self.miniaturize(sender)
     }
 
     ///  Removes the window from the screen list and displays the minimized window in the Dock.
     /// - Parameter sender: The message’s sender.
     public func miniaturize(_ sender: Any?) {
         print("\(Self.self).\(#function)")
+        graphicsContext?.minimizeWindow()
     }
 
     /// De-minimizes the window.
@@ -893,6 +895,7 @@ public class NSWindow: NSResponder {
     /// - Parameter sender: The message’s sender.
     public func deminiaturize(_ sender: Any?) {
         print("\(Self.self).\(#function)")
+        graphicsContext?.maximizeWindow()
     }
 
     /// The custom miniaturized window image of the window.

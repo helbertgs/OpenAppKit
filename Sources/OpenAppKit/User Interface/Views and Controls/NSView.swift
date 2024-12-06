@@ -1,4 +1,4 @@
-import OpenCoreAnimation
+    import OpenCoreAnimation
 import OpenCoreImage
 import OpenCoreGraphics
 import Foundation
@@ -14,13 +14,14 @@ import Foundation
     /// This method is the designated initializer for the NSView class.
     /// - Parameter frame: The frame rectangle for the created view object.
     public init(frame: OpenCoreGraphics.CGRect) {
-        fatalError("not implemented yet")
+        self.frame = frame
+        super.init()
     }
 
     /// Initializes a view using from data in the specified coder object.
     /// - Parameter coder: The coder object that contains the view’s configuration details.
     public init?(coder: NSCoder) {
-        fatalError("not implemented yet")
+        nil
     }
 
     /// Restores the view to an initial state so that it can be reused.
@@ -102,7 +103,16 @@ import Foundation
     /// If you want to keep using aView after removing it from the view hierarchy (if, for example, you are swapping through a number of views), you must retain it before invoking ``removeFromSuperview()``.
     /// - Parameter aView: The view to add to the view as a subview.
     public func addSubview(_ aView: NSView) {
-        fatalError("not implemented yet")
+        print("\(Self.self).\(#function)")
+
+        if let aSuperview = aView.superview {
+            aView.removeFromSuperview()
+            viewWillMove(toSuperview: self)
+        }
+
+        aView.nextResponder = self
+        subviews.append(aView)
+        didAddSubview(aView)
     }
 
     /// Inserts a view among the view’s subviews so it’s displayed immediately above or below another view.
@@ -125,7 +135,11 @@ import Foundation
     /// Calling this method removes any constraints that refer to the view you are removing, or that refer to any view in the subtree of the view you are removing.
     /// Never invoke this method during display.
     public func removeFromSuperview() {
-        fatalError("not implemented yet")
+        print("\(Self.self).\(#function)")
+        
+        willRemoveSubview(self)
+        nextResponder = nil
+        superview?.subviews.removeAll { $0 === self }
     }
 
     /// Unlinks the view from its superview and its window and removes it from the responder chain, but does not invalidate its cursor rectangles to cause redrawing.
@@ -157,7 +171,7 @@ import Foundation
     /// This method is invoked by addSubview(_:).
     /// - Parameter subview: The view that was added as a subview.
     open func didAddSubview(_ subview: NSView) {
-        fatalError("not implemented yet")
+        print("\(Self.self).\(#function)")
     }
 
     /// Informs the view that its superview has changed (possibly to nil).
@@ -183,7 +197,7 @@ import Foundation
     /// Subclasses can override this method to perform whatever actions are necessary.
     /// - Parameter newSuperview: A view object that will be the new superview of the view.
     open func viewWillMove(toSuperview newSuperview: NSView?) {
-        fatalError("not implemented yet")
+        print("\(Self.self).\(#function)")
     }
 
     /// Informs the view that it’s being added to the view hierarchy of the specified window object (which may be nil).
@@ -209,7 +223,7 @@ import Foundation
     /// This method is invoked when subview receives a ``removeFromSuperview()`` message or subview is removed from the view due to it being added to another view with ``addSubview(_:)``.
     /// - Parameter subview: The subview that will be removed.
     open func willRemoveSubview(_ subview: NSView) {
-        fatalError("not implemented yet")
+        print("\(Self.self).\(#function)")
     }
 
     // MARK: - Identifying Views by Tag
@@ -217,7 +231,13 @@ import Foundation
     /// Returns the view’s nearest descendant (including itself) with a specific tag, or nil if no subview has that tag.
     /// - Parameter tag: An integer identifier associated with a view object.
     public func viewWithTag(_ tag: Int) -> NSView? {
-        fatalError("not implemented yet")
+        print("\(Self.self).\(#function)")
+
+        guard self.tag == tag else { 
+            return subviews.first { $0.tag == tag }
+        }
+
+        return self
     }
 
     /// The view’s tag, which is an integer that you use to identify the view within your app.
@@ -850,7 +870,7 @@ import Foundation
     /// Creates the view’s backing layer.
     /// - Returns: The layer to use as the view’s backing layer.
     open func makeBackingLayer() -> CALayer {
-        fatalError("not implemented yet")
+        .init()
     }
 
     /// The current layer contents placement policy.
@@ -957,6 +977,7 @@ import Foundation
 
     // MARK: - Layout
     // MARK: - Managing the view’s content
+
     // MARK: - Respecting the View’s Safe Area
 
     /// A rectangle in the view’s coordinate system that contains the unobscured portion of the view.
@@ -985,7 +1006,140 @@ import Foundation
     /// 
     /// The layout guide in this property reflects the view’s frame minus its safe area insets. 
     /// Use this guide to configure layout rules relative to this safe area.
-    public var safeAreaLayoutGuide: NSLayoutGuide
+    public var safeAreaLayoutGuide: NSLayoutGuide = .init()
+    
+    // MARK: - Managing the Content Layout Direction
+
+    /// The layout direction for content in the view.
+    /// 
+    /// Different languages support different directions for laying out content. 
+    /// While many languages support left-to-right layout, some support right-to-left layout. 
+    /// This property contains the preferred layout direction employed by the view. 
+    /// It is the responsibility of the view to respect this value and lay out its content appropriately.
+    /// 
+    /// In macOS 10.9 and later, if no layout direction is set explicitly, this property contains the value reported by the app’s userInterfaceLayoutDirection property. 
+    /// In prior versions of macOS, it returns the value NSUserInterfaceLayoutDirection.leftToRight by default. 
+    /// Certain AppKit subclasses, such as NSOutlineView, respect the value returned by this method and adjust their layout accordingly.
+    public var userInterfaceLayoutDirection: NSUserInterfaceLayoutDirection = .leftToRight
+
+    // MARK: - Opting In to Auto Layout
+
+    /// Returns a Boolean value indicating whether the view depends on the constraint-based layout system.
+    /// 
+    /// ``true`` if the view must be in a window using constraint-based layout to function properly, ``false`` otherwise.
+    /// Custom views should override this to return true if they can not layout correctly using autoresizing.
+    public static var requiresConstraintBasedLayout: Bool = false
+
+    /// A Boolean value indicating whether the view’s autoresizing mask is translated into constraints for the constraint-based layout system.
+    /// 
+    /// When this property is set to true, the view’s superview looks at the view’s autoresizing mask, produces constraints that implement it, and adds those constraints to itself (the superview). 
+    /// If your view has flexible constraints that require dynamic adjustment, set this property to false and apply the constraints yourself.
+    public var translatesAutoresizingMaskIntoConstraints: Bool = false
+
+    // MARK: - Creating Constraints Using Layout Anchors
+
+    /// A layout anchor representing the bottom edge of the view’s frame.
+    /// 
+    /// Use this anchor to create constraints with the view’s bottom edge. 
+    /// You can only combine this anchor with other NSLayoutYAxisAnchor anchors. For more information, see NSLayoutAnchor.
+    public var bottomAnchor: NSLayoutYAxisAnchor {
+        fatalError("Not implemented yet")
+    }
+
+    /// A layout anchor representing the horizontal center of the view’s frame.
+    /// 
+    /// Use this anchor to create constraints with the view’s horizontal center. 
+    /// You can only combine this anchor with other NSLayoutXAxisAnchor anchors. For more information, see NSLayoutAnchor.
+    public var centerXAnchor: NSLayoutXAxisAnchor {
+        fatalError("Not implemented yet")
+    }
+
+    /// A layout anchor representing the vertical center of the view’s frame.
+    /// 
+    /// Use this anchor to create constraints with the view’s vertical center. 
+    /// You can only combine this anchor with other NSLayoutYAxisAnchor anchors. For more information, see NSLayoutAnchor.
+    public var centerYAnchor: NSLayoutYAxisAnchor {
+        fatalError("Not implemented yet")
+    }
+
+    /// A layout anchor representing the baseline for the topmost line of text in the view.
+    /// 
+    /// For views with multiple lines of text, this anchor represents the baseline of the top row of text. 
+    /// Use this anchor to create constraints with this baseline. 
+    /// You can only combine this anchor with other NSLayoutYAxisAnchor anchors. For more information, see NSLayoutAnchor.
+    public var firstBaselineAnchor: NSLayoutYAxisAnchor {
+        fatalError("Not implemented yet")
+    }
+
+    /// A layout anchor representing the height of the view’s frame.
+    /// 
+    /// Use this anchor to create constraints with the view’s height. 
+    /// You can only combine this anchor with other NSLayoutDimension anchors. For more information, see NSLayoutAnchor.
+    public var heightAnchor: NSLayoutDimension {
+        fatalError("Not implemented yet")
+    }
+
+    /// A layout anchor representing the baseline for the bottommost line of text in the view.
+    /// 
+    /// For views with multiple lines of text, this anchor represents the baseline of the bottom row of text. 
+    /// Use this anchor to create constraints with this baseline. 
+    /// You can only combine this anchor with other NSLayoutYAxisAnchor anchors. For more information, see NSLayoutAnchor.
+    public var lastBaselineAnchor: NSLayoutYAxisAnchor {
+        fatalError("Not implemented yet")
+    }
+
+    /// A layout anchor representing the leading edge of the view’s frame.
+    /// 
+    /// Use this anchor to create constraints with the view’s leading edge. 
+    /// You can only combine this anchor with a subset of the NSLayoutXAxisAnchor anchors. 
+    /// You can combine a leadingAnchor with another leadingAnchor, a trailingAnchor, or a centerXAnchor. For more information, see NSLayoutAnchor.
+    public var leadingAnchor: NSLayoutXAxisAnchor {
+        fatalError("Not implemented yet")
+    }
+
+    /// A layout anchor representing the left edge of the view’s frame.
+    /// 
+    /// Use this anchor to create constraints with the view’s left edge. 
+    /// You can only combine this anchor with a subset of the NSLayoutXAxisAnchor anchors. 
+    /// You can combine a leftAnchor with another leftAnchor, a rightAnchor, or a centerXAnchor. For more information, see NSLayoutAnchor.
+    public var leftAnchor: NSLayoutXAxisAnchor {
+        fatalError("Not implemented yet")
+    }
+
+    /// A layout anchor representing the right edge of the view’s frame.
+    /// 
+    /// Use this anchor to create constraints with the view’s right edge. 
+    /// You can only combine this anchor with a subset of the NSLayoutXAxisAnchor anchors. 
+    /// You can combine a rightAnchor with another rightAnchor, a leftAnchor, or a centerXAnchor. For more information, see NSLayoutAnchor.
+    public var rightAnchor: NSLayoutXAxisAnchor {
+        fatalError("Not implemented yet")
+    }
+
+    /// A layout anchor representing the top edge of the view’s frame.
+    /// 
+    /// Use this anchor to create constraints with the view’s top edge. 
+    /// You can only combine this anchor with other NSLayoutYAxisAnchor anchors. For more information, see NSLayoutAnchor.
+    public var topAnchor: NSLayoutYAxisAnchor {
+        fatalError("Not implemented yet")
+    }
+
+    /// A layout anchor representing the trailing edge of the view’s frame.
+    /// 
+    /// Use this anchor to create constraints with the view’s trailing edge. 
+    /// You can only combine this anchor with a subset of the NSLayoutXAxisAnchor anchors. 
+    /// You can combine a trailingAnchor with another trailingAnchor, a leadingAnchor, or a centerXAnchor. For more information, see NSLayoutAnchor.
+    public var trailingAnchor: NSLayoutXAxisAnchor {
+        fatalError("Not implemented yet")
+    }
+
+    /// A layout anchor representing the width of the view’s frame.
+    /// 
+    /// Use this anchor to create constraints with the view’s width. 
+    /// You can only combine this anchor with other NSLayoutDimension anchors. For more information, see NSLayoutAnchor.
+    public var widthAnchor: NSLayoutDimension {
+        fatalError("Not implemented yet")
+    }
+
 }
 
 extension NSView {

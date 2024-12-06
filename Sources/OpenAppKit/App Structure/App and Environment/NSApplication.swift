@@ -1,7 +1,7 @@
 import Foundation
 
 /// An object that manages an app’s main event loop and resources used by all of that app’s objects.
-@MainActor open class NSApplication {
+@MainActor open class NSApplication: NSResponder {
 
     // MARK: - Accessing the shared application
 
@@ -16,8 +16,9 @@ import Foundation
 
     // MARK: - Create a NSApplication
 
-    public required init() {
+    public override required init() {
         print("\(Self.self).\(#function)")
+        super.init()
     }
 
     deinit {
@@ -90,6 +91,7 @@ import Foundation
     /// - Parameter event: The event object to dispatch.
     public func sendEvent(_ event: NSEvent) {
         print("\(Self.self).\(#function)")
+        print("event: \(event)")
     }
 
     /// Adds a given event to the receiver’s event queue.
@@ -247,6 +249,9 @@ import Foundation
     /// - Parameter sender: The object that sent the command.
     public func miniaturizeAll(_ sender: Any?) {
         print("\(Self.self).\(#function)")
+        windows.forEach { window in
+            window.miniaturize(sender)
+        }
     }
 
     // MARK: - Hiding Windows

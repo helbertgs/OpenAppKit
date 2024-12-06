@@ -10,6 +10,12 @@ import Foundation
     /// By default, this property is false. Subclasses set this property to true if the receiver accepts first responder status.
     open var acceptsFirstResponder: Bool = false
 
+    // MARK: - Creating Responders
+
+    /// Creates and returns a new responder object.
+    public init() {
+    }
+
     /// Notifies the receiver that it’s about to become first responder in its NSWindow.
     /// 
     /// The default implementation returns true, accepting first responder status. 
@@ -43,5 +49,61 @@ import Foundation
     /// - Returns: true if the control should become first responder, otherwise false.
     open func validateProposedFirstResponder(_ responder: NSResponder, for event: NSEvent?) -> Bool {
         true
+    }
+
+    // MARK: - Managing the Next Responder
+
+    /// The next responder after this one, or nil if it has none.
+    /// 
+    /// The next responder must be an object that inherits, directly or indirectly, from NSResponder.
+    open var nextResponder: NSResponder?
+
+    // MARK: - Responding to Mouse Events
+
+    /// Informs the receiver that the user has pressed the left mouse button.
+    /// 
+    /// The default implementation forwards the message to the next responder in the responder chain.
+    /// - Parameter event: An object encapsulating information about the mouse-down event.
+    open func mouseDown(with event: NSEvent) {
+        print("\(Self.self).\(#function)")
+        print("event: \(event)")
+    }
+
+    /// Informs the receiver that the user has released the left mouse button.
+    /// 
+    /// The default implementation forwards the message to the next responder in the responder chain.
+    /// - Parameter event: An object encapsulating information about the mouse-up event.
+    open func mouseUp(with event: NSEvent) {
+        print("\(Self.self).\(#function)")
+        print("event: \(event)")
+    }
+
+    /// Informs the receiver that the user has pressed the right mouse button.
+    /// 
+    /// The default implementation forwards the message to the next responder in the responder chain.
+    /// - Parameter event: An object encapsulating information about the mouse-down event.
+    open func rightMouseDown(with event: NSEvent) {
+        print("\(Self.self).\(#function)")
+        print("event: \(event)")
+    }
+
+    /// Informs the receiver that the user has released the right mouse button.
+    /// 
+    /// The default implementation forwards the message to the next responder in the responder chain.
+    /// - Parameter event: An object encapsulating information about the mouse-up event.
+    open func rightMouseUp(with event: NSEvent) {
+        print("\(Self.self).\(#function)")
+        print("event: \(event)")
+    }
+
+    // MARK: - Responding to Other Kinds of Events
+
+    /// Informs the receiver that the mouse’s scroll wheel has moved.
+    /// 
+    /// The default implementation forwards the message to the next responder in the responder chain.
+    /// - Parameter event: An object encapsulating information about the scroll wheel event.
+    open func scrollWheel(with event: NSEvent) {
+        print("\(Self.self).\(#function)")
+        print("event: \(event)")
     }
 }
