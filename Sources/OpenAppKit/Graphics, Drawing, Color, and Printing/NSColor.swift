@@ -15,3 +15,9 @@ import Foundation
         self.alpha = alpha
     }
 }
+
+extension NSColor {
+    public static var clear: NSColor {
+        .init(red: 0, green: 0, blue: 0, alpha: 0)
+    }
+}

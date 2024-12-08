@@ -1,7 +1,7 @@
 import Foundation
 
 /// An abstract class that forms the basis of event and command processing in AppKit.
-@MainActor open class NSResponder {
+@MainActor open class NSResponder: Sendable {
 
     // MARK: - Changing the First Responder
 
@@ -66,7 +66,7 @@ import Foundation
     /// - Parameter event: An object encapsulating information about the mouse-down event.
     open func mouseDown(with event: NSEvent) {
         print("\(Self.self).\(#function)")
-        print("event: \(event)")
+        nextResponder?.mouseDown(with: event)
     }
 
     /// Informs the receiver that the user has released the left mouse button.
@@ -75,7 +75,7 @@ import Foundation
     /// - Parameter event: An object encapsulating information about the mouse-up event.
     open func mouseUp(with event: NSEvent) {
         print("\(Self.self).\(#function)")
-        print("event: \(event)")
+        nextResponder?.mouseUp(with: event)
     }
 
     /// Informs the receiver that the user has pressed the right mouse button.
@@ -84,7 +84,7 @@ import Foundation
     /// - Parameter event: An object encapsulating information about the mouse-down event.
     open func rightMouseDown(with event: NSEvent) {
         print("\(Self.self).\(#function)")
-        print("event: \(event)")
+        nextResponder?.rightMouseDown(with: event)
     }
 
     /// Informs the receiver that the user has released the right mouse button.
@@ -93,7 +93,7 @@ import Foundation
     /// - Parameter event: An object encapsulating information about the mouse-up event.
     open func rightMouseUp(with event: NSEvent) {
         print("\(Self.self).\(#function)")
-        print("event: \(event)")
+        nextResponder?.rightMouseUp(with: event)
     }
 
     // MARK: - Responding to Other Kinds of Events
@@ -104,6 +104,6 @@ import Foundation
     /// - Parameter event: An object encapsulating information about the scroll wheel event.
     open func scrollWheel(with event: NSEvent) {
         print("\(Self.self).\(#function)")
-        print("event: \(event)")
+        nextResponder?.scrollWheel(with: event)
     }
 }

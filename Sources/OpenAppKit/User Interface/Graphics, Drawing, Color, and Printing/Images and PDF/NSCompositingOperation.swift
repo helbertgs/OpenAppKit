@@ -1,7 +1,7 @@
 import Foundation
 
 /// Constants that describe compositing operators in terms of source and destination images, each having an opaque and transparent region.
-@MainActor public enum NSCompositingOperation: Sendable {
+@MainActor public enum NSCompositingOperation: String, Equatable, Hashable, Sendable {
     
     // MARK: - Operations for Compositing
 
