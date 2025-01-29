@@ -37,7 +37,7 @@ extension NSEvent {
         public static let deviceIndependentFlagsMask = ModifierFlags(rawValue: 0x0100)
 
         /// Default value
-        public static let none = ModifierFlags(rawValue: 0x0000)
+        public static let none = ModifierFlags([])
 
         nonisolated public init(rawValue: Int) {
             self.rawValue = rawValue

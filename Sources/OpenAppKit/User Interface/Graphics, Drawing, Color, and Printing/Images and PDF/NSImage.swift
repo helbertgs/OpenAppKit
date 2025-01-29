@@ -15,6 +15,8 @@ public typealias NSImageRep = AnyObject
 
     // MARK: - Setting Attributes of Images
 
+    package var cgImage: CGImage
+
     /// The size of the image.
     /// 
     /// Defaults to {0.0, 0.0} if no size has been set and the size cannot be determined from any of the receiver’s image representations. 
@@ -141,6 +143,7 @@ public typealias NSImageRep = AnyObject
     /// You might lock focus on the image and draw to the image or you might explicitly add an image representation that you created.
     /// - Parameter size: The size of the image, measured in points.
     public init(size: OpenCoreGraphics.CGSize) {
+        self.cgImage = CGImage()
         self.size = size
     }
 

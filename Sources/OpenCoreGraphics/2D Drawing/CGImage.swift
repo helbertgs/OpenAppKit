@@ -46,6 +46,9 @@ import Foundation
         // self.height = Int(height)
     }
 
+    package init() {
+    }
+
     deinit { 
         // stbi_image_free(decode)
     }

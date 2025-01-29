@@ -1,4 +1,5 @@
 import Foundation
+import OpenGLFW
 
 /// An object that manages an app’s main event loop and resources used by all of that app’s objects.
 @MainActor open class NSApplication: NSResponder {
@@ -19,10 +20,19 @@ import Foundation
     public override required init() {
         print("\(Self.self).\(#function)")
         super.init()
+
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3)
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3)
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
+
+        guard glfwInit() == GLFW_TRUE else {
+            fatalError("Fail to initialize GLFW")
+        }
     }
 
     deinit {
         print("\(Self.self).\(#function)")
+        glfwTerminate()
     }
 
     // MARK: - Managing the Event Loop
@@ -65,7 +75,11 @@ import Foundation
         print("\(Self.self).\(#function)")
 
         delegate?.applicationWillFinishLaunching(NSApplication.shared)
-        delegate?.applicationDidFinishLaunching(NSApplication.shared) 
+
+        let mainScreen = NSScreen(monitorRef: glfwGetPrimaryMonitor())
+        NSScreen.main = mainScreen
+
+        delegate?.applicationDidFinishLaunching(NSApplication.shared)
     }
 
     /// Stops the main event loop.

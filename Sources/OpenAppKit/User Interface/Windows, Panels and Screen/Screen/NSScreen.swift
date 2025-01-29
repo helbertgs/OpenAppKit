@@ -1,11 +1,14 @@
 import Foundation
 import OpenCoreGraphics
+import OpenGLFW
 
 /// An object that describes the attributes of a computer’s monitor or screen.
 @MainActor
 public class NSScreen: NSObject {
 
     // MARK: - Getting Screen Objects
+
+    var monitorRef: OpaquePointer
     
     /// Returns the screen object containing the window with the keyboard focus.
     /// 
@@ -38,7 +41,10 @@ public class NSScreen: NSObject {
     public private(set) var depth: NSWindow.Depth = .onehundredtwentyeightBitRGB
     
     /// The dimensions and location of the screen.
-    public private(set) var frame: OpenCoreGraphics.CGRect = OpenCoreGraphics.CGRect()
+    public var frame: OpenCoreGraphics.CGRect {
+        let videoMode: GLFWvidmode = glfwGetVideoMode(monitorRef).pointee
+        return .init(x: 0, y: 0, width: Double(videoMode.width), height: Double(videoMode.height))
+    }
 
     /// The device dictionary for the screen.
     public private(set) var deviceDescription: [String: Any] = [:]
@@ -47,7 +53,13 @@ public class NSScreen: NSObject {
     public private(set) var colorSpace: NSColorSpace?
 
     /// The localized name of the display.
-    public private(set) var localizedName: String = ""
+    public var localizedName: String {
+        guard let ptr = glfwGetMonitorName(monitorRef) else {
+            fatalError("GLFW not initialized!")
+        }
+
+        return String.init(cString: ptr, encoding: .utf8) ?? ""
+    }
 
     /// A Boolean value indicating whether the color space of the screen is capable of representing the specified display gamut.
     public func canRepresent(_ displayGamut: NSDisplayGamut) -> Bool {
@@ -62,8 +74,16 @@ public class NSScreen: NSObject {
     /// The returned rectangle is always based on the current user-interface settings and does not include the area currently occupied by the dock and menu bar. 
     /// On Macs that include a camera housing in the bezel, this rectangle does not include the bezel or the visible areas on either side of the bezel. Get those areas using the ``auxiliaryTopLeftArea`` and ``auxiliaryTopRightArea`` properties. 
     /// Don’t cache the rectangle in this property; it is based on the current user-interface settings, which can change between calls.
-    public private(set) var visibleFrame: OpenCoreGraphics.CGRect = OpenCoreGraphics.CGRect()
-    
+    public var visibleFrame: OpenCoreGraphics.CGRect {
+        var y: Int32 = 0
+        var x: Int32 = 0
+        var width: Int32 = 0
+        var height: Int32 = 0
+
+        glfwGetMonitorWorkarea(monitorRef, &x, &y, &width, &height)
+        return .init(x: Double(x), y: Double(y), width: Double(width), height: Double(height))
+    }
+
     /// The distances from the screen’s edges at which content isn’t obscured.
     /// 
     /// The safe area reflects the unobscured portion of the screen. 
@@ -108,15 +128,35 @@ public class NSScreen: NSObject {
 
     /// Create a NSScreen
     /// - Parameter window: The window object associated with the event.
-    // private init(window: NSWindow) {
-    //     self.window = window
-    //     super.init()
-    // }
+    init(monitorRef: OpaquePointer) {
+        self.monitorRef = monitorRef
+        super.init()
 
-    // public required init() {
-    //     self.window = nil
-    //     super.init()
-    // }
+//        let ptr = Unmanaged.passUnretained(self).toOpaque()
+//        glfwSetMonitorUserPointer(self.monitorRef, ptr)
+//
+//        glfwSetMonitorCallback() { monitor, event in
+//            guard let pointer = glfwGetWindowUserPointer(monitorRef) else { return }
+//
+//            let context = Unmanaged<NSScreen>
+//                .fromOpaque(pointer)
+//                .takeUnretainedValue()
+//
+//            switch event {
+//                case GLFW_CONNECTED:
+//                print("\(context.localizedName) connected!")
+//                case GLFW_DISCONNECTED:
+//                print("\(context.localizedName) disconnected!")
+//                default:
+//                    break
+//            }
+//        }
+    }
+
+    @available(*, unavailable)
+    public required init() {
+        fatalError("init() has not been implemented")
+    }
 }
 
 extension NSScreen {

@@ -11,7 +11,7 @@ public class NSGraphicsContext {
     // MARK: - Managing the Current Context
 
     /// The Core Graphics context, which is a low-level, platform-specific graphics context.
-    public internal(set) var cgContext: OpenCoreGraphics.CGContext = .init()
+    public internal(set) var cgContext: OpenCoreGraphics.CGContext = OpenCoreGraphics.CGContext()
 
     // MARK: - Getting Information About the Context
 

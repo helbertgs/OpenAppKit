@@ -37,7 +37,10 @@ let package = Package(
         ),
         .target(
             name: "OpenCoreAnimation",
-            dependencies: [ "OpenCoreGraphics" ]
+            dependencies: [ 
+                "OpenCoreGraphics",
+                .product(name: "OpenGLAD", package: "OpenGLAD")
+            ]
         ),
         .target(
             name: "OpenAppKit",

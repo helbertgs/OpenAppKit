@@ -1,27 +1,82 @@
 import Foundation
 import OpenCoreGraphics
-
+import OpenGLFW
 
 /// A window that an app displays on the screen.
 public class NSWindow: NSResponder {
 
     // MARK: - Creating a Window
 
-    /// Creates a titled window that contains the specified content view controller.
-    /// 
-    /// This method creates a basic window object that is titled, closable, resizable, and miniaturizable. By default, the window's title is automatically bound to the title of contentViewController. 
-    /// You can control the size of the window by using Auto Layout and applying size constraints to the view or its subviews. 
-    /// The initial size of the window is set to the initial size of contentView (that is, the size of contentViewController.view).
-    /// - Parameter contentViewController: The view controller that provides the main content view for the window. The window’s contentView property is set to contentViewController.view.
-    /// - Returns: A window with the content view controller set to the passed-in view controller object.
-    public init(contentViewController: NSViewController) {
-        self.contentViewController = contentViewController
+    /// The GLFW window reference associated with the window, creating one if necessary.
+    ///
+    /// You can use this property to create a WindowRef for a window containing a GLFW control.
+    /// Subsequent accesses to this property get the existing WindowRef.
+    /// You use a WindowRef to create a GLFWwindow reference for a GLFW window.
+    var windowRef: OpaquePointer!
+
+    /// Initializes the window with the specified values.
+    ///
+    /// This method is the designated initializer for the NSWindow class.
+    /// Deferring the creation of the window improves launch time and minimizes the virtual memory load on the window server.
+    /// The new window creates a view to be its default content view. You can replace it with your own object by setting the contentView property.
+    /// - Parameters:
+    ///   - contentRect: Origin and size of the window’s content area in screen coordinates. Note that the window server limits window position coordinates to ±16,000 and sizes to 10,000.
+    ///   - style: The window’s style. It can be NSBorderlessWindowMask, or it can contain any of the options described in NSWindow.StyleMask, combined using the C bitwise OR operator.
+    ///   - backingStoreType: Specifies how the drawing done in the window is buffered by the window device, and possible values are described in NSWindow.BackingStoreType.
+    ///   - flag: Specifies whether the window server creates a window device for the window immediately.
+    ///           When true, the window server defers creating the window device until the window is moved onscreen.
+    ///           All display messages sent to the window or its views are postponed until the window is created, just before it’s moved onscreen.
+    public init(contentRect: OpenCoreGraphics.CGRect, styleMask style: StyleMask, backing backingStoreType: BackingStoreType, defer flag: Bool) {
+        self.frame = contentRect
+        self.styleMask = style
+        self.backingType = backingStoreType
+        self.screen = NSScreen.main
+        self.contentViewController = NSViewController(nibName: nil, bundle: nil)
         self.contentView = self.contentViewController?.view
 
         super.init()
+        self._glfwCreateWindow()
+        // self.graphicsContext = NSGraphicsContext(window: self)
+    }
 
+    /// Initializes an allocated window with the specified values.
+    /// - Parameters:
+    ///   - contentRect: Origin and size of the window’s content area in screen coordinates. Note that the window server limits window position coordinates to ±16,000 and sizes to 10,000.
+    ///   - style: The window’s style. It can be NSBorderlessWindowMask, or it can contain any of the options described in NSWindow.StyleMask, combined using the C bitwise OR operator.
+    ///   - backingStoreType: Specifies how the drawing done in the window is buffered by the window device, and possible values are described in NSWindow.BackingStoreType.
+    ///   - flag: Specifies whether the window server creates a window device for the window immediately.
+    ///           When true, the window server defers creating the window device until the window is moved onscreen.
+    ///           All display messages sent to the window or its views are postponed until the window is created, just before it’s moved onscreen.
+    ///   - screen: Specifies the screen on which the window is positioned.
+    ///             The content rectangle is positioned relative to the bottom-left corner of screen.
+    ///             When nil, the content rectangle is positioned relative to (0, 0), which is the origin of the primary screen.
+    public init(contentRect: OpenCoreGraphics.CGRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool, screen: NSScreen?) {
+        self.frame = contentRect
+        self.styleMask = style
+        self.backingType = backingStoreType
+        self.screen = screen
+        self.contentViewController = NSViewController(nibName: nil, bundle: nil)
+        self.contentView = self.contentViewController?.view
+
+        super.init()
+        self._glfwCreateWindow()
+    }
+
+    /// Creates a titled window that contains the specified content view controller.
+    /// 
+    /// This method creates a basic window object that is titled, closable, resizable, and miniaturizable. By default, the window's title is automatically bound to the title of ``contentViewController``.
+    /// You can control the size of the window by using Auto Layout and applying size constraints to the view or its subviews.
+    /// The initial size of the window is set to the initial size of ``contentView`` (that is, the size of contentViewController.view).
+    /// - Parameter contentViewController: The view controller that provides the main content view for the window. The window’s contentView property is set to ``contentViewController.view``.
+    /// - Returns: A window with the content view controller set to the passed-in view controller object.
+    public init(contentViewController: NSViewController) {
+        self.contentViewController = contentViewController
+        super.init()
+
+        self.contentView = self.contentViewController?.view
         self.contentView?.window = self
-        self.graphicsContext = NSGraphicsContext(window: self)
+
+        self._glfwCreateWindow()
     }
 
     // MARK: - Managing the Window's Behavior
@@ -58,13 +113,14 @@ public class NSWindow: NSResponder {
 
     /// Flags that describe the window’s current style, such as if it’s resizable or in full-screen mode.
     /// Changing the style mask may cause the view hierarchy to be rebuilt.
-    public var styleMask: StyleMask = .init(rawValue: 0)
+    public var styleMask: StyleMask = [ .closable, .miniaturizable, .resizable, .titled ]
 
     /// Takes the window into or out of fullscreen mode.
     /// 
     /// If an application supports fullscreen, it should add a menu item to the View menu with toggleFullScreen: as the action, and nil as the target.
     /// - Parameter sender: The object that sent the message.
     public func toggleFullScreen(_ sender: Any?) {
+        print("\(Self.self).\(#function)")
     }
 
     /// A Boolean value that indicates whether the window is able to receive keyboard and mouse events even when some other window is being run modally.
@@ -77,7 +133,10 @@ public class NSWindow: NSResponder {
     public var alphaValue: Float = 1.0
 
     /// The color of the window’s background.
-    public var backgroundColor: NSColor = NSColor(red: 1, green: 0, blue: 0)
+    public var backgroundColor: NSColor {
+        get { contentView?.layer?.backgroundColor ?? .init(red: 0, green: 0, blue: 0, alpha: alphaValue) }
+        set { contentView?.layer?.backgroundColor = newValue }
+    }
 
     /// The window’s color space.
     /// The value of this property is nil if the window does not have a backing store, and is off-screen.
@@ -86,6 +145,7 @@ public class NSWindow: NSResponder {
     /// Sets a Boolean value that indicates whether the window’s depth limit can change to match the depth of the screen it’s on.
     /// - Parameter flag: true if the window’s depth can change; otherwise, false.
     public func setDynamicDepthLimit(_ flag: Bool) {
+        print("\(Self.self).\(#function)")
     }
 
     /// A Boolean value that indicates whether the window can hide when its application becomes hidden.
@@ -121,6 +181,7 @@ public class NSWindow: NSResponder {
 
     /// Invalidates the window shadow so that it is recomputed based on the current window shape.
     public func invalidateShadow() {
+        print("\(Self.self).\(#function)")
     }
 
     /// An object that the window inherits its appearance from.
@@ -153,7 +214,8 @@ public class NSWindow: NSResponder {
     /// - Parameter options: The possible options are specified in NSWindow.NumberListOptions.
     /// - Returns: An array of window numbers for all visible windows satisfying the specified options. (Windows on the active space are returned in z-order; that is, front to back.)
     public class func windowNumbers(options: NumberListOptions = []) -> [Int]? {
-        []
+        print("\(Self.self).\(#function)")
+        return []
     }
 
     /// A dictionary containing information about the window’s resolution, such as color, depth, and so on.
@@ -177,6 +239,7 @@ public class NSWindow: NSResponder {
     /// Note that the window server limits window position coordinates to ±16,000.
     /// - Parameter point: The new position of the window’s bottom-left corner in screen coordinates.
     public func setFrameOrigin(_ point: OpenCoreGraphics.CGPoint) {
+        print("\(Self.self).\(#function)")
         self.frame.origin = point
     }
 
@@ -184,6 +247,7 @@ public class NSWindow: NSResponder {
     /// Note that the window server limits window position coordinates to ±16,000; if necessary, adjust aPoint relative to the window’s lower-left corner to account for this limit.
     /// - Parameter point: The new position of the window’s top-left corner in screen coordinates.
     public func setFrameTopLeftPoint(_ point: OpenCoreGraphics.CGPoint) {
+        print("\(Self.self).\(#function)")
     }
 
     /// Modifies and returns a frame rectangle so that its top edge lies on a specific screen.
@@ -197,7 +261,8 @@ public class NSWindow: NSResponder {
     ///   - screen: The screen on which the top edge of the window’s frame is to lie.
     /// - Returns: The adjusted frame rectangle.
     public func constrainFrameRect(_ frameRect: OpenCoreGraphics.CGRect, to screen: NSScreen?) -> OpenCoreGraphics.CGRect {
-        .init()
+        print("\(Self.self).\(#function)")
+        return .init()
     }
 
     /// Positions the window’s top-left to a given point.
@@ -206,7 +271,8 @@ public class NSWindow: NSResponder {
     /// - Parameter topLeftPoint: The new top-left point, in screen coordinates, for the window. When ``NSZeroPoint``, the window is not moved, except as needed to constrain to the visible screen
     /// - Returns: The point shifted from top left of the window in screen coordinates.
     public func cascadeTopLeft(from topLeftPoint: OpenCoreGraphics.CGPoint) -> OpenCoreGraphics.CGPoint {
-        .init()
+        print("\(Self.self).\(#function)")
+        return .init()
     }
 
     /// Sets the origin and size of the window’s frame rectangle according to a given frame rectangle, thereby setting its position and size onscreen.
@@ -224,7 +290,8 @@ public class NSWindow: NSResponder {
     ///   - frameRect: The frame rectangle for the window, including the title bar.
     ///   - displayFlag: Specifies whether the window redraws the views that need to be displayed. When true the window sends a displayIfNeeded() message down its view hierarchy, thus redrawing all views.
     ///   - animateFlag: Specifies whether the window performs a smooth resize. true to perform the animation, whose duration is specified by animationResizeTime(_:).
-    public func setFrame(_ frameRect: OpenCoreGraphics.CGRect, display displayFlag: Bool, animate animateFlag: Bool) { 
+    public func setFrame(_ frameRect: OpenCoreGraphics.CGRect, display displayFlag: Bool, animate animateFlag: Bool) {
+        print("\(Self.self).\(#function)")
         self.frame = frameRect
         self.viewsNeedDisplay = displayFlag
     }
@@ -233,7 +300,8 @@ public class NSWindow: NSResponder {
     /// - Parameter newFrame: The frame rectangle specified in ``setFrame(_:display:animate:)``.
     /// - Returns: The duration of the frame size change.
     public func animationResizeTime(_ newFrame: OpenCoreGraphics.CGRect) -> TimeInterval {
-        0.20
+        print("\(Self.self).\(#function)")
+        return 0.20
     }
 
     /// The window’s aspect ratio, which constrains the size of its frame rectangle to integral multiples of this ratio when the user resizes it.
@@ -274,12 +342,16 @@ public class NSWindow: NSResponder {
     /// 2. If the neither the delegate nor the window class implements ``windowWillUseStandardFrame(_:defaultFrame:)``, a default frame that nearly fits the screen is chosen. 
     /// If the delegate or window class implements ``windowWillUseStandardFrame(_:defaultFrame:)``, it is invoked to validate the proposed zoomed frame. 
     /// After the zoomed frame is validated, the value of isZoomed is determined by whether or not the current window frame is equal to the zoomed frame.
-    public var isZoomed: Bool = false
+    public var isZoomed: Bool {
+        glfwGetWindowAttrib(windowRef, GLFW_MAXIMIZED) == GLFW_TRUE
+    }
 
     /// This action method simulates the user clicking the zoom box by momentarily highlighting the button and then zooming the window.
     /// If the window doesn’t have a zoom box or can’t be zoomed for some reason, the computer beeps.
     /// - Parameter sender: The object sending the message.
     public func performZoom(_ sender: Any?) {
+        print("\(Self.self).\(#function)")
+        self.zoom(sender)
     }
 
     /// Toggles the size and location of the window between its standard state (which the application provides as the best size to display the window’s data) and its user state (a new size and location the user may have set by moving or resizing the window).
@@ -299,6 +371,10 @@ public class NSWindow: NSResponder {
     /// 6. If the window currently allows zooming, sets the new frame.
     /// - Parameter sender: The object sending the message.
     public func zoom(_ sender: Any?) {
+        print("\(Self.self).\(#function)")
+        if isZoomable {
+            glfwMaximizeWindow(windowRef)
+        }
     }
 
     /// The flags field of the event record for the mouse-down event that initiated the resizing session.
@@ -345,12 +421,13 @@ public class NSWindow: NSResponder {
     /// 
     /// The minimum size constraint is enforced for resizing by the user as well as for the ``setContentSize(_:)`` method and the setFrame... methods other than ``setFrame(_:display:)`` and ``setFrame(_:display:animate:)``.
     /// This method takes precedence over the minSize property.
-    public var contentMinSize: OpenCoreGraphics.CGSize = .init()
+    public var contentMinSize: OpenCoreGraphics.CGSize = .init(width: 50, height: 50)
 
     /// Sets the size of the window’s content view to a given size, which is expressed in the window’s base coordinate system.
     /// This size in turn alters the size of the NSWindow object itself. Note that the window server limits window sizes to 10,000; if necessary, be sure to limit aSize relative to the frame rectangle.
     /// - Parameter size: The new size of the window’s content view in the window’s base coordinate system.
     public func setContentSize(_ size: OpenCoreGraphics.CGSize) {
+        print("\(Self.self).\(#function)")
         self.contentView?.frame.size = size
     }
 
@@ -449,7 +526,9 @@ public class NSWindow: NSResponder {
     
     /// A Boolean value that indicates whether the window is visible onscreen (even when it’s obscured by other windows).
     /// The value of this property is true when the window is onscreen (even if it’s obscured by other windows); otherwise, false.
-    public var isVisible: Bool = false
+    public var isVisible: Bool {
+        glfwGetWindowAttrib(windowRef, GLFW_VISIBLE) == GLFW_TRUE
+    }
 
     /// The occlusion state of the window.
     /// When the value of this property is ``visible``, at least part of the window is visible; otherwise, the window is fully occluded.
@@ -501,7 +580,7 @@ public class NSWindow: NSResponder {
     open func becomeKey() {
         print("\(Self.self).\(#function)")
 
-        NotificationCenter.default.post(name: .init("NSWindowDidBecomeKeyNotification"), object: self)
+        NotificationCenter.default.post(name: NSWindow.didBecomeKeyNotification, object: self)
         delegate?.windowDidBecomeKey(self)
     }
 
@@ -512,7 +591,7 @@ public class NSWindow: NSResponder {
     open func resignKey() {
         print("\(Self.self).\(#function)")
 
-        NotificationCenter.default.post(name: .init("NSWindowDidResignKeyNotification"), object: self)
+        NotificationCenter.default.post(name: NSWindow.didResignKeyNotification, object: self)
         delegate?.windowDidResignKey(self)
     }
 
@@ -553,7 +632,7 @@ public class NSWindow: NSResponder {
     open func becomeMain() {
         print("\(Self.self).\(#function)")
 
-        NotificationCenter.default.post(name: .init("NSWindowDidBecomeMainNotification"), object: self)
+        NotificationCenter.default.post(name: NSWindow.didBecomeMainNotification, object: self)
         delegate?.windowDidBecomeMain(self)
     }
 
@@ -562,7 +641,7 @@ public class NSWindow: NSResponder {
     open func resignMain() {
         print("\(Self.self).\(#function)")
 
-        NotificationCenter.default.post(name: .init("NSWindowDidResignMainNotification"), object: self)
+        NotificationCenter.default.post(name: NSWindow.didResignMainNotification, object: self)
         delegate?.windowDidResignMain(self)
     }
 
@@ -753,7 +832,9 @@ public class NSWindow: NSResponder {
     /// An ``NSWindow`` object is automatically sent an update message on every pass through the event loop and before it’s displayed onscreen. 
     /// You can manually cause an update message to be sent to all visible NSWindow objects through the ``NSApplication`` ``updateWindows()`` method.
     public func update() {
-        graphicsContext?.render()
+        print("\(Self.self).\(#function)")
+        NotificationCenter.default.post(name: NSWindow.didUpdateNotification, object: self)
+        // graphicsContext?.render()
     }
 
     // MARK: - Managing Titles
@@ -851,7 +932,11 @@ public class NSWindow: NSResponder {
     /// Use ``performClose(_:)`` if you need these features.
     public func close() {
         print("\(Self.self).\(#function)")
-//        glfwDestroyWindow(_context)
+
+        if isReleasedWhenClosed {
+            NotificationCenter.default.post(name: NSWindow.willCloseNotification, object: self)
+            glfwDestroyWindow(windowRef)
+        }
 
         NSApplication.shared.terminate(self)
     }
@@ -964,9 +1049,8 @@ public class NSWindow: NSResponder {
     /// A Boolean value that indicates if the user can resize the window.
     /// This property is key-value coding compliant.
     public var isResizable: Bool {
-//        get { glfwGetWindowAttrib(_context, GLFW_RESIZABLE) == GLFW_TRUE ? true : false }
-//        set { glfwSetWindowAttrib(_context, GLFW_RESIZABLE, newValue == true ? GLFW_TRUE : GLFW_FALSE) }
-        true
+        get { glfwGetWindowAttrib(windowRef, GLFW_RESIZABLE) == GLFW_TRUE ? true : false }
+        set { glfwSetWindowAttrib(windowRef, GLFW_RESIZABLE, newValue == true ? GLFW_TRUE : GLFW_FALSE) }
     }
 
     /// A Boolean value that indicates whether the window can minimize.
@@ -976,7 +1060,6 @@ public class NSWindow: NSResponder {
     /// The zero-based position of the window, based on its order from front to back among all visible application windows.
     /// If you set this property to an index that’s out of range, the system sets the position to the nearest value that’s in range.
     public var orderedIndex: Int = 1
-
 }
 
 extension NSWindow {
@@ -985,17 +1068,23 @@ extension NSWindow {
 
         // MARK: - Constants
 
+        /// The window displays none of the usual peripheral elements.
+        /// Useful only for display or caching purposes.
+        /// A window that uses ``.borderless`` can’t become key or main, unless the value of canBecomeKey or canBecomeMain is true.
+        /// Note that you can set a window’s or panel’s style mask to ``.borderless`` in Interface Builder by deselecting Title Bar in the Appearance section of the Attributes inspector.
+        public static let borderless = StyleMask(rawValue: 1)
+
         /// The window displays a title bar.
-        public static let titled = StyleMask(rawValue: 1)
+        public static let titled = StyleMask(rawValue: 2)
 
         /// The window displays a close button.
-        public static let closable = StyleMask(rawValue: 2)
-        
+        public static let closable = StyleMask(rawValue: 4)
+
         /// The window displays a minimize button.
-        public static let miniaturizable = StyleMask(rawValue: 4)
-        
+        public static let miniaturizable = StyleMask(rawValue: 8)
+
         /// The window can be resized by the user.
-        public static let resizable = StyleMask(rawValue: 8)
+        public static let resizable = StyleMask(rawValue: 16)
 
         // MARK: - Accessing the Raw Value
         
@@ -1215,5 +1304,107 @@ extension NSWindow {
     public enum TitleVisibility: Sendable {
         case visible
         case hidden
+    }
+}
+
+extension NSWindow {
+
+    // MARK: - Notifications
+
+    /// A notification that the window object became the key window.
+    public static let didBecomeKeyNotification = NSNotification.Name("UIWindowDidBecomeKeyNotification")
+
+    /// A notification that the window object became the main window.
+    public static let didBecomeMainNotification = NSNotification.Name("UIWindowDidBecomeMainNotification")
+
+    /// A notification that a portion of the window object’s frame moved onto or off of a screen.
+    public static let didChangeScreenNotification = NSNotification.Name("UIWindowDidChangeScreenNotification")
+
+    /// A notification that the screen containing the window changed.
+    public static let didChangeScreenProfileNotification = NSNotification.Name("UIWindowDidChangeScreenProfileNotification")
+
+    /// A notification that the window is no longer minimized.
+    public static let didDeminiaturizeNotification = NSNotification.Name("UIWindowDidDeminiaturizeNotification")
+
+    /// A notification that the window object closed an attached sheet.
+    public static let didEndSheetNotification = NSNotification.Name("UIWindowDidEndSheetNotification")
+
+    /// A notification that the user resized the window object.
+    public static let didEndLiveResizeNotification = NSNotification.Name("UIWindowDidEndLiveResizeNotification")
+
+    /// A notification that a window exposed a portion of its nonretained content.
+    public static let didExposeNotification = NSNotification.Name("UIWindowDidExposeNotification")
+
+    /// A notification that the window object minimized.
+    public static let didMiniaturizeNotification = NSNotification.Name("UIWindowDidMiniaturizeNotification")
+
+    /// A notification that the window object moved.
+    public static let didMoveNotification = NSNotification.Name("UIWindowDidMoveNotification")
+
+    /// A notification that the window object resigned its status as key window.
+    public static let didResignKeyNotification = NSNotification.Name("UIWindowDidResignKeyNotification")
+
+    /// A notification that the window object resigned its status as main window.
+    public static let didResignMainNotification = NSNotification.Name("UIWindowDidResignMainNotification")
+
+    /// A notification that the window object size changed.
+    public static let didResizeNotification = NSNotification.Name("UIWindowDidResizeNotification")
+
+    /// A notification that the window object received an update message.
+    public static let didUpdateNotification = NSNotification.Name("UIWindowDidUpdateNotification")
+
+    /// A notification that the window object is about to open a sheet.
+    public static let willBeginSheetNotification = NSNotification.Name("UIWindowWillBeginSheetNotification")
+
+    /// A notification that the window object is about to close.
+    public static let willCloseNotification = NSNotification.Name("UIWindowWillCloseNotification")
+
+    /// A notification that the window object is about to minimize.
+    public static let willMiniaturizeNotification = NSNotification.Name("UIWindowWillMiniaturizeNotification")
+
+    /// A notification that the window object is about to move.
+    public static let willMoveNotification = NSNotification.Name("UIWindowWillMoveNotification")
+
+    /// A notification that the user is about to resize the window.
+    public static let willStartLiveResizeNotification = NSNotification.Name("UIWindowWillStartLiveResizeNotification")
+
+    /// A notification that the window will enter full-screen mode.
+    public static let willEnterFullScreenNotification = NSNotification.Name("UIWindowWillEnterFullScreenNotification")
+
+    /// A notification that the window entered full-screen mode.
+    public static let didEnterFullScreenNotification = NSNotification.Name("UIWindowDidEnterFullScreenNotification")
+
+    /// A notification that the window object will exit full-screen mode.
+    public static let willExitFullScreenNotification = NSNotification.Name("UIWindowWillExitFullScreenNotification")
+
+    /// A notification that the window object exited full-screen mode.
+    public static let didExitFullScreenNotification = NSNotification.Name("UIWindowDidExitFullScreenNotification")
+
+    /// A notification that the window object will enter version browser mode.
+    public static let willEnterVersionBrowserNotification = NSNotification.Name("UIWindowWillEnterVersionBrowserNotification")
+
+    /// A notification that the window object entered version browser mode.
+    public static let didEnterVersionBrowserNotification = NSNotification.Name("UIWindowDidEnterVersionBrowserNotification")
+
+    /// A notification that the window object will exit version browser mode.
+    public static let willExitVersionBrowserNotification = NSNotification.Name("UIWindowWillExitVersionBrowserNotification")
+
+    /// A notification that the window object exited version browser mode.
+    public static let didExitVersionBrowserNotification = NSNotification.Name("UIWindowDidExitVersionBrowserNotification")
+
+    /// A notification that the window object backing properties changed.
+    public static let didChangeBackingPropertiesNotification = NSNotification.Name("UIWindowDidChangeBackingPropertiesNotification")
+
+    /// A notification that the window object’s occlusion state changed.
+    public static let didChangeOcclusionStateNotification = NSNotification.Name("UIWindowDidChangeOcclusionStateNotification")
+}
+
+extension NSWindow {
+    fileprivate func _glfwCreateWindow() {
+        guard let windowRef = glfwCreateWindow(200, 200, "Hello, World!", nil, nil) else {
+            fatalError("Fail to create a GLFW Window")
+        }
+
+        self.windowRef  = windowRef
     }
 }

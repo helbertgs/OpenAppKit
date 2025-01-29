@@ -1,7 +1,7 @@
 import Foundation
 
 /// A structure that contains a point in a two-dimensional coordinate system.
-@MainActor public struct CGPoint: Equatable, Hashable {
+public struct CGPoint: Equatable, Hashable, Sendable {
 
     // MARK: - Geometric Properties
 
@@ -54,7 +54,7 @@ extension CGPoint {
     }
 }
 
-extension CGPoint: @preconcurrency Encodable {
+extension CGPoint: Encodable {
     /// Encodes this value into the given encoder.
     /// 
     /// If the value fails to encode anything, encoder will encode an empty keyed container in its place.
@@ -67,7 +67,7 @@ extension CGPoint: @preconcurrency Encodable {
     }
 }
 
-extension CGPoint: @preconcurrency Decodable {
+extension CGPoint: Decodable {
     /// Creates a new instance by decoding from the given decoder.
     /// 
     /// This initializer throws an error if reading from the decoder fails, or if the data read is corrupted or otherwise invalid.

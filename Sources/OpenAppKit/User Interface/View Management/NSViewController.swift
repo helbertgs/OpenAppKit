@@ -51,7 +51,9 @@ open class NSViewController: NSResponder {
     /// It then employs the NSNib class to instantiate the specified nib file via the instantiate(withOwner:topLevelObjects:) method, providing the view controller object as the owner parameter.
     open func loadView() {
         print("\(Self.self).\(#function)")
-        view = .init(frame: .zero)
+        if view == nil {
+            self.view = .init(frame: .zero)
+        }
         isViewLoaded = true
         viewDidLoad()
     }

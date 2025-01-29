@@ -6,7 +6,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var window: NSWindow?
 
     func applicationDidFinishLaunching(_ application: NSApplication) {
-        self.window = NSWindow(contentViewController: .init(nibName: nil, bundle: nil))
+        let contentViewController = NSViewController(nibName: nil, bundle: nil)
+        let view = NSView(frame: .init(x: 0, y: 0, width: 900, height: 450))
+
+        contentViewController.view = view
+
+        self.window = NSWindow(contentViewController: contentViewController)
         self.window?.makeKeyAndOrderFront(nil)
     }
 }

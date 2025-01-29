@@ -4,7 +4,7 @@ import Foundation
 /// 
 /// A CGSize structure is sometimes used to represent a distance vector, rather than a physical size. As a vector, its values can be negative. 
 /// To normalize a CGRect structure so that its size is represented by positive values, call the CGRectStandardize(_:) function.
-@MainActor public struct CGSize: Equatable, Hashable {
+public struct CGSize: Equatable, Hashable, Sendable {
 
     // MARK: - Geometric Properties
 
@@ -39,6 +39,15 @@ import Foundation
         self.height = Double(height)
     }
 
+    /// Creates a size with specified as integer values.
+    /// - Parameters:
+    ///   - width: A width value.
+    ///   - height: A height value.
+    public init(width: Int32, height: Int32) {
+        self.width = Double(width)
+        self.height = Double(height)
+    }
+
     // MARK: - Transforming Sizes
 
     /// Returns the height and width resulting from a transformation of an existing height and width.
@@ -57,7 +66,7 @@ extension CGSize {
     }
 }
 
-extension CGSize: @preconcurrency Encodable {
+extension CGSize: Encodable {
     /// Encodes this value into the given encoder.
     /// 
     /// If the value fails to encode anything, encoder will encode an empty keyed container in its place.
@@ -70,7 +79,7 @@ extension CGSize: @preconcurrency Encodable {
     }
 }
 
-extension CGSize: @preconcurrency Decodable {
+extension CGSize: Decodable {
     /// Creates a new instance by decoding from the given decoder.
     /// 
     /// This initializer throws an error if reading from the decoder fails, or if the data read is corrupted or otherwise invalid.

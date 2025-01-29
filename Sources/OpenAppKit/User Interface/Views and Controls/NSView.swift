@@ -1,4 +1,4 @@
-    import OpenCoreAnimation
+import OpenCoreAnimation
 import OpenCoreImage
 import OpenCoreGraphics
 import Foundation
@@ -21,7 +21,7 @@ import Foundation
     /// Initializes a view using from data in the specified coder object.
     /// - Parameter coder: The coder object that contains the view’s configuration details.
     public init?(coder: NSCoder) {
-        nil
+        fatalError("not implemented yet")
     }
 
     /// Restores the view to an initial state so that it can be reused.
@@ -105,10 +105,8 @@ import Foundation
     public func addSubview(_ aView: NSView) {
         print("\(Self.self).\(#function)")
 
-        if let aSuperview = aView.superview {
-            aView.removeFromSuperview()
-            viewWillMove(toSuperview: self)
-        }
+        aView.removeFromSuperview()
+        viewWillMove(toSuperview: self)
 
         aView.nextResponder = self
         subviews.append(aView)
@@ -265,7 +263,7 @@ import Foundation
     /// For more information, see the ``frameRotation`` property.
     /// 
     /// Changing the value of this property results in the posting of an ``frameDidChangeNotification`` to the default notification center if the view is configured to do so.
-    public var frame: OpenCoreGraphics.CGRect = .zero
+    public var frame: OpenCoreGraphics.CGRect
 
     /// Sets the origin of the view’s frame rectangle to the specified point, effectively repositioning it within its superview.
     /// 
