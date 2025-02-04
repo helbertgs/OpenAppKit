@@ -22,7 +22,7 @@ open class CALayer {
     /// This is the designated initializer for layer objects that are not in the presentation layer.
     /// - Returns: An initialized CALayer object.
     public init() {
-        fatalError("not implemented yet")
+        // fatalError("not implemented yet")
     }
 
     /// Override to copy or initialize custom fields of the specified layer.
@@ -205,7 +205,7 @@ open class CALayer {
     /// 
     /// The value in this property must be in the range 0.0 (transparent) to 1.0 (opaque). 
     /// The default value of this property is 0.0.
-    public var shadowOpacity: Float
+    public var shadowOpacity: Float = 0.0
 
     /// The blur radius (in points) used to render the layer’s shadow.
     /// 
@@ -506,7 +506,11 @@ open class CALayer {
     /// If the array in the sublayers property is nil, calling this method creates an array for that property and adds the specified layer to it.
     /// - Parameter layer: The layer to be added.
     public func addSublayer(_ layer: CALayer) {
-        fatalError("not implemented yet")
+        if sublayers == nil {
+            sublayers = []
+        }
+
+        sublayers?.append(layer)
     }
 
     /// Detaches the layer from its parent layer.
@@ -514,7 +518,7 @@ open class CALayer {
     /// You can use this method to remove a layer (and all of its sublayers) from a layer hierarchy. 
     /// This method updates both the superlayer’s list of sublayers and sets this layer’s ``superlayer`` property to nil.
     public func removeFromSuperlayer() {
-        fatalError("not implemented yet")
+        superlayer?.sublayers?.removeAll { $0 === self }
     }
 
     /// Inserts the specified layer into the receiver’s list of sublayers at the specified index.
@@ -522,7 +526,11 @@ open class CALayer {
     ///   - layer: The sublayer to be inserted into the current layer.
     ///   - index: The index at which to insert layer. This value must be a valid 0-based index into the ``sublayers`` array.
     public func insertSublayer(_ layer: CALayer, at index: Int) {
-        fatalError("not implemented yet")
+        if sublayers == nil {
+            sublayers = []
+        }
+
+        sublayers?.insert(layer, at: index)
     }
 
     /// Inserts the specified sublayer below a different sublayer that already belongs to the receiver.
@@ -532,7 +540,11 @@ open class CALayer {
     ///   - layer: The sublayer to be inserted into the current layer.
     ///   - sibling: An existing sublayer in the current layer. The layer in aLayer is inserted before this layer in the ``sublayers`` array, and thus appears behind it visually.
     public func insertSublayer(_ layer: CALayer, below sibling: CALayer?) {
-        fatalError("not implemented yet")
+        guard let index = sublayers?.firstIndex(where: { $0 === sibling }) else {
+            fatalError("")
+        }
+
+        sublayers?.insert(layer, at: index - 1)
     }
 
     /// Inserts the specified sublayer above a different sublayer that already belongs to the receiver.
@@ -542,7 +554,11 @@ open class CALayer {
     ///   - layer: The sublayer to be inserted into the current layer.
     ///   - sibling: An existing sublayer in the current layer. The layer in aLayer is inserted after this layer in the ``sublayers`` array, and thus appears in front of it visually.
     public func insertSublayer(_ layer: CALayer, above sibling: CALayer?) {
-        fatalError("not implemented yet")
+        guard let index = sublayers?.firstIndex(where: { $0 === sibling }) else {
+            fatalError("")
+        }
+
+        sublayers?.insert(layer, at: index + 1)
     }
 
     /// Replaces the specified sublayer with a different layer object.
@@ -552,7 +568,11 @@ open class CALayer {
     ///   - oldLayer: The layer to be replaced.
     ///   - newLayer: The layer with which to replace oldLayer.
     public func replaceSublayer(_ oldLayer: CALayer, with newLayer: CALayer) {
-        fatalError("not implemented yet")
+        guard let index = sublayers?.firstIndex(where: { $0 === oldLayer }) else {
+            fatalError("")
+        }
+
+        sublayers?[index] = newLayer
     }
 
     // MARK: - Updating Layer Display
@@ -563,13 +583,13 @@ open class CALayer {
     /// This results in the layer potentially calling either the ``display(_:)`` or ``draw(_:in:)`` method of its delegate. 
     /// The existing content in the layer’s contents property is removed to make way for the new content.
     public func setNeedsDisplay() {
-        fatalError("not implemented yet")
+        needsDisplay = true
     }
 
     /// Marks the region within the specified rectangle as needing to be updated.
     /// - Parameter rect: The rectangular region of the layer to mark as invalid. You must specify this rectangle in the layer’s own coordinate system.
     public func setNeedsDisplay(_ rect: OpenCoreGraphics.CGRect) {
-        fatalError("not implemented yet")
+        needsDisplay = true
     }
 
     /// A Boolean indicating whether the layer contents must be updated when its bounds rectangle changes.
@@ -583,14 +603,14 @@ open class CALayer {
     /// Doing so is generally not needed, though. 
     /// The preferred way to update a layer is to call ``setNeedsDisplay()`` and let the system update the layer during the next cycle.
     public func displayIfNeeded() {
-        fatalError("not implemented yet")
+        if needsDisplay {
+            self.display()
+        }
     }
 
     /// Returns a Boolean indicating whether the layer has been marked as needing an update.
     /// - Returns: true if the layer needs to be updated.
-    public func needsDisplay() -> Bool {
-        fatalError("not implemented yet")
-    }
+    public private(set) var needsDisplay: Bool = false
 
     /// Returns a Boolean indicating whether changes to the specified key require the layer to be redisplayed.
     /// 
@@ -659,7 +679,7 @@ open class CALayer {
     /// 
     /// During the next update cycle, the system calls the ``layoutSublayers()`` method of any layers requiring layout updates.
     public func setNeedsLayout() {
-        fatalError("not implemented yet")
+        needsLayout = true
     }
 
     /// Tells the layer to update its layout.
@@ -670,7 +690,9 @@ open class CALayer {
     /// The default implementation of this method calls the ``layoutSublayers(of:)`` method of the layer’s delegate object. 
     /// If there is no delegate object, or the delegate does not implement that method, this method calls the ``layoutSublayers(of:)`` method of the object in the ``layoutManager`` property.
     public func layoutSublayers() {
-        fatalError("not implemented yet")
+        sublayers?.forEach { 
+            $0.layoutIfNeeded()
+        }
     }
 
     /// Recalculate the receiver’s layout, if required.
@@ -683,9 +705,7 @@ open class CALayer {
 
     /// Returns a Boolean indicating whether the layer has been marked as needing a layout update.
     /// - Returns: true if the layer has been marked as requiring a layout update.
-    public func needsLayout() -> Bool {
-        fatalError("not implemented yet")
-    }
+    public private(set) var needsLayout: Bool = false
 
     /// A bitmask defining how the layer is resized when the bounds of its superlayer changes.
     /// 
@@ -730,7 +750,7 @@ open class CALayer {
     /// 
     /// macOS apps can use this property to access their layer-based constraints. 
     /// Before constraints can be applied, you must also assign a ``CAConstraintLayoutManager`` object to the ``layoutManager`` property of the layer.
-    public var constraints: [CAConstraint]?
+    public private(set) var constraints: [CAConstraint]?
 
     /// Adds the specified constraint to the layer.
     /// 
@@ -738,7 +758,11 @@ open class CALayer {
     /// Before constraints can be applied, you must also assign a ``CAConstraintLayoutManager`` object to the ``layoutManager`` property of the layer.
     /// - Parameter constraint: The constraint object to add to the receiver’s array of constraint objects. 
     public func addConstraint(_ constraint: CAConstraint) {
-        fatalError("not implemented yet")
+        if constraints == nil {
+            constraints = []
+        }
+
+        constraints?.append(constraint)
     }
 
     // MARK: - Getting the Layer’s Actions
@@ -754,17 +778,17 @@ open class CALayer {
     /// This method searches for the layer’s associated actions in the following order:
     /// 1. If the layer has a delegate that implements the action(for:forKey:) method, the layer calls that method. The delegate must do one of the following:
     /// 2. Return the action object for the given key.
-    /// 3. Return the NSNull object if it does not handle the action.
+    /// 3. Return the nil object if it does not handle the action.
     /// 4. The layer looks in the layer’s actions dictionary for a matching key/action pair.
     /// 5. The layer looks in the style dictionary for an actions dictionary for a matching key/action pair.
     /// 6. The layer calls the defaultAction(forKey:) class method to look for any class-defined actions.
     /// 
-    /// If any of the above steps returns an instance of NSNull, it is converted to nil before continuing.
+    /// If any of the above steps returns an instance of nil, it is converted to nil before continuing.
     /// When an action object is invoked it receives three parameters: the name of the event, the object on which the event happened (the layer), and a dictionary of named arguments specific to each event kind.
     /// - Parameter event: The identifier of the action.
     /// - Returns: Returns the object that provides the action for key. The object must implement the CAAction protocol.
     public func action(forKey event: String) -> (any CAAction)? {
-        fatalError("not implemented yet")
+        actions?[event]
     }
 
     /// A dictionary containing layer actions.

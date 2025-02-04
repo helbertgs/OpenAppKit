@@ -976,6 +976,7 @@ import Foundation
     // MARK: - Layout
     // MARK: - Managing the view’s content
 
+
     // MARK: - Respecting the View’s Safe Area
 
     /// A rectangle in the view’s coordinate system that contains the unobscured portion of the view.
@@ -1138,6 +1139,735 @@ import Foundation
         fatalError("Not implemented yet")
     }
 
+    // MARK: - Managing the View’s Constraints
+    
+    /// Returns the constraints held by the view.
+    public private(set) var constraints: [NSLayoutConstraint] = []
+
+    /// Adds a constraint on the layout of the receiving view or its subviews.
+    ///
+    /// The constraint must involve only views that are within scope of the receiving view.
+    /// Specifically, any views involved must be either the receiving view itself, or a subview of the receiving view.
+    /// Constraints that are added to a view are said to be held by that view.
+    /// The coordinate system used when evaluating the constraint is the coordinate system of the view that holds the constraint.
+    /// - Parameter constraint: The constraint to be added to the view. The constraint may only reference the view itself or its subviews.
+    public func addConstraint(_ constraint: NSLayoutConstraint) {
+        fatalError("Not implemented yet")
+    }
+    
+    /// Adds multiple constraints on the layout of the receiving view or its subviews.
+    ///
+    /// All constraints must involve only views that are within scope of the receiving view.
+    /// Specifically, any views involved must be either the receiving view itself, or a subview of the receiving view.
+    /// Constraints that are added to a view are said to be held by that view.
+    /// The coordinate system used when evaluating each constraint is the coordinate system of the view that holds the constraint.
+    /// - Parameter constraints: An array of constraints to be added to the view. All constraints may only reference the view itself or its subviews.
+    public func addConstraints(_ constraints: [NSLayoutConstraint]) {
+        fatalError("Not implemented yet")
+    }
+    
+    /// Removes the specified constraint from the view.
+    /// - Parameter constraint: The constraint to remove. Removing a constraint not held by the view has no effect.
+    public func removeConstraint(_ constraint: NSLayoutConstraint) {
+        fatalError("Not implemented yet")
+    }
+    
+    /// Removes the specified constraints from the view.
+    /// - Parameter constraints: The constraints to remove.
+    public func removeConstraints(_ constraints: [NSLayoutConstraint]) {
+        fatalError("Not implemented yet")
+    }
+
+    // MARK: - Measuring in Auto Layout
+
+    /// The minimum size of the view that satisfies the constraints it holds.
+    ///
+    /// OpenAppKit sets this property to the best size available for the view, considering all of the constraints it and its subviews hold and satisfying a preference to make the view as small as possible.
+    /// The size values in this property are never negative.
+    public var fittingSize: OpenCoreGraphics.CGSize = .zero
+
+    /// The natural size for the receiving view, considering only properties of the view itself.
+    ///
+    /// The default width and height values of this property are set to noIntrinsicMetric.
+    /// For a custom view, you can override this property and use it to communicate what size you would like your view to be based on its content.
+    /// You might do this in cases where the layout system cannot determine the size of the view based solely on its current constraints.
+    /// For example, a text field might override this method and return an intrinsic size based on the text it contains.
+    /// The intrinsic size you supply must be independent of the content frame, because there’s no way to dynamically communicate a changed width to the layout system based on a changed height.
+    /// If your custom view has no intrinsic size for a given dimension, you can set the corresponding dimension to the noIntrinsicMetric.
+    public var intrinsicContentSize: OpenCoreGraphics.CGSize = .zero
+    
+    /// Invalidates the view’s intrinsic content size.
+    ///
+    /// Call this when something changes in your custom view that invalidates its intrinsic content size.
+    /// This allows the constraint-based layout system to take the new intrinsic content size into account in its next layout pass.
+    public func invalidateIntrinsicContentSize() {
+        fatalError("Not implemented yet")
+    }
+    
+    /// Returns the priority with which a view resists being made smaller than its intrinsic size.
+    ///
+    /// The constraint-based layout system uses these priorities when determining the best layout for views that are encountering constraints that would require them to be smaller than their intrinsic size.
+    ///  Subclasses should not override this method. Instead, custom views should set default values for their content on creation, typically to ``defaultLow`` or ``defaultHigh``.
+    /// - Parameter orientation: The orientation of the dimension of the view that might be reduced.
+    /// - Returns: The priority with which the view should resist being compressed from its intrinsic size in the specified orientation.
+    public func contentCompressionResistancePriority(for orientation: NSLayoutConstraint.Orientation) -> NSLayoutConstraint.Priority {
+        fatalError("Not implemented yet")
+    }
+    
+    /// Sets the priority with which a view resists being made smaller than its intrinsic size.
+    ///
+    /// Custom views should set default values for both orientations on creation, based on their content, typically to defaultLow or defaultHigh.
+    /// When creating user interfaces, the layout designer can modify these priorities for specific views when the overall layout design requires different tradeoffs than the natural priorities of the views being used in the interface.
+    /// Subclasses should not override this method.
+    /// - Parameters:
+    ///   - priority: The new priority.
+    ///   - orientation: The orientation for which the compression resistance priority should be set.
+    public func setContentCompressionResistancePriority(_ priority: NSLayoutConstraint.Priority, for orientation: NSLayoutConstraint.Orientation) {
+        fatalError("Not implemented yet")
+    }
+    
+    /// Returns the priority with which a view resists being made larger than its intrinsic size.
+    ///
+    /// The constraint-based layout system uses these priorities when determining the best layout for views that are encountering constraints that would require them to be larger than their intrinsic size.
+    /// Subclasses should not override this method. Instead, custom views should set default values for their content on creation, typically to ``defaultLow`` or ``defaultHigh``.
+    /// - Parameter orientation: The orientation of the dimension of the view that might be enlarged.
+    /// - Returns: The priority with which the view should resist being enlarged from its intrinsic size in the specified orientation.
+    public func contentHuggingPriority(for orientation: NSLayoutConstraint.Orientation) -> NSLayoutConstraint.Priority {
+        fatalError("Not implemented yet")
+    }
+    
+    /// Sets the priority with which a view resists being made larger than its intrinsic size.
+    ///
+    /// Custom views should set default values for both orientations on creation, based on their content, typically to ``defaultLow`` or ``defaultHigh``.
+    /// When creating user interfaces, the layout designer can modify these priorities for specific views when the overall layout design requires different tradeoffs than the natural priorities of the views being used in the interface.
+    /// Subclasses should not override this method.
+    /// - Parameters:
+    ///   - priority: The new priority.
+    ///   - orientation: The orientation for which the content hugging priority should be set.
+    public func setContentHuggingPriority(_ priority: NSLayoutConstraint.Priority, for orientation: NSLayoutConstraint.Orientation) {
+        fatalError("Not implemented yet")
+    }
+
+    /// A value that tells the layout system to ignore the intrinsic size value for a given dimension.
+    ///
+    /// Specify this value if a view doesn’t have an intrinsic height or width.
+    /// For example, a horizontal slider has an intrinsic height but might have no intrinsic width.
+    public static let noIntrinsicMetric: Float = 0
+
+    // MARK: - Managing Layout Guides
+    
+    /// The array of layout guide objects owned by this view.
+    public private(set) var layoutGuides: [NSLayoutGuide] = []
+    
+    /// A layout guide that provides the recommended amount of padding for content inside of a view.
+    ///
+    /// To ensure you pad your view’s content by the correct amount, constrain against the anchors of the layout margins guide on all sides.
+    /// The system automatically updates the guide when a view becomes the content view.
+    ///
+    /// For views that aren’t the content view, the layout margins guide is equivalent to the system’s standard spacing from the safe area.
+    public var layoutMarginsGuide: NSLayoutGuide = .init()
+
+    /// Adds the provided layout guide to the view.
+    ///
+    /// This method adds the provided layout guide to the end of the view’s layoutGuides array.
+    /// It also assigns the view to the guide’s owningView property. Each guide can have only one owning view.
+    /// After the guide has been added to a view, it can participate in Auto Layout constraints with that view’s hierarchy.
+    /// - Parameter guide: The layout guide to be added.
+    public func addLayoutGuide(_ guide: NSLayoutGuide) {
+        fatalError("Not implemented yet")
+    }
+    
+    /// Removes the provided layout guide from the view.
+    ///
+    /// This method removes the provided layout guide from the view’s ``layoutGuides`` array.
+    /// It also sets the guide’s ``owningView`` property to nil.
+    /// Finally, it removes any constraints to the layout guide.
+    ///
+    /// Layout guides cannot participate in Auto Layout constraints unless they are added by a view in the view hierarchy.
+    /// - Parameter guide: The layout guide to be removed.
+    public func removeLayoutGuide(_ guide: NSLayoutGuide) {
+        fatalError("Not implemented yet")
+    }
+
+    // MARK: - Aligning Views with Auto Layout
+
+    /// The insets (in points) from the view’s frame that define its content rectangle.
+    ///
+    /// The default value is an ``NSEdgeInsets`` structure with the value 0 for each component.
+    /// Custom views that draw ornamentation around their content can override this property and return insets that align with the edges of the content, excluding the ornamentation.
+    /// This allows the constraint-based layout system to align views based on their content, rather than just their frame.
+    ///
+    /// Custom views whose content location can’t be expressed by a simple set of insets should override ``alignmentRect(forFrame:)`` and ``frame(forAlignmentRect:)`` to describe their custom transform between alignment rectangle and frame.
+    public private(set) var alignmentRectInsets: NSEdgeInsets = .init()
+
+    /// The distance (in points) between the bottom of the view’s alignment rectangle and its baseline.
+    ///
+    /// The default value of this property is 0.
+    /// For views that contain text or other content whose layout benefits from having a custom baseline, you can override this property and provide the correct distance between the bottom of the view’s alignment rectangle and that baseline.
+    public private(set) var baselineOffsetFromBottom: Float = 0
+
+    /// The distance (in points) between the top of the view’s alignment rectangle and its topmost baseline.
+    ///
+    /// The default value of this property is 0.
+    /// For views that contain text or other content whose layout benefits from having a custom baseline, you can override this property and provide the correct distance between the top of the view’s alignment rectangle and the baseline of the top row of text.
+    public private(set) var firstBaselineOffsetFromTop: Float = 0
+
+    /// The distance (in points) between the bottom of the view’s alignment rectangle and its bottommost baseline.
+    ///
+    /// The default value of this property is 0.
+    /// For views that contain text or other content whose layout benefits from having a custom baseline, you can override this property and provide the correct distance between the bottom of the view’s alignment rectangle and the baseline of the bottom row of text.
+    public private(set) var lastBaselineOffsetFromBottom: CGFloat = 0
+
+    /// Returns the view’s alignment rectangle for a given frame.
+    ///
+    /// The constraint-based layout system uses alignment rectangles to align views, rather than their frame.
+    /// This allows custom views to be aligned based on the location of their content while still having a frame that encompasses any ornamentation they need to draw around their content, such as shadows or reflections.
+    ///
+    /// The default implementation returns the view’s frame modified by the insets specified by the view’s ``alignmentRectInsets`` method.
+    /// Most custom views can override ``alignmentRectInsets`` to specify the location of their content within their frame.
+    /// Custom views that require arbitrary transformations can override ``alignmentRect(forFrame:) ``and ``frame(forAlignmentRect:)`` to describe the location of their content.
+    /// These two methods must always be inverses of each other.
+    /// - Parameter frame: The frame whose corresponding alignment rectangle is desired.
+    /// - Returns: The alignment rectangle for the specified frame.
+    public func alignmentRect(forFrame frame: OpenCoreGraphics.CGRect) -> OpenCoreGraphics.CGRect {
+        fatalError("Not implemented yet")
+    }
+    
+    /// Returns the view’s frame for a given alignment rectangle.
+    ///
+    /// The constraint-based layout system uses alignment rectangles to align views, rather than their frame.
+    /// This allows custom views to be aligned based on the location of their content while still having a frame that encompasses any ornamentation they need to draw around their content, such as shadows or reflections.
+    ///
+    /// The default implementation returns ``alignmentRect`` modified by the insets specified by the view’s ``alignmentRectInsets`` method.
+    /// Most custom views can override ``alignmentRectInsets`` to specify the location of their content within their frame.
+    /// Custom views that require arbitrary transformations can override ``alignmentRect(forFrame:)`` and ``frame(forAlignmentRect:)`` to describe the location of their content.
+    /// These two methods must always be inverses of each other.
+    /// - Parameter alignmentRect: The alignment rectangle whose corresponding frame is desired.
+    /// - Returns: The frame for the specified alignment rectangle
+    public func frame(forAlignmentRect alignmentRect: OpenCoreGraphics.CGRect) -> OpenCoreGraphics.CGRect {
+        fatalError("Not implemented yet")
+    }
+
+    // MARK: - Triggering Auto Layout
+
+    /// A Boolean value indicating whether the view needs a layout pass before it can be drawn.
+    ///
+    /// true if the view needs a layout pass, false otherwise.
+    ///
+    /// You only ever need to change the value of this property if your view implements the ``layout()`` method because it has custom layout that is not expressible in the constraint-based layout system.
+    /// Setting this property to true lets the system know that the view’s layout needs to be updated before it is drawn.
+    /// The system checks the value of this property prior to applying constraint-based layout rules for the view.
+    public var needsLayout: Bool = false
+    
+    /// Perform layout in concert with the constraint-based layout system.
+    ///
+    /// Override this method if your custom view needs to perform custom layout not expressible using the constraint-based layout system.
+    /// In this case you are responsible for setting needsLayout to true when something that impacts your custom layout changes.
+    ///
+    /// You may not invalidate any constraints as part of your layout phase, nor invalidate the layout of your superview or views outside of your view hierarchy.
+    /// You also may not invoke a drawing pass as part of layout.
+    ///
+    /// You must call ``super.layout()`` as part of your implementation.
+    public func layout() {
+        fatalError("Not implemented yet")
+    }
+    
+    /// Updates the layout of the receiving view and its subviews based on the current views and constraints.
+    ///
+    /// Before displaying a view that uses constraints-based layout the system invokes this method to ensure that the layout of the view and its subviews is up to date.
+    /// This method updates the layout if needed, first invoking ``updateConstraintsForSubtreeIfNeeded()`` to ensure that all constraints are up to date.
+    /// This method is called automatically by the system, but may be invoked manually if you need to examine the most up to date layout.
+    ///
+    /// Subclasses should not override this method.
+    public func layoutSubtreeIfNeeded() {
+        fatalError("Not implemented yet")
+    }
+    
+    /// A Boolean value indicating whether the view’s constraints need to be updated.
+    ///
+    /// When a property of your view changes in a way that would impact constraints, set the value of this property to ``true`` to indicate that the constraints need to be updated at some point in the future.
+    /// The next time the layout process happens, the constraint-based layout system uses the value of this property to determine whether it needs to call ``updateConstraints()`` on the view. Use this as an optimization tool to batch constraint changes.
+    /// Updating constraints all at once just before they are needed ensures that you don’t needlessly recalculate constraints when multiple changes are made to your view in between layout passes.
+    public var needsUpdateConstraints: Bool = false
+    
+    /// Update constraints for the view.
+    ///
+    /// Override this method to optimize changes to your constraints.
+    ///
+    /// It is almost always cleaner and easier to update a constraint immediately after the affecting change has occurred.
+    /// For example, if you want to change a constraint in response to a button press, make that change directly in the button’s action method.
+    /// You should only override this method when changing constraints in place is too slow, or when a view is producing a number of redundant changes.
+    ///
+    /// To schedule a change, set the view’s ``needsUpdateConstraints`` property to ``true``.
+    /// The system then calls your implementation of ``updateConstraints()`` before the layout occurs.
+    /// This lets you verify that all necessary constraints for your content are in place at a time when your custom view’s properties are not changing.
+    ///
+    /// Your implementation must be as efficient as possible.
+    /// Do not deactivate all your constraints, then reactivate the ones you need.
+    /// Instead, your app must have some way of tracking your constraints, and validating them during each update pass.
+    /// Only change items that need to be changed.
+    /// During each update pass, you must ensure that you have the appropriate constraints for the app’s current state.
+    ///
+    /// Do not set the ``needsUpdateConstraints`` property inside your implementation.
+    /// Setting ``needsUpdateConstraints`` to true schedules another update pass, creating a feedback loop.
+    ///
+    /// Call ``super.updateConstraints()`` as the final step in your implementation.
+    public func updateConstraints() {
+        fatalError("Not implemented yet")
+    }
+    
+    /// Updates the constraints for the receiving view and its subviews.
+    ///
+    /// Whenever a new layout pass is triggered for a view, the system invokes this method to ensure that any constraints for the view and its subviews are updated with information from the current view hierarchy and its constraints.
+    /// This method is called automatically by the system, but may be invoked manually if you need to examine the most up to date constraints.
+    ///
+    /// Subclasses should not override this method.
+    public func updateConstraintsForSubtreeIfNeeded() {
+        fatalError("Not implemented yet")
+    }
+
+    // MARK: - Enabling and Disabling Constraints
+
+
+    /// A Boolean value that indicates whether the view’s horizontal size constraints are active.
+    ///
+    ///  Setting this property to ``false`` lets Auto Layout optimize layout operations by ignoring the view’s intrinsic content size.
+    ///  The default value of this property is ``true``, which causes the system to take the view’s content size into account.
+    public var isHorizontalContentSizeConstraintActive: Bool = true
+    
+    /// A Boolean value that indicates whether the view’s vertical size constraints are active.
+    ///
+    /// Setting this property to ``false`` lets Auto Layout optimize layout operations by ignoring the view’s intrinsic content size.
+    /// The default value of this property is ``true``, which causes the system to take the view’s content size into account.
+    public var isVerticalContentSizeConstraintActive: Bool = true
+
+    // MARK: - Debugging Auto Layout
+    
+    /// A Boolean value indicating whether the constraints impacting the layout of the view incompletely specify the location of the view.
+    ///
+    /// The value of this property is ``true`` when the view’s location or size cannot be determined definitively based on the current constraints.
+    ///
+    /// Accessing this property engages the layout engine to determine whether any other frame would also satisfy the constraints on the view.
+    /// Because this process involves laying out the view, accessing the property can be an expensive operation but it can also provide useful debugging information.
+    /// OpenAppKit automatically calls this method when a window is asked to visualize its constraints using the ``visualizeConstraints(_:)`` method.
+    public private(set) var hasAmbiguousLayout: Bool = false
+
+    /// Returns the constraints impacting the layout of the view for a given orientation.
+    ///
+    /// The returned set of constraints may not all include the view explicitly.
+    /// Constraints that impact the location of the view implicitly may also be included.
+    /// While this provides a good starting point for debugging, there is no guarantee that the returned set of constraints will include all of the constraints that have an impact on the view’s layout in the given orientation.
+    ///
+    /// This method should only be used for debugging constraint-based layout.
+    /// No application should ship with calls to this method as part of its operation.
+    ///
+    /// This property should be used only for debugging constraint-based layout. Do not access this property in the shipping version of your app.
+    /// - Parameter orientation: The direction of the dimension for which the constraints should be found.
+    /// - Returns: The constraints impacting the layout of the view for the specified orientation.
+    public func constraintsAffectingLayout(for orientation: NSLayoutConstraint.Orientation) -> [NSLayoutConstraint] {
+        fatalError("Not implemented yet")
+    }
+
+    /// Randomly changes the frame of a view with an ambiguous layout between the different valid values.
+    ///
+    /// This method randomly changes the frame of a view with an ambiguous layout between its different valid values, causing the view to move in the interface.
+    /// This makes it easy to visually identify what the valid frames are and may enable the developer to discern what constraints need to be added to the layout to fully specify a location for the view.
+    ///
+    /// This method should only be used for debugging constraint-based layout.
+    /// No application should ship with calls to this method as part of its operation.
+    public func exerciseAmbiguityInLayout() {
+        fatalError("Not implemented yet")
+    }
+
+    // MARK: - Resizing Subviews
+    
+    /// A Boolean value indicating whether the view applies the autoresizing behavior to its subviews when its frame size changes.
+    ///
+    /// When the value of this property is ``true`` and the view’s frame changes, the view automatically calls the ``resizeSubviews(withOldSize:)`` method to facilitate the resizing of its subviews.
+    /// When the value of this property is ``false``, the view does not autoresize its subviews.
+    ///
+    /// The default value of this property is ``true``.
+    public var autoresizesSubviews: Bool = true
+
+    /// The options that determine how the view is resized relative to its superview.
+    ///
+    /// The value of this property is an integer bit mask specified by combining the options described in ``NSView.AutoresizingMask``.
+    /// This mask is used by the ``resize(withOldSuperviewSize:)`` method when the view needs to be resized.
+    ///
+    /// If the autoresizing mask is set to NSViewNotSizable (that is, if none of the options are set), the view does not resize at all.
+    /// When more than one option along an axis is set, the ``resize(withOldSuperviewSize:)`` method distributes the size difference as evenly as possible among the flexible portions.
+    /// For example, if NSViewWidthSizable and NSViewMaxXMargin are set and the superview’s width has increased by 10.0 points, the view’s frame and right margin are each widened by 5.0 points.
+    public var autoresizingMask: NSView.AutoresizingMask = .none
+    
+    /// Informs the view’s subviews that the view’s bounds rectangle size has changed.
+    ///
+    /// If the view is configured to autoresize its subviews, this method is automatically invoked by any method that changes the view’s frame size.
+    ///
+    /// The default implementation sends ``resize(withOldSuperviewSize:)`` to the view’s subviews with oldBoundsSize as the argument.
+    /// You shouldn’t invoke this method directly, but you can override it to define a specific resizing behavior.
+    /// - Parameter oldSize: The previous size of the view’s bounds rectangle.
+    public func resizeSubviews(withOldSize oldSize: OpenCoreGraphics.CGSize) {
+        fatalError("Not implemented yet")
+    }
+    
+    /// Informs the view that the bounds size of its superview has changed.
+    ///
+    /// This method is normally invoked automatically from resizeSubviews(withOldSize:).
+    ///
+    /// The default implementation resizes the view according to the autoresizing options specified by the autoresizingMask property.
+    /// You shouldn’t invoke this method directly, but you can override it to define a specific resizing behavior.
+    ///
+    /// If you override this method and call super as part of your implementation, you should be sure to call super before making changes to the receiving view’s frame yourself.
+    /// - Parameter oldSize: The previous size of the superview’s bounds rectangle.
+    public func resize(withOldSuperviewSize oldSize: OpenCoreGraphics.CGSize) {
+        fatalError("Not implemented yet")
+    }
+
+    // MARK: - Drawing
+    // MARK: - Drawing the View’s Content
+    
+    /// Updates the view’s content by modifying its underlying layer.
+    ///
+    /// You use this method to optimize the rendering of your view in situations where you can represent your views contents entirely using a layer object.
+    /// If your view’s ``wantsUpdateLayer`` property is ``true``, the view calls this method instead of ``draw(_:)`` during the view update cycle.
+    /// Custom views can override this method and use it to modify the properties of the underlying layer object.
+    /// Modifying layer properties is a much more efficient way to update your view than is redrawing its content each time something changes.
+    ///
+    /// When you want to update the contents of your layer, mark the view as dirty by setting its ``needsDisplay`` property to ``true``.
+    /// Doing so adds the view to the list of views that need to be refreshed during the next update cycle.
+    /// During that update cycle, this method is called if the ``wantsUpdateLayer`` property is still ``true``.
+    ///
+    /// Your implementation of this method should not call super.
+    public func updateLayer() {
+        fatalError("Not implemented yet")
+    }
+
+    /// Overridden by subclasses to draw the view’s image within the specified rectangle.
+    ///
+    /// Use this method to draw the specified portion of your view’s content. Your implementation of this method should be as fast as possible and do as little work as possible.
+    /// The dirtyRect parameter helps you achieve better performance by specifying the portion of the view that needs to be drawn.
+    /// You should always limit drawing to the content inside this rectangle.
+    /// For even better performance, you can call the ``getRectsBeingDrawn(_:count:)`` method and use the list of rectangles returned by that method to limit drawing even further.
+    /// You can also use the ``needsToDraw(_:)`` method test whether objects in a particular rectangle need to be drawn.
+    ///
+    /// The default implementation does nothing.
+    /// Subclasses should override this method if they do custom drawing.
+    /// Prior to calling this method, ``OpenAppKit`` creates an appropriate drawing context and configures it for drawing to the view; you do not need to configure the drawing context yourself.
+    /// If your app manages content using its layer object instead, use the ``updateLayer()`` method to update your layer instead of overriding this method.
+    ///
+    /// If your custom view is a direct ``NSView`` subclass, you do not need to call super.
+    /// For all other views, call super at some point in your implementation so that the parent class can perform any additional drawing.
+    /// - Parameter dirtyRect: A rectangle defining the portion of the view that requires redrawing.
+    /// This rectangle usually represents the portion of the view that requires updating.
+    /// When responsive scrolling is enabled, this rectangle can also represent a nonvisible portion of the view that ``OpenAppKit`` wants to cache.
+    ///
+    /// - Important: If the view’s ``isOpaque`` property is ``true``, the view must completely fill the dirtyRect rectangle with opaque content.
+    public func draw(_ dirtyRect: OpenCoreGraphics.CGRect) {
+        fatalError("Not implemented yet")
+    }
+
+    /// A Boolean value that indicates whether the view, and its subviews, confine their drawing areas to the bounds of the view.
+    /// 
+    /// Setting this value to true causes the view, and its subviews, to clip themselves to the bounds of the view. 
+    /// Setting it to false prevents views and subviews whose frames extend beyond the visible bounds of the view from clipping themselves. 
+    /// A value of false has no effect on ``hitTest(_:)`` but does affect ``visibleRect``, as well as the area drawn inside ``draw(_:)``.
+    ///
+    /// By default this value is ``false``. In macOS 13 and earlier, the default value is ``true``.
+    ///
+    /// Because of this change in default value, views built on macOS 13 and earlier may require layout adjustments such as the following on newer versions of macOS:
+    /// 
+    /// * Showing or hiding UI elements by setting a parent’s frame size to zero. To hide a view hierarchy by shrinking the parent view, or positioning a child view outside a parent’s bounds, set the clipsToBounds property of the parent view to true. 
+    /// Alternatively, set isHidden to true on the parent view instead.
+    /// 
+    /// * Filling the dirtyRect of a view inside ``draw(_:)``.
+    /// It’s a common practice to set the background color on a view by calling ``setFill()`` on a background color and then calling ``fill(using:)`` on the dirtyRect parameter passed into an override of ``draw(_:)``.
+    /// Because the dirtyRect now extends outside your view’s bounds, call ``fill(using:)`` on the view’s bounds instead of the dirtyRect, or set the view’s ``clipsToBounds ``to true.
+    ///
+    /// * Differentiating a view’s bounds from its dirtyRect. 
+    /// Use the dirtyRect parameter passed to ``draw(_:)`` to determine what to draw, not where to draw it.
+    /// Use the view’s bounds to determine the layout of what your view draws.
+    public var clipsToBounds: Bool = false
+
+    /// A Boolean value indicating whether the view can draw its contents on a background thread.
+    ///
+    /// If your view’s ``draw(_:)`` implementation can draw safely on a background thread, set this property to true.
+    /// Doing so gives OpenAppKit the ability to run your view’s drawing code off the app’s main thread, which can improve performance.
+    /// The view’s window must also have its ``allowsConcurrentViewDrawing`` property set to true (the default) for threaded view drawing to occur.
+    public var canDrawConcurrently: Bool = true
+
+    /// The portion of the view that isn’t clipped by its superviews.
+    ///
+    /// Visibility, as reflected by this property, doesn’t account for whether other view or window objects overlap the current view or whether the current view is installed in a window at all.
+    /// This value of this property is ``.zero`` if the current view is effectively hidden.
+    ///
+    /// During a printing operation the visible rectangle is further clipped to the page being imaged.
+    /// ``clipsToBounds`` affects this property.
+    public private(set) var visibleRect: OpenCoreGraphics.CGRect = .zero
+    
+    /// Returns a Boolean value indicating whether the specified rectangle intersects any part of the area that the view is being asked to draw.
+    ///
+    /// You typically send this message from within a ``draw(_:)`` implementation.
+    /// It gives you a convenient way to determine whether any part of a given graphical entity might need to be drawn.
+    /// It is optimized to efficiently reject any rectangle that lies outside the bounding box of the area that the view is being asked to draw in ``draw(_:)``.
+    /// - Parameter rect: A rectangle defining a region of the view.
+    public func needsToDraw(_ rect: NSRect) -> Bool {
+        fatalError("Not implemented yet")
+    }
+
+    /// A Boolean value indicating whether OpenAppKit’s default clipping behavior is in effect.
+    ///
+    /// The default value of this property is ``true``. When the value of this property is ``true``, OpenAppKit sets the current clipping region to the bounds of the view prior to calling that view’s ``draw(_:)`` method.
+    /// Subclasses may override this property and return ``false`` to suppress this default clipping behavior.
+    /// You might do this to avoid the cost of setting up, enforcing, and cleaning up the clipping path. If you do change the value to ``false``, you are responsible for doing your own clipping or constraining drawing appropriately.
+    /// Failure to do so could the view to corrupt the contents of other views in the window.
+    public private(set) var wantsDefaultClipping: Bool = true
+
+    /// Returns a bitmap-representation object suitable for caching the specified portion of the view.
+    ///
+    /// Passing the visible rectangle of the view (self.visibleRect) returns a bitmap suitable for caching the current contents of the view, including all of its descendants.
+    /// - Parameter rect: A rectangle defining the area of the view to be cached.
+    /// - Returns: An autoreleased ``NSBitmapImageRep`` object or ``nil`` if the object could not be created.
+    public func bitmapImageRepForCachingDisplay(in rect: OpenCoreGraphics.CGRect) -> NSBitmapImageRep? {
+        fatalError("Not implemented yet")
+    }
+
+    /// Draws the specified area of the view, and its descendants, into a provided bitmap-representation object.
+    ///
+    /// You are responsible for initializing the bitmap to the desired configuration before calling this method.
+    /// However, once initialized, you can reuse the same bitmap multiple times to refresh the cached copy of your view’s contents.
+    /// The bitmap produced by this method is transparent (that is, has an alpha value of 0) wherever the view and its descendants do not draw any content.
+    /// - Parameters:
+    ///   - rect: A rectangle defining the region to be drawn into ``bitmapImageRep``.
+    ///   - bitmapImageRep: An ``NSBitmapImageRep`` object. For pixel-format compatibility, bitmapImageRep should have been obtained from ``bitmapImageRepForCachingDisplay(in:)``.
+    public func cacheDisplay(in rect: NSRect, to bitmapImageRep: NSBitmapImageRep) {
+        fatalError("Not implemented yet")
+    }
+
+    // MARK: - Drawing the View in Fullscreen Mode
+
+    /// A Boolean value indicating whether the view is in full screen mode.
+    /// 
+    /// The value of this property is ``true`` when the view is in full screen mode or ``false`` when it is not.
+    public var isInFullScreenMode: Bool = false
+    
+    /// Sets the view to full screen mode.
+    ///
+    /// When the ``fullScreenModeApplicationPresentationOptions`` is contained in the options dictionary, the presentation options that were in effect when this method is invoked are not altered, and no displays are captured.
+    /// If you do not wish to capture the screen when going to full screen mode, you can add ``fullScreenModeApplicationPresentationOptions`` to the options dictionary with the value returned by the ``presentationOptions``.
+    ///
+    /// When the ``fullScreenModeApplicationPresentationOptions`` options is specified, exiting full screen mode using ``exitFullScreenMode(options:)`` will restore the previously active ``presentationOptions``.
+    /// - Parameters:
+    ///   - screen: The screen the view should cover.
+    ///   - options: A dictionary of options for the mode. For possible keys, see Full Screen Mode Options.
+    /// - Returns: ``true`` if the view was able to enter full screen mode, otherwise ``false``.
+    public func enterFullScreenMode(_ screen: NSScreen, withOptions options: [NSView.FullScreenModeOptionKey : Any]? = nil) -> Bool {
+        fatalError("Not implemented yet")
+    }
+    
+    /// Instructs the view to exit full screen mode.
+    ///
+    /// When the ``fullScreenModeApplicationPresentationOptions`` options is specified when ``enterFullScreenMode(_:withOptions:)`` is invoked, exiting full screen mode will restore the previously active ``presentationOptions``.
+    /// - Parameter options: A dictionary of options for the mode. For possible keys, see Full Screen Mode Options.
+    public func exitFullScreenMode(options: [NSView.FullScreenModeOptionKey : Any]? = nil) {
+        fatalError("Not implemented yet")
+    }
+
+    // MARK: - Invalidating the View’s Content
+
+    /// A Boolean value that determines whether the view needs to be redrawn before being displayed.
+    /// 
+    /// The ``displayIfNeeded`` methods check the value of this property to avoid unnecessary drawing, and all display methods set the value back to ``false`` when the view is up to date.
+    /// Whenever the data or state affecting the view’s appearance changes, set this property to ``true``. 
+    /// This marks the view as needing to update its display.
+    /// On the next pass through the app’s event loop, the view is automatically redisplayed.
+    public var needsDisplay: Bool = false
+
+    /// Marks the region of the view within the specified rectangle as needing display, increasing the view’s existing invalid region to include it.
+    /// 
+    /// A later displayIfNeeded method will then perform drawing only within the invalid region. 
+    /// View objects marked as needing display are automatically redisplayed on each pass through the application’s event loop. 
+    /// (View objects that need to redisplay before the event loop comes around can of course immediately be sent the appropriate display method.)
+    /// - Parameter invalidRect: The rectangular region of the view to mark as invalid; it should be specified in the coordinate system of the view.
+    public func setNeedsDisplay(_ invalidRect: OpenCoreGraphics.CGRect) {
+        fatalError("Not implemented yet")
+    }
+
+    /// Displays the view and all its subviews if possible, invoking each of the NSView methods ``lockFocus()``, ``draw(_:)``, and ``unlockFocus()`` as necessary.
+    /// 
+    /// If the view isn’t opaque, this method backs up the view hierarchy to the first opaque ancestor, calculates the portion of the opaque ancestor covered by the view, and begins displaying from there.
+    public func display() {
+        fatalError("Not implemented yet")
+    }
+
+    /// Acts as ``display()``, but confining drawing to a rectangular region of the view.
+    /// - Parameter rect: A rectangle defining the region of the view to be redrawn; it should be specified in the coordinate system of the view.
+    public func display(_ rect: OpenCoreGraphics.CGRect) {
+        fatalError("Not implemented yet")
+    }
+
+    ///  Displays the view but confines drawing to a specified region and does not back up to the first opaque ancestor—it simply causes the view and its descendants to execute their drawing code.
+    /// - Parameter rect: A rectangle defining the region of the view to be redrawn; it should be specified in the coordinate system of the view.
+    public func displayIgnoringOpacity(_ rect: OpenCoreGraphics.CGRect) {
+        fatalError("Not implemented yet")
+    }
+
+    /// Causes the view and its descendants to be redrawn to the specified graphics context.
+    /// 
+    /// Acts as ``display()``, but confines drawing to aRect. 
+    /// This method initiates drawing with the view, even if the view is not opaque. 
+    /// Appropriate scaling factors for the view are obtained from context.
+    /// 
+    /// If the context parameter represents the context for the window containing the view, then all of the necessary transformations are applied. 
+    /// This includes the application of the view’s bounds and frame transforms along with any transforms it inherited from its ancestors. 
+    /// In this situation, the view is also marked as no longer needing an update for the specified rectangle.
+    /// 
+    /// If context specifies any other graphics context, then only the view’s bounds transform is applied. 
+    /// This means that drawing is not constrained to the view’s visible rectangle. 
+    /// It also means that any dirty rectangles are not cleared, since they are not being redrawn to the window.
+    /// - Parameters:
+    ///   - rect: A rectangle defining the region of the view to be redrawn. It should be specified in the coordinate system of the view.
+    ///   - context: The graphics context in which drawing will occur. See the discussion below for more about this parameter.
+    public func displayIgnoringOpacity(_ rect: OpenCoreGraphics.CGRect, in context: NSGraphicsContext) {
+        fatalError("Not implemented yet")
+    }
+
+    /// Displays the view and all its subviews if any part of the view has been marked as needing display.
+    /// 
+    /// This method invokes the ``NSView`` methods ``lockFocus()``, ``draw(_:)``, and ``unlockFocus()`` as necessary. 
+    /// If the view isn’t opaque, this method backs up the view hierarchy to the first opaque ancestor, calculates the portion of the opaque ancestor covered by the view, and begins displaying from there.
+    public func displayIfNeeded() {
+        fatalError("Not implemented yet")
+    }
+
+    /// Acts as ``displayIfNeeded()``, confining drawing to a specified region of the view.
+    /// - Parameter rect: A rectangle defining the region to be redrawn. It should be specified in the coordinate system of the view.
+    public func displayIfNeeded(_ rect: OpenCoreGraphics.CGRect) {
+        fatalError("Not implemented yet")
+    }
+
+    /// Acts as ``displayIfNeeded()``, except that this method doesn’t back up to the first opaque ancestor—it simply causes the view and its descendants to execute their drawing code.
+    public func displayIfNeededIgnoringOpacity() {
+        fatalError("Not implemented yet")
+    }
+
+    /// Acts as ``displayIfNeeded()``, but confining drawing to aRect and not backing up to the first opaque ancestor—it simply causes the view and its descendants to execute their drawing code.
+    /// - Parameter rect: A rectangle defining the region to be redrawn. It should be specified in the coordinate system of the view.
+    public func displayIfNeededIgnoringOpacity(_ rect: OpenCoreGraphics.CGRect) {
+        fatalError("Not implemented yet")
+    }
+
+    /// Translates the display rectangles by the specified delta.
+    /// 
+    /// This method performs the shifting of dirty rectangles that an equivalent scroll(_:by:) operation would cause, without performing the actual scroll operation. 
+    /// It is only useful in very rare cases where a view implements its own low-level scrolling mechanics.
+    /// 
+    /// This method:
+    /// 1. Collects the receiving view’s dirty rectangles.
+    /// 2. Clears all dirty rectangles in the intersection of clipRect and the view’s bounds.
+    /// 3. Shifts the retrieved rectangles by the delta offset.
+    /// 4. Clips the result to the intersection of clipRect and the view’s bounds
+    /// 5. Marks the resultant rectangles as needing display.
+    /// 
+    /// The developer must ensure that clipRect and delta are pixel-aligned in order to guarantee correct drawing. 
+    /// See Transforming View Coordinates To and From Base Space for a description of how to pixel-align view coordinates.
+    /// - Parameters:
+    ///   - clipRect: A rectangle defining the region of the view, typically the view’s bounds.
+    ///   - delta: A ``OpenCoreGraphics.CGSize`` structure that specifies an offset from aRect’s origin.
+    public func translateRectsNeedingDisplay(in clipRect: OpenCoreGraphics.CGRect, by delta: OpenCoreGraphics.CGSize) {
+        fatalError("Not implemented yet")
+    }
+
+    /// A Boolean value indicating whether the view fills its frame rectangle with opaque content.
+    /// 
+    /// The default value of this property is ``false`` to reflect the fact that views do no drawing by default. 
+    /// Subclasses can override this property and return ``true`` to indicate that the view completely covers its frame rectangle with opaque content. 
+    /// Doing so can improve performance during drawing operations by eliminating the need to render content behind the view.
+    public private(set) var isOpaque: Bool = false
+
+    /// Informs the view that it’s required to draw content.
+    /// 
+    /// In response to receiving one of the display methods, the view recurses down the view hierarchy, sending this message to each of the views that may be involved in the display operation.
+    /// 
+    /// Subclasses can override this method to move or resize views, mark additional areas as requiring display, or take other actions that can best be deferred until they are required for drawing. 
+    /// During the recursion, setting the ``needsDisplay`` property or sending the ``setNeedsDisplay(_:)`` message to views in the hierarchy that are about to be drawn is valid and supported, and affects the assessment of the total area to be rendered in that drawing pass.
+    public func viewWillDraw() {
+        fatalError("Not implemented yet")
+    }
+
+    // MARK: - Managing Live Resize
+
+    /// A Boolean value indicating whether the view is being rendered as part of a live resizing operation.
+    /// 
+    /// OpenAppKit sets the value of this property to ``true`` when a live resizing operation involving the view is underway. 
+    /// Use this property to determine when to optimize your view’s drawing behavior. 
+    /// Typically, you access this property from your ``draw(_:)`` method and use the value to change the fidelity of the content you draw, or to draw your content more efficiently.
+    public private(set) var inLiveResize: Bool = false
+
+    /// A Boolean value indicating whether the view optimizes live-resize operations by preserving content that has not moved.
+    /// 
+    /// The default value of this property is ``false``. If your view supports content preservation, override this property and return ``true``. 
+    /// Content preservation lets your view decide what to redraw during a live resize operation. 
+    /// If your view supports this feature, you should also provide a custom implementation of the ``setFrameSize(_:)`` method that invalidates the portions of your view that actually need to be redrawn.
+    public private(set) var preservesContentDuringLiveResize: Bool = false
+
+    /// Returns a list of rectangles indicating the newly exposed areas of the view.
+    /// 
+    /// If your view does not support content preservation during live resizing, the entire area of your view is returned in the exposedRects parameter. 
+    /// To support content preservation, override the ``preservesContentDuringLiveResize`` property in your view and have your implementation return ``true``.
+    /// 
+    /// - Note: The window containing your view must also support content preservation. To enable support for this feature in your window, use the ``preservesContentDuringLiveResize`` method of ``NSWindow``.
+    /// 
+    /// If the view decreased in both height and width, the list of returned rectangles will be empty. 
+    /// If the view increased in both height and width and its upper-left corner stayed anchored in the same position, the list of returned rectangles will contain a vertical and horizontal component indicating the exposed area.
+    /// - Parameters:
+    ///   - exposedRects: On return, contains the list of rectangles. The returned rectangles are in the coordinate space of the view.
+    ///   - count: Contains the number of rectangles in exposedRects; this value may be 0 and is guaranteed to be no more than 4.
+    public func getRectsExposedDuringLiveResize(_ exposedRects: UnsafeMutablePointer<NSRect>, count: UnsafeMutablePointer<Int>) {
+        fatalError("Not implemented yet")
+    }
+
+    /// The rectangle identifying the portion of your view that did not change during a live resize operation.
+    /// 
+    /// The rectangle in this property is in the coordinate system of your view and reflects the space your view previously occupied. 
+    /// This rectangle may be smaller or the same size as your view’s current bounds, depending on whether the view grew or shrunk.
+    /// 
+    /// If your view does not support content preservation during live resizing, the rectangle will be empty. 
+    /// To support content preservation, override the ``preservesContentDuringLiveResize`` property in your view and have your implementation return ``true``.
+    /// 
+    /// - Note: The window containing your view must also support content preservation. To enable support for this feature in your window, use the ``preservesContentDuringLiveResize`` method of ``NSWindow``.
+    public var rectPreservedDuringLiveResize: OpenCoreGraphics.CGRect = .zero
+
+    /// Informs the view of the start of a live resize—the user has started resizing the view.
+    /// 
+    /// In the simple case, a view is sent ``viewDidEndLiveResize()`` before the first resize operation on the containing window and ``viewDidEndLiveResize()`` after the last resize operation. 
+    /// A view that is repeatedly added and removed from a window during live resize will receive only one ``viewWillStartLiveResize()`` (on the first time it is added to the window) and one ``viewDidEndLiveResize()`` (when the window has completed the live resize operation). 
+    /// This allows a superview such as NSBrowser object to add and remove its NSMatrix subviews during live resize without the NSMatrix object receiving multiple calls to these methods.
+    /// 
+    /// A view might allocate data structures to cache-drawing information in ``viewDidEndLiveResize()`` and should clean up these data structures in ``viewDidEndLiveResize()``. 
+    /// In addition, a view that does optimized drawing during live resize might need to do full drawing after ``viewDidEndLiveResize()``. 
+    /// However, you should not assume that a view has a drawing context in ``viewDidEndLiveResize()`` (since it may have been removed from the window during live resize). 
+    /// A view that needs to redraw itself after live resize should set its ``needsDisplay`` property to true in ``viewDidEndLiveResize()``.
+    /// 
+    /// A view subclass should call super from these methods.
+    public func viewWillStartLiveResize() {
+        fatalError("Not implemented yet")
+    }
+
+    /// Informs the view of the end of a live resize—the user has finished resizing the view.
+    /// 
+    /// In the simple case, a view is sent ``viewWillStartLiveResize()`` before the first resize operation on the containing window and ``viewDidEndLiveResize()`` after the last resize operation. 
+    /// A view that is repeatedly added and removed from a window during live resize will receive only one ``viewWillStartLiveResize(``) (on the first time it is added to the window) and one ``viewDidEndLiveResize()`` (when the window has completed the live resize operation). 
+    /// This allows a superview such as NSBrowser object to add and remove its NSMatrix subviews during live resize without the NSMatrix receiving multiple calls to these methods.
+    /// 
+    /// A view might allocate data structures to cache-drawing information in ``viewWillStartLiveResize()`` and should clean up these data structures in ``viewDidEndLiveResize()``. 
+    /// In addition, a view that does optimized drawing during live resize might need to do full drawing after ``viewDidEndLiveResize()``. 
+    /// However, you should not assume that a view has a drawing context in ``viewDidEndLiveResize()`` (since it may have been removed from the window during live resize). 
+    /// A view that needs to redraw itself after live resize should set its needsDisplay property to true in ``viewDidEndLiveResize()``.
+    /// 
+    /// A view subclass should call super from these methods.
+    public func viewDidEndLiveResize() {
+        fatalError("Not implemented yet")
+    }
 }
 
 extension NSView {
@@ -1201,4 +1931,99 @@ extension NSView {
         /// Redraw the layer contents at the new size and crossfade from the old contents to the new contents. Use this in conjunction with the NSView.LayerContentsPlacement constants to get a nice crossfade animation for complex layer-backed views that cannot update correctly at each step of the animation.
         case crossfade        
     }
+}
+
+extension NSView {
+
+    /// Constants that specify the autoresizing behaviors for views.
+    public struct AutoresizingMask : Equatable, OptionSet, Sendable {
+
+        /// The view cannot be resized.
+        public static let none = NSView.AutoresizingMask(rawValue: 1)
+
+        /// The left margin between the view and its superview is flexible.
+        public static let minXMargin = NSView.AutoresizingMask(rawValue: 2)
+
+        /// The view’s width is flexible.
+        public static let width = NSView.AutoresizingMask(rawValue: 4)
+
+        /// The right margin between the view and its superview is flexible.
+        public static let maxXMargin = NSView.AutoresizingMask(rawValue: 8)
+
+        /// The bottom margin between the view and its superview is flexible.
+        public static let minYMargin = NSView.AutoresizingMask(rawValue: 16)
+
+        /// The view’s height is flexible.
+        public static let height = NSView.AutoresizingMask(rawValue: 32)
+
+        /// The top margin between the view and its superview is flexible.
+        public static let maxYMargin = NSView.AutoresizingMask(rawValue: 64)
+
+        // MARK: - Accessing the Raw Value
+
+        /// The corresponding value of the raw type.
+        public var rawValue: UInt
+
+        // MARK: - Creating a Raw Value
+
+        /// Creates a new instance with the specified raw value.
+        public init(rawValue: UInt) {
+            self.rawValue = rawValue
+        }
+    }
+}
+
+extension NSView {
+
+    /// These constants specify the type of a view’s border.
+    public enum NSBorderType: Equatable {
+        /// A concave border that makes the view look sunken.
+        case bezelBorder
+
+        /// A thin border that looks etched around the image.
+        case grooveBorder
+
+        /// A black line border around the view.
+        case lineBorder
+
+        /// No border.
+        case noBorder
+    }
+}
+
+extension NSView {
+    
+    /// These constants are keys that you can use in the options dictionary in ``enterFullScreenMode(_:withOptions:)`` and ``exitFullScreenMode(options:)``.
+    public struct FullScreenModeOptionKey: Equatable, Hashable, RawRepresentable, Sendable {
+
+        // MARK: - Type Properties
+
+        /// Key whose corresponding value specifies whether the view should take over all screens.
+        public static let fullScreenModeAllScreens = NSView.FullScreenModeOptionKey(rawValue: "")
+
+        /// Key whose corresponding value specifies the application presentation options.
+        public static let fullScreenModeApplicationPresentationOptions = NSView.FullScreenModeOptionKey(rawValue: "")
+
+        /// Key whose corresponding value specifies the full screen mode setting.
+        public static let fullScreenModeSetting = NSView.FullScreenModeOptionKey(rawValue: "")
+
+        /// Key whose corresponding value specifies the screen mode window level.
+        public static let fullScreenModeWindowLevel = NSView.FullScreenModeOptionKey(rawValue: "")
+
+        // MARK: - Accessing the Raw Value
+
+        /// The corresponding value of the raw type.
+        public var rawValue: String
+
+        // MARK: - Creating a Value
+
+        /// Creates a new instance with the specified raw value.
+        public init(rawValue: String) {
+            self.rawValue = rawValue
+        }
+    }
+}
+
+extension NSView {
+    public typealias NSBitmapImageRep = OpaquePointer
 }

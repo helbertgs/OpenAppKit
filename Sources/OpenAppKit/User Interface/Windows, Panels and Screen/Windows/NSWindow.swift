@@ -1,5 +1,6 @@
 import Foundation
 import OpenCoreGraphics
+import OpenGLAD
 import OpenGLFW
 
 /// A window that an app displays on the screen.
@@ -36,7 +37,6 @@ public class NSWindow: NSResponder {
 
         super.init()
         self._glfwCreateWindow()
-        // self.graphicsContext = NSGraphicsContext(window: self)
     }
 
     /// Initializes an allocated window with the specified values.
@@ -75,7 +75,6 @@ public class NSWindow: NSResponder {
 
         self.contentView = self.contentViewController?.view
         self.contentView?.window = self
-
         self._glfwCreateWindow()
     }
 
@@ -834,7 +833,18 @@ public class NSWindow: NSResponder {
     public func update() {
         print("\(Self.self).\(#function)")
         NotificationCenter.default.post(name: NSWindow.didUpdateNotification, object: self)
-        // graphicsContext?.render()
+
+        if glfwWindowShouldClose(windowRef) == GLFW_FALSE {
+
+            // Render Views
+
+            contentView?.draw(frame)
+
+            glfwSwapBuffers(windowRef)
+            glfwPollEvents()
+        } else {
+            self.close()
+        }
     }
 
     // MARK: - Managing Titles
@@ -971,7 +981,7 @@ public class NSWindow: NSResponder {
     /// - Parameter sender: The message’s sender.
     public func miniaturize(_ sender: Any?) {
         print("\(Self.self).\(#function)")
-        graphicsContext?.minimizeWindow()
+        glfwIconifyWindow(windowRef)
     }
 
     /// De-minimizes the window.
@@ -980,7 +990,7 @@ public class NSWindow: NSResponder {
     /// - Parameter sender: The message’s sender.
     public func deminiaturize(_ sender: Any?) {
         print("\(Self.self).\(#function)")
-        graphicsContext?.maximizeWindow()
+        glfwRestoreWindow(windowRef)
     }
 
     /// The custom miniaturized window image of the window.
@@ -1044,18 +1054,21 @@ public class NSWindow: NSResponder {
 
     /// A Boolean value that indicates whether the window allows zooming.
     /// This property is key-value coding compliant.
-    public var isZoomable: Bool = false
+    public var isZoomable: Bool {
+        glfwGetWindowAttrib(windowRef, GLFW_MAXIMIZED) == GLFW_TRUE
+    }
 
     /// A Boolean value that indicates if the user can resize the window.
     /// This property is key-value coding compliant.
     public var isResizable: Bool {
-        get { glfwGetWindowAttrib(windowRef, GLFW_RESIZABLE) == GLFW_TRUE ? true : false }
-        set { glfwSetWindowAttrib(windowRef, GLFW_RESIZABLE, newValue == true ? GLFW_TRUE : GLFW_FALSE) }
+        glfwGetWindowAttrib(windowRef, GLFW_RESIZABLE) == GLFW_TRUE
     }
 
     /// A Boolean value that indicates whether the window can minimize.
     /// This property is key-value coding compliant.
-    public var isMiniaturizable: Bool = false
+    public var isMiniaturizable: Bool {
+        glfwGetWindowAttrib(windowRef, GLFW_ICONIFIED) == GLFW_TRUE
+    }
 
     /// The zero-based position of the window, based on its order from front to back among all visible application windows.
     /// If you set this property to an index that’s out of range, the system sets the position to the nearest value that’s in range.
@@ -1406,5 +1419,13 @@ extension NSWindow {
         }
 
         self.windowRef  = windowRef
+        glfwMakeContextCurrent(self.windowRef)
+
+        if gladLoaderLoadGL() == GL_TRUE {
+            fatalError("Fail to init a GLAD")
+        }
+
+        self.graphicsContext = NSGraphicsContext()
+        self.graphicsContext?.window = self
     }
 }
