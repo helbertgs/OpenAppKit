@@ -42,7 +42,7 @@ public struct CGPoint: Equatable, Hashable, Sendable {
     /// - Parameter t: The affine transform to apply.
     /// - Returns: A new point resulting from applying the specified affine transform to the existing point.
     public func applying(_ t: CGAffineTransform) -> OpenCoreGraphics.CGPoint {
-        fatalError("not implemented yet")
+        fatalError("Not implemented yet")
     }
 }
 
@@ -76,5 +76,12 @@ extension CGPoint: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         x = try container.decode(Double.self, forKey: .x)
         y = try container.decode(Double.self, forKey: .y)
+    }
+}
+
+extension CGPoint : CustomStringConvertible {
+    /// A textual representation of this instance.
+    public var description: String {
+        "CGPoint(x: \(x), y: \(y))"
     }
 }

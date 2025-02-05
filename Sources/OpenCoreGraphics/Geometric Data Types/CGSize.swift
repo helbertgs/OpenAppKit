@@ -54,7 +54,7 @@ public struct CGSize: Equatable, Hashable, Sendable {
     /// - Parameter t: The affine transform to apply.
     /// - Returns: A new size resulting from applying the specified affine transform to the existing size.
     public func applying(_ t: CGAffineTransform) -> OpenCoreGraphics.CGSize {
-        fatalError("not implemented yet")
+        fatalError("Not implemented yet")
     }
 }
 
@@ -88,5 +88,12 @@ extension CGSize: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         width = try container.decode(Double.self, forKey: .width)
         height = try container.decode(Double.self, forKey: .height)
+    }
+}
+
+extension CGSize : CustomStringConvertible {
+    /// A textual representation of this instance.
+    public var description: String {
+        "CGSize(width: \(width), height: \(height))"
     }
 }

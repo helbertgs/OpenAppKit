@@ -38,7 +38,7 @@ public class NSLayoutAnchor<AnchorType> where AnchorType : AnyObject {
     /// - Parameter anchor: A layout anchor from an ``NSView`` or ``NSLayoutGuide`` object. You must use a subclass of ``NSLayoutAnchor`` that matches the current anchor.
     /// - Returns: An ``NSLayoutConstraint`` object that defines an equal relationship between the attributes represented by the two layout anchors.
     public func constraint(equalTo anchor: NSLayoutAnchor<AnchorType>) -> NSLayoutConstraint {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 
     /// Returns a constraint that defines one item’s attribute as equal to another item’s attribute plus a constant offset.
@@ -63,7 +63,7 @@ public class NSLayoutAnchor<AnchorType> where AnchorType : AnyObject {
     ///   - c: The constant offset for the constraint.
     /// - Returns: An ``NSLayoutConstraint`` object that defines an equal relationship between the attributes represented by the two layout anchors plus a constant offset.
     public func constraint(equalTo anchor: NSLayoutAnchor<AnchorType>, constant c: CGFloat) -> NSLayoutConstraint {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 
     /// Returns a constraint that defines one item’s attribute as greater than or equal to another.
@@ -81,7 +81,7 @@ public class NSLayoutAnchor<AnchorType> where AnchorType : AnyObject {
     /// - Parameter anchor: A layout anchor from an ``NSView`` or ``NSLayoutGuide`` object. You must use a subclass of NSLayoutAnchor that matches the current anchor.
     /// - Returns: An ``NSLayoutConstraint`` object that defines the attribute represented by this layout anchor as greater than or equal to the attribute represented by the anchor parameter.
     public func constraint(greaterThanOrEqualTo anchor: NSLayoutAnchor<AnchorType>) -> NSLayoutConstraint {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 
     /// Returns a constraint that defines one item’s attribute as greater than or equal to another item’s attribute plus a constant offset.
@@ -106,7 +106,7 @@ public class NSLayoutAnchor<AnchorType> where AnchorType : AnyObject {
     ///   - c: The constant offset for the constraint.
     /// - Returns: An ``NSLayoutConstraint`` object that defines the attribute represented by this layout anchor as greater than or equal to the attribute represented by the anchor parameter plus a constant offset.
     public func constraint(greaterThanOrEqualTo anchor: NSLayoutAnchor<AnchorType>, constant c: CGFloat) -> NSLayoutConstraint {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 
     /// Returns a constraint that defines one item’s attribute as less than or equal to another.
@@ -124,7 +124,7 @@ public class NSLayoutAnchor<AnchorType> where AnchorType : AnyObject {
     /// - Parameter anchor: A layout anchor from an ``NSView`` or ``NSLayoutGuide`` object. You must use a subclass of NSLayoutAnchor that matches the current anchor.
     /// - Returns: An ``NSLayoutConstraint`` object that defines the attribute represented by this layout anchor as less than or equal to the attribute represented by the anchor parameter.
     public func constraint(lessThanOrEqualTo anchor: NSLayoutAnchor<AnchorType>) -> NSLayoutConstraint {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 
     /// Returns a constraint that defines one item’s attribute as less than or equal to another item’s attribute plus a constant offset.
@@ -149,6 +149,6 @@ public class NSLayoutAnchor<AnchorType> where AnchorType : AnyObject {
     ///   - c: The constant offset for the constraint.
     /// - Returns: An ``NSLayoutConstraint`` object that defines the attribute represented by this layout anchor as less than or equal to the attribute represented by the anchor parameter plus a constant offset.
     public func constraint(lessThanOrEqualTo anchor: NSLayoutAnchor<AnchorType>, constant c: CGFloat) -> NSLayoutConstraint {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 }

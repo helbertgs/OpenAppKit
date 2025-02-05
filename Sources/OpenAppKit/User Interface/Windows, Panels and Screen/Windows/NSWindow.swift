@@ -13,7 +13,7 @@ public class NSWindow: NSResponder {
     /// You can use this property to create a WindowRef for a window containing a GLFW control.
     /// Subsequent accesses to this property get the existing WindowRef.
     /// You use a WindowRef to create a GLFWwindow reference for a GLFW window.
-    var windowRef: OpaquePointer!
+    package var windowRef: OpaquePointer!
 
     /// Initializes the window with the specified values.
     ///
@@ -1426,6 +1426,5 @@ extension NSWindow {
         }
 
         self.graphicsContext = NSGraphicsContext()
-        self.graphicsContext?.window = self
     }
 }

@@ -1563,7 +1563,6 @@ import Foundation
     ///
     /// - Important: If the view’s ``isOpaque`` property is ``true``, the view must completely fill the dirtyRect rectangle with opaque content.
     public func draw(_ dirtyRect: OpenCoreGraphics.CGRect) {
-        fatalError("Not implemented yet")
     }
 
     /// A Boolean value that indicates whether the view, and its subviews, confine their drawing areas to the bounds of the view.

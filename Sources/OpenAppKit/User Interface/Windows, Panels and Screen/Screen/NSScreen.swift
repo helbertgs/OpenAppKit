@@ -8,7 +8,7 @@ public class NSScreen: NSObject {
 
     // MARK: - Getting Screen Objects
 
-    var monitorRef: OpaquePointer
+    package var monitorRef: OpaquePointer
     
     /// Returns the screen object containing the window with the keyboard focus.
     /// 
@@ -17,12 +17,12 @@ public class NSScreen: NSObject {
     /// It is the main screen because it is the one with which the user is most likely interacting.
     ///
     /// The screen containing the menu bar is always the first object (index 0) in the array returned by the screens method.
-    public static var main: NSScreen?
+    public static package(set) var main: NSScreen?
     
     /// Returns a screen object representing the screen that can best represent color.
     /// 
     /// This method always returns an object, even if there is only one screen and it is not a color screen.
-    public static var deepest: NSScreen?
+    public static package(set) var deepest: NSScreen?
     
     /// Returns an array of screen objects representing all of the screens available on the system.
     /// 
@@ -33,7 +33,7 @@ public class NSScreen: NSObject {
     /// 
     /// The array should not be cached. Screens can be added, removed, or dynamically reconfigured at any time. 
     /// When the display configuration is changed, the default notification center sends a ``didChangeScreenParametersNotification`` notification.
-    public static var screens: [NSScreen] = []
+    public static package(set) var screens: [NSScreen] = []
 
     // MARK: - Getting Screen Information
 
@@ -55,7 +55,7 @@ public class NSScreen: NSObject {
     /// The localized name of the display.
     public var localizedName: String {
         guard let ptr = glfwGetMonitorName(monitorRef) else {
-            fatalError("GLFW not initialized!")
+            Debug.error("GLFW not initialized!")
         }
 
         return String.init(cString: ptr, encoding: .utf8) ?? ""
@@ -155,7 +155,7 @@ public class NSScreen: NSObject {
 
     @available(*, unavailable)
     public required init() {
-        fatalError("init() has not been implemented")
+        Debug.error("init() has not been implemented")
     }
 }
 
@@ -163,5 +163,15 @@ extension NSScreen {
     public enum NSDisplayGamut: Sendable {
         case p3
         case sRGB
+    }
+}
+
+extension NSScreen : @preconcurrency CustomStringConvertible {
+    /// A textual representation of this instance.
+    public var description: String {
+        """
+        Name: \(localizedName)
+        Frame: \(frame)
+        """
     }
 }

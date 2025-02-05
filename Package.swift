@@ -24,16 +24,25 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/helbertgs/OpenGLFW.git", branch: "main"),
-        .package(url: "https://github.com/helbertgs/OpenGLAD.git", branch: "main")
+        .package(url: "https://github.com/helbertgs/OpenGLAD.git", branch: "main"),
+        .package(url: "https://github.com/helbertgs/OpenSTB.git", branch: "main"),
+        .package(url: "https://github.com/apple/swift-log.git", branch: "main")
     ],
     targets: [
         .target(
-            name: "OpenCoreImage",
-            dependencies: [  ]
+            name: "OpenCoreGraphics",
+            dependencies: [ 
+                .product(name: "OpenGLAD", package: "OpenGLAD"),
+                .product(name: "OpenSTB", package: "OpenSTB")
+            ]
         ),
         .target(
-            name: "OpenCoreGraphics",
-            dependencies: [ "OpenCoreImage" ]
+            name: "OpenCoreImage",
+            dependencies: [
+                "OpenCoreGraphics",
+                .product(name: "OpenGLAD", package: "OpenGLAD"),
+                .product(name: "OpenSTB", package: "OpenSTB")
+             ]
         ),
         .target(
             name: "OpenCoreAnimation",
@@ -48,7 +57,8 @@ let package = Package(
                 "OpenCoreAnimation",
                 "OpenCoreGraphics",
                 "OpenCoreImage",
-                .product(name: "OpenGLFW", package: "OpenGLFW")
+                .product(name: "OpenGLFW", package: "OpenGLFW"),
+                .product(name: "Logging", package: "swift-log")
             ]
         ),
         .executableTarget(

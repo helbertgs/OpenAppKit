@@ -15,7 +15,7 @@ public typealias NSImageRep = AnyObject
 
     // MARK: - Setting Attributes of Images
 
-    package var cgImage: CGImage
+    package var cgImage: CGImage?
 
     /// The size of the image.
     /// 
@@ -72,7 +72,7 @@ public typealias NSImageRep = AnyObject
     /// Returns the image object associated with the specified name.
     /// - Parameter name: The name associated with the desired image. This can be a name you assigned to the image or the name of an image file in your app bundle.
     public init?(named name: NSImage.Name) {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 
     // MARK: - Creating Dynamically Drawn Images
@@ -88,7 +88,7 @@ public typealias NSImageRep = AnyObject
     /// Therefore, the block must be safe to call from any thread. The block takes the following parameter:
     ///   - dstRect: The destination rectangle in which to draw. The coordinates of this rectangle are specified in points.  
     public convenience init(size: NSSize, flipped drawingHandlerShouldBeCalledWithFlippedContext: Bool, drawingHandler: @escaping (NSRect) -> Bool) {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 
     // MARK: - Creating Images from Resource Files
@@ -101,13 +101,13 @@ public typealias NSImageRep = AnyObject
     /// This method looks for an ``NSImageRep`` subclass that handles that data type from among those registered with ``NSImage``.
     /// - Parameter fileName: A full or relative path name specifying the file with the desired image data. Relative paths must be relative to the current working directory.
     public convenience init?(contentsOfFile fileName: String) {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 
     /// Initializes and returns an image object with the contents of the specified URL.
     /// - Parameter url: The URL identifying the image.
     public convenience init?(contentsOf url: URL) {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 
     // MARK: - Creating Images from Existing Data 
@@ -118,7 +118,7 @@ public typealias NSImageRep = AnyObject
     /// This method initializes the object with an image representation that is most appropriate for the type of data you provided.
     /// - Parameter data: The data object containing the image data. The data can be in any format that macOS supports, including PDF, PICT, EPS, or any number of bitmap data formats.
     public convenience init?(data: Data) {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 
     /// Creates a new image using the contents of the provided image.
@@ -129,7 +129,7 @@ public typealias NSImageRep = AnyObject
     ///   - cgImage: The source image.
     ///   - size: The size of the new image. Use zero to have the new image adopt the pixel dimensions of the source image.
     public convenience init(cgImage: CGImage, size: OpenCoreGraphics.CGSize) {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 
     // MARK: - Creating Empty Images
@@ -143,7 +143,6 @@ public typealias NSImageRep = AnyObject
     /// You might lock focus on the image and draw to the image or you might explicitly add an image representation that you created.
     /// - Parameter size: The size of the image, measured in points.
     public init(size: OpenCoreGraphics.CGSize) {
-        self.cgImage = CGImage()
         self.size = size
     }
 
@@ -164,7 +163,7 @@ public typealias NSImageRep = AnyObject
     /// Image representations cannot be shared among multiple ``NSImage`` objects.
     /// - Parameter imageRep: 
     public func addRepresentation(_ imageRep: NSImageRep) {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 
     /// Adds an array of image representation objects to the image.
@@ -177,13 +176,13 @@ public typealias NSImageRep = AnyObject
     /// Image representations cannot be shared among multiple ``NSImage`` objects.
     /// - Parameter imageReps: 
     public func addRepresentations(_ imageReps: [NSImageRep]) {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 
     /// Removes and releases the specified image representation.
     /// - Parameter imageRep: The image representation object you want to remove.
     public func removeRepresentation(_ imageRep: NSImageRep) {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 
     // MARK: - Drawing Images
@@ -194,7 +193,7 @@ public typealias NSImageRep = AnyObject
     /// The method composites the image using the ``NSCompositeSourceOver`` operation
     /// - Parameter rect: The rectangle in which to draw the image, specified in the current coordinate system.
     public func draw(in rect: OpenCoreGraphics.CGRect) {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 
     /// Draws all or part of the image at the specified point in the current coordinate system.
@@ -207,7 +206,7 @@ public typealias NSImageRep = AnyObject
     ///   - op: The compositing operation to use when drawing the image. See the NSCompositingOperation constants.
     ///   - delta: The opacity of the image, specified as a value from 0.0 to 1.0. Specifying a value of 0.0 draws the image as fully transparent while a value of 1.0 draws the image as fully opaque. Values greater than 1.0 are interpreted as 1.0.
     public func draw(at point: OpenCoreGraphics.CGPoint, from fromRect: OpenCoreGraphics.CGRect, operation op: NSCompositingOperation, fraction delta: Float) {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 
     /// Draws all or part of the image in the specified rectangle respecting the hints and the orientation of the current coordinate system.
@@ -221,7 +220,7 @@ public typealias NSImageRep = AnyObject
     ///   - respectContextIsFlipped: ``true`` if the drawing should respect the context flipped state, otherwise ``false``.
     ///   - hints: An optional dictionary of hints that provide more context for selecting or generating the image.
     public func draw(in dstSpacePortionRect: NSRect, from srcSpacePortionRect: NSRect, operation op: NSCompositingOperation, fraction requestedAlpha: CGFloat, respectFlipped respectContextIsFlipped: Bool, hints: [NSImage.HintKey : Any]?) {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 
     // MAR: - Managing Drawing Options
@@ -272,7 +271,7 @@ public typealias NSImageRep = AnyObject
     /// If you do not send this message, the image representation may use the old cache data. 
     /// This method simply clears the cached image data
     public func recache() {
-        fatalError("Not implemented yet")
+        fatalError("not implemented yet")
     }
 
     // MARK: - Hit-Testing Images

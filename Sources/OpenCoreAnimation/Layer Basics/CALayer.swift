@@ -21,8 +21,7 @@ open class CALayer {
     /// 
     /// This is the designated initializer for layer objects that are not in the presentation layer.
     /// - Returns: An initialized CALayer object.
-    public init() {
-        // fatalError("not implemented yet")
+    public required init() {
     }
 
     /// Override to copy or initialize custom fields of the specified layer.
@@ -37,8 +36,8 @@ open class CALayer {
     /// This method is the designated initializer for layer objects in the presentation layer.
     /// - Parameter layer: The layer from which custom fields should be copied.
     /// - Returns: A layer instance with any custom instance variables copied from layer.
+    @available(*, unavailable)
     public init(layer: Any) {
-        fatalError("not implemented yet")
     }
 
     // MARK: - Accessing Related Layer Objects
@@ -53,7 +52,7 @@ open class CALayer {
     /// For example, the ``hitTest(_:)`` method of the returned object queries the layer objects in the presentation tree.
     /// - Returns: A copy of the current presentation layer object.
     open func presentation() -> Self? {
-        fatalError("not implemented yet")
+        self
     }
 
     /// Returns the model layer object associated with the receiver, if any.
@@ -63,7 +62,7 @@ open class CALayer {
     /// If no transaction is in progress, the results of calling this method are undefined.
     /// - Returns: A layer instance representing the underlying model layer.
     open func model() -> Self {
-        fatalError("not implemented yet")
+        self
     }
 
     // MARK: - Accessing the Delegate
@@ -120,7 +119,11 @@ open class CALayer {
     /// Subclasses can override this method and use it to set the layer’s contents property directly. 
     /// You might do this if your custom layer subclass handles layer updates differently.
     open func display() {
-        fatalError("not implemented yet")
+        if let delegate {
+            delegate.display(self)
+        } else {
+            contents = CGImage()
+        }
     }
 
     /// Draws the layer’s content using the specified graphics context.
@@ -132,7 +135,9 @@ open class CALayer {
     /// When drawing, all coordinates should be specified in points in the logical coordinate space.
     /// - Parameter context: The graphics context in which to draw the content. The context may be clipped to protect valid layer content.
     open func draw(in context: CGContext) {
-        fatalError("not implemented yet")
+        if let delegate {
+            delegate.draw(self, in: context)
+        }
     }
 
     // MARK: - Modifying the Layer’s Appearance
@@ -394,7 +399,10 @@ open class CALayer {
     /// Renders in the coordinate space of the layer.
     /// - Parameter context: The graphics context to use to render the layer.
     public func render(in context: CGContext) {
-        fatalError("not implemented yet")
+        
+        sublayers?.forEach {
+            $0.render(in: context)
+        }
     }
 
     // MARK: - Modifying the Layer Geometry
@@ -494,7 +502,7 @@ open class CALayer {
     /// The default value of this property is nil.
     /// 
     /// When setting the sublayers property to an array populated with layer objects, each layer in the array must not already have a superlayer—that is, its superlayer property must currently be nil.
-    public var sublayers: [CALayer]?
+    public private(set) var sublayers: [CALayer]?
 
     /// The superlayer of the layer.
     /// 
@@ -899,7 +907,6 @@ open class CALayer {
     /// If the layer is not contained by a ``CAScrollLayer`` object, this method does nothing.
     /// - Parameter point: The point in the current layer that should be scrolled into position.
     public func scroll(_ point: OpenCoreGraphics.CGPoint) {
-        fatalError("not implemented yet")
     }
 
     /// Initiates a scroll in the layer’s closest ancestor scroll layer so that the specified rectangle becomes visible.
@@ -907,7 +914,6 @@ open class CALayer {
     /// If the layer is not contained by a ``CAScrollLayer`` object, this method does nothing.
     /// - Parameter rect: The rectangle to be made visible.
     public func scrollRectToVisible(_ rect: OpenCoreGraphics.CGRect) {
-        fatalError("not implemented yet")
     }
 
     // MARK: - Identifying the Layer
@@ -926,7 +932,7 @@ open class CALayer {
     /// - Parameter key: The name of one of the receiver’s properties.
     /// - Returns: true if the specified property should be archived or false if it should not.
     public func shouldArchiveValue(forKey key: String) -> Bool {
-        fatalError("not implemented yet")
+        true
     }
 
     /// Specifies the default value associated with the specified key.
@@ -939,6 +945,6 @@ open class CALayer {
     /// - Parameter key: The name of one of the receiver’s properties.
     /// - Returns: The default value for the named property. Returns nil if no default value has been set.
     public class func defaultValue(forKey key: String) -> Any? {
-        fatalError("not implemented yet")
+        nil
     }
 }

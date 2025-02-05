@@ -1,0 +1,4 @@
+import Foundation
+import OpenCoreGraphics
+
+public typealias NSImageInterpolation = OpenCoreGraphics.CGInterpolationQuality

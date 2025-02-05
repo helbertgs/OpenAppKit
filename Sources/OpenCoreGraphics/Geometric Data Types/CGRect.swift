@@ -61,26 +61,33 @@ public struct CGRect: Equatable, Hashable, Sendable {
     // MARK: - Calculated Geometric Properties
     
     /// Returns the height of a rectangle.
-    public var height: Double { 0 }
+    public var height: Double { size.height }
 
     /// Returns the width of a rectangle.
-    public var width: Double { 0 }
+    public var width: Double { size.width }
 
     /// Returns the smallest value for the x-coordinate of the rectangle.
-    public var minX: Double { 0 }
+    public var minX: Double { origin.x }
 
     /// Returns the x- coordinate that establishes the center of a rectangle.
-    public var midX: Double { 0 }
+    public var midX: Double { (minX + maxX) / 2 }
 
     /// Returns the largest value of the x-coordinate for the rectangle.
-    public var maxX: Double { 0 }
+    public var maxX: Double { origin.x + size.width }
 
     /// Returns the smallest value for the y-coordinate of the rectangle.
-    public var minY: Double { 0 }
+    public var minY: Double { origin.y }
 
     /// Returns the y-coordinate that establishes the center of the rectangle.
-    public var midY: Double { 0 }
+    public var midY: Double { (minY + maxY) / 2 }
 
     /// Returns the largest value for the y-coordinate of the rectangle.
-    public var maxY: Double { 0 }
+    public var maxY: Double { origin.y + size.height }
+}
+
+extension CGRect : CustomStringConvertible {
+    /// A textual representation of this instance.
+    public var description: String {
+        "CGRect(origin: \(origin), size: \(size))"
+    }
 }

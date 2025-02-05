@@ -26,7 +26,7 @@ import OpenGLFW
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
 
         guard glfwInit() == GLFW_TRUE else {
-            fatalError("Fail to initialize GLFW")
+            Debug.error("Fail to initialize GLFW")
         }
     }
 
