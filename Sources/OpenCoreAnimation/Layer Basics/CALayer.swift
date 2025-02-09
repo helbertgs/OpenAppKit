@@ -22,6 +22,7 @@ open class CALayer {
     /// This is the designated initializer for layer objects that are not in the presentation layer.
     /// - Returns: An initialized CALayer object.
     public required init() {
+        self.contents = CGImage()
     }
 
     /// Override to copy or initialize custom fields of the specified layer.
@@ -38,6 +39,7 @@ open class CALayer {
     /// - Returns: A layer instance with any custom instance variables copied from layer.
     @available(*, unavailable)
     public init(layer: Any) {
+        self.contents = CGImage()
     }
 
     // MARK: - Accessing Related Layer Objects
@@ -399,10 +401,13 @@ open class CALayer {
     /// Renders in the coordinate space of the layer.
     /// - Parameter context: The graphics context to use to render the layer.
     public func render(in context: CGContext) {
-        
-        sublayers?.forEach {
-            $0.render(in: context)
+        if let contents = contents as? CGImage {
+            context.draw(contents, in: frame)
         }
+
+        // sublayers?.forEach {
+        //     $0.render(in: context)
+        // }
     }
 
     // MARK: - Modifying the Layer Geometry
@@ -413,7 +418,13 @@ open class CALayer {
     /// For layers, the frame rectangle is a computed property that is derived from the values in the ``bounds``, ``anchorPoint`` and ``position`` properties. 
     /// When you assign a new value to this property, the layer changes its ``position`` and ``bounds`` properties to match the rectangle you specified. 
     /// The values of each coordinate in the rectangle are measured in points.
-    public var frame: OpenCoreGraphics.CGRect = .zero
+    public var frame: OpenCoreGraphics.CGRect { 
+        get { .init(origin: position, size: bounds.size) }
+        set {
+            bounds.size = newValue.size
+            position = newValue.origin
+        }
+    }
 
     /// The layer’s bounds rectangle.
     /// 
@@ -491,7 +502,6 @@ open class CALayer {
     /// Sets the layer’s transform to the specified affine transform.
     /// - Parameter m: The affine transform to use for the layer’s transform.
     public func setAffineTransform(_ m: OpenCoreGraphics.CGAffineTransform) {
-        fatalError("not implemented yet")
     }
 
     // MARK: - Managing the Layer Hierarchy

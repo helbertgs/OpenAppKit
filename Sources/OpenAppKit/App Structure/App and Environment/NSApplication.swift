@@ -64,6 +64,9 @@ import OpenGLFW
 
         while isRunning {
             updateWindows()
+            self.windows.forEach { window in
+                window.displayIfNeeded()
+            }
         }
     }
 

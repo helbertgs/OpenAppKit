@@ -263,7 +263,13 @@ import Foundation
     /// For more information, see the ``frameRotation`` property.
     /// 
     /// Changing the value of this property results in the posting of an ``frameDidChangeNotification`` to the default notification center if the view is configured to do so.
-    public var frame: OpenCoreGraphics.CGRect
+    public var frame: OpenCoreGraphics.CGRect {
+        didSet {
+            if postsFrameChangedNotifications {
+                NotificationCenter.default.post(name: Self.frameDidChangeNotification, object: self)
+            }
+        }
+    }
 
     /// Sets the origin of the view’s frame rectangle to the specified point, effectively repositioning it within its superview.
     /// 
@@ -273,7 +279,7 @@ import Foundation
     /// Changing the frame origin results in the posting of an ``frameDidChangeNotification`` to the default notification center if the view is configured to do so.
     /// - Parameter newOrigin: The point that is the new origin of the view's frame.
     public func setFrameOrigin(_ newOrigin: OpenCoreGraphics.CGPoint) {
-        fatalError("not implemented yet")
+        self.frame.origin = newOrigin
     }
 
     /// Sets the size of the view’s frame rectangle to the specified dimensions, resizing it within its superview without affecting its coordinate system.
@@ -288,7 +294,7 @@ import Foundation
     /// Your code must invalidate any portions of your view that need to be redrawn.
     /// - Parameter newSize: An OpenCoreGraphics.CGSize structure specifying the new height and width of the frame rectangle.
     public func setFrameSize(_ newSize: OpenCoreGraphics.CGSize) {
-        fatalError("not implemented yet")
+        self.frame.size = newSize
     }
 
     /// The angle of rotation, measured in degrees, applied to the view’s frame rectangle relative to its superview’s coordinate system.
@@ -348,7 +354,13 @@ import Foundation
     /// If the ratios differ, your content may appear skewed.
     /// 
     /// Changing the value of this property results in the posting of an ``boundsDidChangeNotification`` to the default notification center if the view is configured to do so.
-    public  var bounds: OpenCoreGraphics.CGRect = .zero
+    public  var bounds: OpenCoreGraphics.CGRect = .zero {
+        didSet {
+            if postsBoundsChangedNotifications {
+                NotificationCenter.default.post(name: Self.boundsDidChangeNotification, object: self)
+            }
+        }
+    }
 
     /// Sets the origin of the view’s bounds rectangle to a specified point.
     /// 
@@ -362,7 +374,7 @@ import Foundation
     /// If the ratios differ, your content may appear skewed.
     /// - Parameter newOrigin: A point specifying the new bounds origin of the view.
     public func setBoundsOrigin(_ newOrigin: OpenCoreGraphics.CGPoint) {
-        fatalError("not implemented yet")
+        self.bounds.origin = newOrigin
     }
 
     /// Sets the size of the view’s bounds rectangle to specified dimensions, inversely scaling its coordinate system relative to its frame rectangle.
@@ -377,7 +389,7 @@ import Foundation
     /// If the ratios differ, your content may appear skewed.
     /// - Parameter newSize: An OpenCoreGraphics.CGSize structure specifying the new width and height of the view's bounds rectangle.
     public func setBoundsSize(_ newSize: OpenCoreGraphics.CGSize) {
-        fatalError("not implemented yet")
+        self.bounds.size = newSize
     }
 
     /// The angle of rotation, measured in degrees, applied to the view’s bounds rectangle relative to its frame rectangle.
@@ -819,7 +831,8 @@ import Foundation
     /// 
     /// Setting the value of this property to true turns the view into a layer-backed view—that is, the view uses a CALayer object to manage its rendered content. 
     /// Creating a layer-backed view implicitly causes the entire view hierarchy under that view to become layer-backed. 
-    /// Thus, the view and all of its subviews (including subviews of subviews) become layer-backed. The default value of this property is false.
+    /// Thus, the view and all of its subviews (including subviews of subviews) become layer-backed. 
+    /// The default value of this property is false.
     /// 
     /// In a layer-backed view, any drawing done by the view is cached to the underlying layer object. 
     /// This cached content can then be manipulated in ways that are more performant than redrawing the view contents explicitly. 
@@ -868,7 +881,10 @@ import Foundation
     /// Creates the view’s backing layer.
     /// - Returns: The layer to use as the view’s backing layer.
     open func makeBackingLayer() -> CALayer {
-        .init()
+        let layer = CALayer()
+        layer.delegate = self
+
+        return layer
     }
 
     /// The current layer contents placement policy.
@@ -1539,7 +1555,7 @@ import Foundation
     ///
     /// Your implementation of this method should not call super.
     public func updateLayer() {
-        fatalError("Not implemented yet")
+        layer?.displayIfNeeded()
     }
 
     /// Overridden by subclasses to draw the view’s image within the specified rectangle.
@@ -1551,6 +1567,7 @@ import Foundation
     /// You can also use the ``needsToDraw(_:)`` method test whether objects in a particular rectangle need to be drawn.
     ///
     /// The default implementation does nothing.
+    /// 
     /// Subclasses should override this method if they do custom drawing.
     /// Prior to calling this method, ``OpenAppKit`` creates an appropriate drawing context and configures it for drawing to the view; you do not need to configure the drawing context yourself.
     /// If your app manages content using its layer object instead, use the ``updateLayer()`` method to update your layer instead of overriding this method.
@@ -1695,7 +1712,7 @@ import Foundation
     /// 
     /// If the view isn’t opaque, this method backs up the view hierarchy to the first opaque ancestor, calculates the portion of the opaque ancestor covered by the view, and begins displaying from there.
     public func display() {
-        fatalError("Not implemented yet")
+        wantsUpdateLayer ? updateLayer() : draw(frame)
     }
 
     /// Acts as ``display()``, but confining drawing to a rectangular region of the view.
@@ -1735,7 +1752,10 @@ import Foundation
     /// This method invokes the ``NSView`` methods ``lockFocus()``, ``draw(_:)``, and ``unlockFocus()`` as necessary. 
     /// If the view isn’t opaque, this method backs up the view hierarchy to the first opaque ancestor, calculates the portion of the opaque ancestor covered by the view, and begins displaying from there.
     public func displayIfNeeded() {
-        fatalError("Not implemented yet")
+        if needsDisplay {
+            display()
+            needsDisplay = false
+        }
     }
 
     /// Acts as ``displayIfNeeded()``, confining drawing to a specified region of the view.
@@ -2025,4 +2045,35 @@ extension NSView {
 
 extension NSView {
     public typealias NSBitmapImageRep = OpaquePointer
+}
+
+extension NSView : OpenCoreAnimation.CALayerDelegate {
+    /// Tells the delegate to implement the display process.
+    /// 
+    /// The ``display(_:)`` delegate method is called when the layer is marked for its content to be reloaded, typically initiated by the ``setNeedsDisplay()`` method. 
+    /// The typical technique for updating is to set the layer’s contents property.
+    /// - Parameter layer: The layer whose contents need updating.
+    public func display(_ layer: CALayer) {
+        print("\(Self.self).\(#function)")
+    }
+
+    /// Tells the delegate to implement the display process using the layer’s context.
+    /// 
+    /// The draw(_:in:) method is called when the layer is marked for its content to be reloaded, typically with the setNeedsDisplay() method. 
+    /// It is not called if the delegate implements the display(_:) method. 
+    /// You can use the context to draw vectors, such as curves and lines, or images with the draw(_:in:byTiling:) method.
+    /// - Parameters:
+    ///   - layer: The layer whose contents need to be drawn.
+    ///   - context: The graphics context to use for drawing. The graphics context incorporates the appropriate scale factor for drawing to the target screen
+    public func draw(_ layer: CALayer, in context: CGContext) {
+        if let contents = layer.contents as? NSImage, let image = contents.cgImage {
+            context.draw(image, in: layer.frame)
+            return
+        }
+
+        if let image = layer.contents as? CGImage {
+            context.draw(image, in: layer.frame)
+            return
+        }
+    }
 }

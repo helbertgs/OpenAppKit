@@ -10,7 +10,6 @@ import OpenGLAD
     // MARK: - Creating Bitmap Graphics Contexts
 
     public init() {
-        
     }
 
     // MARK: - Converting Between Coordinate Spaces.

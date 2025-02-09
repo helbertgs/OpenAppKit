@@ -101,13 +101,17 @@ public typealias NSImageRep = AnyObject
     /// This method looks for an ``NSImageRep`` subclass that handles that data type from among those registered with ``NSImage``.
     /// - Parameter fileName: A full or relative path name specifying the file with the desired image data. Relative paths must be relative to the current working directory.
     public convenience init?(contentsOfFile fileName: String) {
-        fatalError("not implemented yet")
+        self.init()
+        if let url = URL(string: fileName) {
+            self.cgImage = OpenCoreGraphics.CGImage(url: url)
+        }
     }
 
     /// Initializes and returns an image object with the contents of the specified URL.
     /// - Parameter url: The URL identifying the image.
     public convenience init?(contentsOf url: URL) {
-        fatalError("not implemented yet")
+        self.init()
+        self.cgImage = OpenCoreGraphics.CGImage(url: url)
     }
 
     // MARK: - Creating Images from Existing Data 
@@ -118,7 +122,10 @@ public typealias NSImageRep = AnyObject
     /// This method initializes the object with an image representation that is most appropriate for the type of data you provided.
     /// - Parameter data: The data object containing the image data. The data can be in any format that macOS supports, including PDF, PICT, EPS, or any number of bitmap data formats.
     public convenience init?(data: Data) {
-        fatalError("not implemented yet")
+        self.init()
+        if let dataProvider = OpenCoreGraphics.CGDataProvider(data: data) {
+            self.cgImage = OpenCoreGraphics.CGImage(dataProvider)
+        }
     }
 
     /// Creates a new image using the contents of the provided image.
@@ -129,7 +136,8 @@ public typealias NSImageRep = AnyObject
     ///   - cgImage: The source image.
     ///   - size: The size of the new image. Use zero to have the new image adopt the pixel dimensions of the source image.
     public convenience init(cgImage: CGImage, size: OpenCoreGraphics.CGSize) {
-        fatalError("not implemented yet")
+        self.init(size: size)
+        self.cgImage = cgImage
     }
 
     // MARK: - Creating Empty Images
@@ -142,7 +150,7 @@ public typealias NSImageRep = AnyObject
     /// After using this method to initialize an image object, you are expected to provide the image contents before trying to draw the image. 
     /// You might lock focus on the image and draw to the image or you might explicitly add an image representation that you created.
     /// - Parameter size: The size of the image, measured in points.
-    public init(size: OpenCoreGraphics.CGSize) {
+    public init(size: OpenCoreGraphics.CGSize = .zero) {
         self.size = size
     }
 
@@ -163,7 +171,7 @@ public typealias NSImageRep = AnyObject
     /// Image representations cannot be shared among multiple ``NSImage`` objects.
     /// - Parameter imageRep: 
     public func addRepresentation(_ imageRep: NSImageRep) {
-        fatalError("not implemented yet")
+        representations.append(imageRep)
     }
 
     /// Adds an array of image representation objects to the image.
@@ -176,13 +184,13 @@ public typealias NSImageRep = AnyObject
     /// Image representations cannot be shared among multiple ``NSImage`` objects.
     /// - Parameter imageReps: 
     public func addRepresentations(_ imageReps: [NSImageRep]) {
-        fatalError("not implemented yet")
+        imageReps.forEach { representations.append($0) }
     }
 
     /// Removes and releases the specified image representation.
     /// - Parameter imageRep: The image representation object you want to remove.
     public func removeRepresentation(_ imageRep: NSImageRep) {
-        fatalError("not implemented yet")
+        representations.removeAll { $0 === imageRep }
     }
 
     // MARK: - Drawing Images

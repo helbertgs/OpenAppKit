@@ -792,6 +792,17 @@ public class NSWindow: NSResponder {
     /// This method includes the frame view that draws the border, title bar, and other peripheral elements.
     public func display() {
         print("\(Self.self).\(#function)")
+        
+        if glfwWindowShouldClose(windowRef) == GLFW_FALSE {
+
+            // Render Views
+            contentView?.displayIfNeeded()
+            
+            glfwSwapBuffers(windowRef)
+            glfwPollEvents()
+        } else {
+            self.close()
+        }
     }
 
     /// Passes a display message down the window’s view hierarchy, thus redrawing all views that need displaying.
@@ -806,7 +817,7 @@ public class NSWindow: NSResponder {
             print("\(Self.self).\(#function)")
 
             display()
-            viewsNeedDisplay = false
+            // viewsNeedDisplay = false
         }
     }
 
@@ -833,18 +844,6 @@ public class NSWindow: NSResponder {
     public func update() {
         print("\(Self.self).\(#function)")
         NotificationCenter.default.post(name: NSWindow.didUpdateNotification, object: self)
-
-        if glfwWindowShouldClose(windowRef) == GLFW_FALSE {
-
-            // Render Views
-
-            contentView?.draw(frame)
-
-            glfwSwapBuffers(windowRef)
-            glfwPollEvents()
-        } else {
-            self.close()
-        }
     }
 
     // MARK: - Managing Titles
