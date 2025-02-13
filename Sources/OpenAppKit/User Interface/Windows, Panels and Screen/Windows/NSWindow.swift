@@ -1429,5 +1429,6 @@ extension NSWindow {
         }
 
         self.graphicsContext = NSGraphicsContext()
+        NSGraphicsContext.current = self.graphicsContext
     }
 }

@@ -354,7 +354,7 @@ import Foundation
     ///   - byTiling: If true, this method fills the context's entire clipping region by tiling many copies of the image, and the rect parameter defines the origin and size of the tiling pattern.
     ///               If false (the default), this method draws a single copy of the image in the area defined by the rect parameter.
     public func draw(_ image: CGImage, in rect: CGRect, byTiling: Bool = false) {
-
+        print("\(Self.self).\(#function)")
         _vertices = [
             GLfloat(rect.minX), GLfloat(rect.minY), 0.0,
             GLfloat(rect.maxX), GLfloat(rect.minY), 0.0,

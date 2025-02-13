@@ -22,6 +22,7 @@ open class CALayer {
     /// This is the designated initializer for layer objects that are not in the presentation layer.
     /// - Returns: An initialized CALayer object.
     public required init() {
+        print("\(Self.self).\(#function)")
         self.contents = CGImage()
     }
 
@@ -39,6 +40,7 @@ open class CALayer {
     /// - Returns: A layer instance with any custom instance variables copied from layer.
     @available(*, unavailable)
     public init(layer: Any) {
+        print("\(Self.self).\(#function)")
         self.contents = CGImage()
     }
 
@@ -54,7 +56,8 @@ open class CALayer {
     /// For example, the ``hitTest(_:)`` method of the returned object queries the layer objects in the presentation tree.
     /// - Returns: A copy of the current presentation layer object.
     open func presentation() -> Self? {
-        self
+        print("\(Self.self).\(#function)")
+        return self
     }
 
     /// Returns the model layer object associated with the receiver, if any.
@@ -64,7 +67,8 @@ open class CALayer {
     /// If no transaction is in progress, the results of calling this method are undefined.
     /// - Returns: A layer instance representing the underlying model layer.
     open func model() -> Self {
-        self
+        print("\(Self.self).\(#function)")
+        return self
     }
 
     // MARK: - Accessing the Delegate
@@ -356,7 +360,8 @@ open class CALayer {
     /// Similarly, the layer converts any rectangles passed to its ``setNeedsDisplay(_:)`` into the flipped coordinate space.
     /// - Returns: true if the layer contents are implicitly flipped when rendered or false if they are not. This method returns false by default.
     open func contentsAreFlipped() -> Bool {
-        false
+        print("\(Self.self).\(#function)")
+        return false
     }
 
     /// A Boolean that indicates whether the geometry of the layer and its sublayers is flipped vertically.
@@ -499,12 +504,14 @@ open class CALayer {
     /// Returns an affine version of the layer’s transform.
     /// - Returns: The affine transform structure that corresponds to the value in the layer’s ``transform`` property.
     public func affineTransform() -> OpenCoreGraphics.CGAffineTransform {
-        .init()
+        print("\(Self.self).\(#function)")
+        return .init()
     }
 
     /// Sets the layer’s transform to the specified affine transform.
     /// - Parameter m: The affine transform to use for the layer’s transform.
     public func setAffineTransform(_ m: OpenCoreGraphics.CGAffineTransform) {
+        print("\(Self.self).\(#function)")
     }
 
     // MARK: - Managing the Layer Hierarchy
@@ -527,6 +534,7 @@ open class CALayer {
     /// If the array in the sublayers property is nil, calling this method creates an array for that property and adds the specified layer to it.
     /// - Parameter layer: The layer to be added.
     public func addSublayer(_ layer: CALayer) {
+        print("\(Self.self).\(#function)")
         if sublayers == nil {
             sublayers = []
         }
@@ -539,6 +547,7 @@ open class CALayer {
     /// You can use this method to remove a layer (and all of its sublayers) from a layer hierarchy. 
     /// This method updates both the superlayer’s list of sublayers and sets this layer’s ``superlayer`` property to nil.
     public func removeFromSuperlayer() {
+        print("\(Self.self).\(#function)")
         superlayer?.sublayers?.removeAll { $0 === self }
     }
 
@@ -547,6 +556,7 @@ open class CALayer {
     ///   - layer: The sublayer to be inserted into the current layer.
     ///   - index: The index at which to insert layer. This value must be a valid 0-based index into the ``sublayers`` array.
     public func insertSublayer(_ layer: CALayer, at index: Int) {
+        print("\(Self.self).\(#function)")
         if sublayers == nil {
             sublayers = []
         }
@@ -561,6 +571,7 @@ open class CALayer {
     ///   - layer: The sublayer to be inserted into the current layer.
     ///   - sibling: An existing sublayer in the current layer. The layer in aLayer is inserted before this layer in the ``sublayers`` array, and thus appears behind it visually.
     public func insertSublayer(_ layer: CALayer, below sibling: CALayer?) {
+        print("\(Self.self).\(#function)")
         guard let index = sublayers?.firstIndex(where: { $0 === sibling }) else {
             fatalError("")
         }
@@ -575,6 +586,7 @@ open class CALayer {
     ///   - layer: The sublayer to be inserted into the current layer.
     ///   - sibling: An existing sublayer in the current layer. The layer in aLayer is inserted after this layer in the ``sublayers`` array, and thus appears in front of it visually.
     public func insertSublayer(_ layer: CALayer, above sibling: CALayer?) {
+        print("\(Self.self).\(#function)")
         guard let index = sublayers?.firstIndex(where: { $0 === sibling }) else {
             fatalError("")
         }
@@ -589,6 +601,7 @@ open class CALayer {
     ///   - oldLayer: The layer to be replaced.
     ///   - newLayer: The layer with which to replace oldLayer.
     public func replaceSublayer(_ oldLayer: CALayer, with newLayer: CALayer) {
+        print("\(Self.self).\(#function)")
         guard let index = sublayers?.firstIndex(where: { $0 === oldLayer }) else {
             fatalError("")
         }
@@ -604,12 +617,14 @@ open class CALayer {
     /// This results in the layer potentially calling either the ``display(_:)`` or ``draw(_:in:)`` method of its delegate. 
     /// The existing content in the layer’s contents property is removed to make way for the new content.
     public func setNeedsDisplay() {
+        print("\(Self.self).\(#function)")
         needsDisplay = true
     }
 
     /// Marks the region within the specified rectangle as needing to be updated.
     /// - Parameter rect: The rectangular region of the layer to mark as invalid. You must specify this rectangle in the layer’s own coordinate system.
     public func setNeedsDisplay(_ rect: OpenCoreGraphics.CGRect) {
+        print("\(Self.self).\(#function)")
         needsDisplay = true
     }
 
@@ -624,6 +639,7 @@ open class CALayer {
     /// Doing so is generally not needed, though. 
     /// The preferred way to update a layer is to call ``setNeedsDisplay()`` and let the system update the layer during the next cycle.
     public func displayIfNeeded() {
+        print("\(Self.self).\(#function)")
         if needsDisplay {
             self.display()
         }
@@ -642,7 +658,8 @@ open class CALayer {
     /// - Parameter key: A string that specifies an attribute of the layer.
     /// - Returns: true if the layer requires a redisplay.
     public class func needsDisplay(forKey key: String) -> Bool {
-        false
+        print("\(Self.self).\(#function)")
+        return false
     }
     
     // MARK: - Layer Animations
@@ -654,6 +671,7 @@ open class CALayer {
     ///   - anim: The animation to be added to the render tree. This object is copied by the render tree, not referenced. Therefore, subsequent modifications to the object are not propagated into the render tree.
     ///   - key: A string that identifies the animation. Only one animation per unique key is added to the layer. The special key kCATransition is automatically used for transition animations. You may specify nil for this parameter.
     public func add(_ anim: CAAnimation, forKey key: String?) {
+        print("\(Self.self).\(#function)")
         fatalError("not implemented yet")
     }
 
@@ -664,11 +682,13 @@ open class CALayer {
     /// - Parameter key: A string that specifies the identifier of the animation. This string corresponds to the identifier string you passed to the ``add(_:forKey:)`` method.
     /// - Returns: The animation object matching the identifier, or nil if no such animation exists.
     public func animation(forKey key: String) -> CAAnimation? {
+        print("\(Self.self).\(#function)")
         fatalError("not implemented yet")
     }
 
     /// Remove all animations attached to the layer.
     public func removeAllAnimations() {
+        print("\(Self.self).\(#function)")
         fatalError("not implemented yet")
     }
 
@@ -677,6 +697,7 @@ open class CALayer {
     /// The order of the array matches the order in which animations will be applied to the layer.
     /// - Returns: An array of ``String`` objects identifying the current animations.
     public func animationKeys() -> [String]? {
+        print("\(Self.self).\(#function)")
         fatalError("not implemented yet")
     }
 
@@ -700,6 +721,7 @@ open class CALayer {
     /// 
     /// During the next update cycle, the system calls the ``layoutSublayers()`` method of any layers requiring layout updates.
     public func setNeedsLayout() {
+        print("\(Self.self).\(#function)")
         needsLayout = true
     }
 
@@ -711,6 +733,7 @@ open class CALayer {
     /// The default implementation of this method calls the ``layoutSublayers(of:)`` method of the layer’s delegate object. 
     /// If there is no delegate object, or the delegate does not implement that method, this method calls the ``layoutSublayers(of:)`` method of the object in the ``layoutManager`` property.
     public func layoutSublayers() {
+        print("\(Self.self).\(#function)")
         sublayers?.forEach { 
             $0.layoutIfNeeded()
         }
@@ -721,6 +744,7 @@ open class CALayer {
     /// When this message is received, the layer’s super layers are traversed until a ancestor layer is found that does not require layout. 
     /// Then layout is performed on the entire layer-tree beneath that ancestor.
     public func layoutIfNeeded() {
+        print("\(Self.self).\(#function)")
         fatalError("not implemented yet")
     }
 
@@ -743,6 +767,7 @@ open class CALayer {
     /// The old size of the superlayer is passed to this method so that the sublayer has that information for any calculations it must make.
     /// - Parameter size: The previous size of the superlayer.
     public func resize(withOldSuperlayerSize size: OpenCoreGraphics.CGSize) {
+        print("\(Self.self).\(#function)")
         fatalError("not implemented yet")
     }
 
@@ -753,6 +778,7 @@ open class CALayer {
     /// You should not need to call or override this method directly.
     /// - Parameter size: The previous size of the current layer.
     public func resizeSublayers(withOldSize size: OpenCoreGraphics.CGSize) {
+        print("\(Self.self).\(#function)")
         fatalError("not implemented yet")
     }
 
@@ -762,6 +788,7 @@ open class CALayer {
     /// If that object does not exist or does not implement that method, this method returns the size of the layer’s current ``bounds`` rectangle mapped into the coordinate space of its ``superlayer``.
     /// - Returns: The layer’s preferred frame size.
     public func preferredFrameSize() -> OpenCoreGraphics.CGSize {
+        print("\(Self.self).\(#function)")
         fatalError("not implemented yet")
     }
 
@@ -779,6 +806,7 @@ open class CALayer {
     /// Before constraints can be applied, you must also assign a ``CAConstraintLayoutManager`` object to the ``layoutManager`` property of the layer.
     /// - Parameter constraint: The constraint object to add to the receiver’s array of constraint objects. 
     public func addConstraint(_ constraint: CAConstraint) {
+        print("\(Self.self).\(#function)")
         if constraints == nil {
             constraints = []
         }
@@ -809,7 +837,8 @@ open class CALayer {
     /// - Parameter event: The identifier of the action.
     /// - Returns: Returns the object that provides the action for key. The object must implement the CAAction protocol.
     public func action(forKey event: String) -> (any CAAction)? {
-        actions?[event]
+        print("\(Self.self).\(#function)")
+        return actions?[event]
     }
 
     /// A dictionary containing layer actions.
@@ -825,6 +854,7 @@ open class CALayer {
     /// - Parameter event: The identifier of the action.
     /// - Returns: Returns a suitable action object for the given key or nil of no action object was associated with that key.
     public class func defaultAction(forKey event: String) -> (any CAAction)? {
+        print("\(Self.self).\(#function)")
         fatalError("not implemented yet")
     }
 
@@ -838,6 +868,7 @@ open class CALayer {
     ///   - layer: The layer with point in its coordinate system. The receiver and layer and must share a common parent layer. This parameter may be nil.
     /// - Returns: The point converted to the receiver’s coordinate system.
     public func convert(_ point: OpenCoreGraphics.CGPoint, from layer: CALayer?) -> OpenCoreGraphics.CGPoint {
+        print("\(Self.self).\(#function)")
         fatalError("not implemented yet")
     }
 
@@ -849,6 +880,7 @@ open class CALayer {
     ///   - layer: The layer into whose coordinate system point is to be converted. The receiver and layer must share a common parent layer. This parameter may be nil.
     /// - Returns: The point converted to the coordinate system of layer.
     public func convert(_ point: OpenCoreGraphics.CGPoint, to layer: CALayer?) -> OpenCoreGraphics.CGPoint {
+        print("\(Self.self).\(#function)")
         fatalError("not implemented yet")
     }
 
@@ -860,6 +892,7 @@ open class CALayer {
     ///   - layer: The layer with rect in its coordinate system. The receiver and layer and must share a common parent layer. This parameter may be nil.
     /// - Returns: The rectangle converted to the receiver’s coordinate system.
     public func convert(_ rect: OpenCoreGraphics.CGRect, from layer: CALayer?) -> OpenCoreGraphics.CGRect {
+        print("\(Self.self).\(#function)")
         fatalError("not implemented yet")
     }
 
@@ -871,6 +904,7 @@ open class CALayer {
     ///   - layer: The layer into whose coordinate system rect is to be converted. The receiver and layer and must share a common parent layer. This parameter may be nil.
     /// - Returns: The rectangle converted to the coordinate system of layer.
     public func convert(_ rect: OpenCoreGraphics.CGRect, to layer: CALayer?) -> OpenCoreGraphics.CGRect {
+        print("\(Self.self).\(#function)")
         fatalError("not implemented yet")
     }
 
@@ -880,6 +914,7 @@ open class CALayer {
     ///   - layer: The layer with timeInterval in its time space. The receiver and layer and must share a common parent layer.
     /// - Returns: The time interval converted to the receiver’s time space.
     public func convertTime(_ timeInterval: TimeInterval, from layer: CALayer?) -> TimeInterval {
+        print("\(Self.self).\(#function)")
         fatalError("not implemented yet")
     }
 
@@ -889,6 +924,7 @@ open class CALayer {
     ///   - layer: The layer into whose time space timeInterval is to be converted. The receiver and layer and must share a common parent layer.
     /// - Returns: The time interval converted to the time space of layer.
     public func convertTime(_ timeInterval: TimeInterval, to layer: CALayer?) -> TimeInterval {
+        print("\(Self.self).\(#function)")
         fatalError("not implemented yet")
     }
 
@@ -898,6 +934,7 @@ open class CALayer {
     /// - Parameter point: A point in the coordinate system of the receiver's superlayer.
     /// - Returns: The layer that contains the point or nil if the point lies outside the receiver’s bounds rectangle.
     public func hitTest(_ point: OpenCoreGraphics.CGPoint) -> CALayer? {
+        print("\(Self.self).\(#function)")
         fatalError("not implemented yet")
     }
 
@@ -905,6 +942,7 @@ open class CALayer {
     /// - Parameter point: A point in the receiver’s coordinate system.
     /// - Returns: true if the bounds of the layer contains the point.
     public func contains(_ point: OpenCoreGraphics.CGPoint) -> Bool {
+        print("\(Self.self).\(#function)")
         fatalError("not implemented yet")
     }
 
@@ -920,6 +958,7 @@ open class CALayer {
     /// If the layer is not contained by a ``CAScrollLayer`` object, this method does nothing.
     /// - Parameter point: The point in the current layer that should be scrolled into position.
     public func scroll(_ point: OpenCoreGraphics.CGPoint) {
+        print("\(Self.self).\(#function)")
     }
 
     /// Initiates a scroll in the layer’s closest ancestor scroll layer so that the specified rectangle becomes visible.
@@ -927,6 +966,7 @@ open class CALayer {
     /// If the layer is not contained by a ``CAScrollLayer`` object, this method does nothing.
     /// - Parameter rect: The rectangle to be made visible.
     public func scrollRectToVisible(_ rect: OpenCoreGraphics.CGRect) {
+        print("\(Self.self).\(#function)")
     }
 
     // MARK: - Identifying the Layer
@@ -945,7 +985,8 @@ open class CALayer {
     /// - Parameter key: The name of one of the receiver’s properties.
     /// - Returns: true if the specified property should be archived or false if it should not.
     public func shouldArchiveValue(forKey key: String) -> Bool {
-        true
+        print("\(Self.self).\(#function)")
+        return true
     }
 
     /// Specifies the default value associated with the specified key.
@@ -958,6 +999,7 @@ open class CALayer {
     /// - Parameter key: The name of one of the receiver’s properties.
     /// - Returns: The default value for the named property. Returns nil if no default value has been set.
     public class func defaultValue(forKey key: String) -> Any? {
-        nil
+        print("\(Self.self).\(#function)")
+        return nil
     }
 }

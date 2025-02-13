@@ -875,7 +875,7 @@ import Foundation
     /// 
     /// If the ``canDrawSubviewsIntoLayer`` property is set to true, the view ignores the value returned by this method. 
     /// Instead, the view always uses its ``draw(_:)`` method to draw its content.
-    public private(set) var wantsUpdateLayer: Bool = false
+    public private(set) var wantsUpdateLayer: Bool = true
 
     /// The Core Animation layer that the view uses as its backing store.
     /// 
@@ -1566,7 +1566,13 @@ import Foundation
     ///
     /// Your implementation of this method should not call super.
     public func updateLayer() {
-        layer?.displayIfNeeded()
+        print("\(Self.self).\(#function)")
+        if let layer = layer {
+            // layer.contents = NSImage(named: "NSView")?.cgImage
+            layer.displayIfNeeded()
+        } else {
+            print("Layer is nil")
+        }
     }
 
     /// Overridden by subclasses to draw the view’s image within the specified rectangle.
@@ -1707,7 +1713,7 @@ import Foundation
     /// Whenever the data or state affecting the view’s appearance changes, set this property to ``true``. 
     /// This marks the view as needing to update its display.
     /// On the next pass through the app’s event loop, the view is automatically redisplayed.
-    public var needsDisplay: Bool = false
+    public var needsDisplay: Bool = true
 
     /// Marks the region of the view within the specified rectangle as needing display, increasing the view’s existing invalid region to include it.
     /// 
@@ -1723,7 +1729,9 @@ import Foundation
     /// 
     /// If the view isn’t opaque, this method backs up the view hierarchy to the first opaque ancestor, calculates the portion of the opaque ancestor covered by the view, and begins displaying from there.
     public func display() {
-        wantsUpdateLayer ? updateLayer() : draw(frame)
+        print("\(Self.self).\(#function)")
+        // wantsUpdateLayer ? updateLayer() : draw(frame)
+        updateLayer()
     }
 
     /// Acts as ``display()``, but confining drawing to a rectangular region of the view.
@@ -2070,6 +2078,8 @@ extension NSView : OpenCoreAnimation.CALayerDelegate {
         if let context = NSGraphicsContext.current {
             draw(layer, in: context.cgContext)
             return
+        } else {
+            print("Context is nil")
         }
     }
 
@@ -2082,6 +2092,7 @@ extension NSView : OpenCoreAnimation.CALayerDelegate {
     ///   - layer: The layer whose contents need to be drawn.
     ///   - context: The graphics context to use for drawing. The graphics context incorporates the appropriate scale factor for drawing to the target screen
     public func draw(_ layer: CALayer, in context: CGContext) {
+        print("\(Self.self).\(#function)")
         if let contents = layer.contents as? NSImage, let image = contents.cgImage {
             context.draw(image, in: layer.frame)
             return
