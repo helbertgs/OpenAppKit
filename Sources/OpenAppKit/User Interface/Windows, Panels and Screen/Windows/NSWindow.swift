@@ -36,6 +36,8 @@ public class NSWindow: NSResponder {
         self.contentView = self.contentViewController?.view
 
         super.init()
+
+        self.contentView?.window = self
         self._glfwCreateWindow()
     }
 
@@ -59,6 +61,8 @@ public class NSWindow: NSResponder {
         self.contentView = self.contentViewController?.view
 
         super.init()
+
+        self.contentView?.window = self
         self._glfwCreateWindow()
     }
 
@@ -791,7 +795,7 @@ public class NSWindow: NSResponder {
     /// 
     /// This method includes the frame view that draws the border, title bar, and other peripheral elements.
     public func display() {
-        print("\(Self.self).\(#function)")
+        // print("\(Self.self).\(#function)")
         
         if glfwWindowShouldClose(windowRef) == GLFW_FALSE {
 
@@ -814,7 +818,7 @@ public class NSWindow: NSResponder {
     /// NSWindow objects normally record which of their views need displaying and display them automatically on each pass through the event loop.
     public func displayIfNeeded() {
         if viewsNeedDisplay {
-            print("\(Self.self).\(#function)")
+            // print("\(Self.self).\(#function)")
 
             display()
             // viewsNeedDisplay = false
@@ -842,7 +846,7 @@ public class NSWindow: NSResponder {
     /// An ``NSWindow`` object is automatically sent an update message on every pass through the event loop and before it’s displayed onscreen. 
     /// You can manually cause an update message to be sent to all visible NSWindow objects through the ``NSApplication`` ``updateWindows()`` method.
     public func update() {
-        print("\(Self.self).\(#function)")
+        // print("\(Self.self).\(#function)")
         NotificationCenter.default.post(name: NSWindow.didUpdateNotification, object: self)
     }
 

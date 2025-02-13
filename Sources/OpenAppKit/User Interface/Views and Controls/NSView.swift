@@ -16,6 +16,11 @@ import Foundation
     public init(frame: OpenCoreGraphics.CGRect) {
         self.frame = frame
         super.init()
+
+        if wantsLayer {
+            layer = makeBackingLayer()
+            layer?.delegate = self
+        }
     }
 
     /// Initializes a view using from data in the specified coder object.
@@ -881,7 +886,9 @@ import Foundation
     /// Creates the view’s backing layer.
     /// - Returns: The layer to use as the view’s backing layer.
     open func makeBackingLayer() -> CALayer {
+        print("\(Self.self).\(#function)")
         let layer = CALayer()
+        layer.contents = NSImage(size: frame.size)
         layer.delegate = self
 
         return layer
@@ -1168,7 +1175,7 @@ import Foundation
     /// The coordinate system used when evaluating the constraint is the coordinate system of the view that holds the constraint.
     /// - Parameter constraint: The constraint to be added to the view. The constraint may only reference the view itself or its subviews.
     public func addConstraint(_ constraint: NSLayoutConstraint) {
-        fatalError("Not implemented yet")
+        constraints.append(constraint)
     }
     
     /// Adds multiple constraints on the layout of the receiving view or its subviews.
@@ -1179,19 +1186,23 @@ import Foundation
     /// The coordinate system used when evaluating each constraint is the coordinate system of the view that holds the constraint.
     /// - Parameter constraints: An array of constraints to be added to the view. All constraints may only reference the view itself or its subviews.
     public func addConstraints(_ constraints: [NSLayoutConstraint]) {
-        fatalError("Not implemented yet")
+        constraints.forEach { 
+            addConstraint($0) 
+        }
     }
     
     /// Removes the specified constraint from the view.
     /// - Parameter constraint: The constraint to remove. Removing a constraint not held by the view has no effect.
     public func removeConstraint(_ constraint: NSLayoutConstraint) {
-        fatalError("Not implemented yet")
+        constraints.removeAll { $0 == constraint }
     }
     
     /// Removes the specified constraints from the view.
     /// - Parameter constraints: The constraints to remove.
     public func removeConstraints(_ constraints: [NSLayoutConstraint]) {
-        fatalError("Not implemented yet")
+        constraints.forEach { 
+            removeConstraint($0) 
+        }
     }
 
     // MARK: - Measuring in Auto Layout
@@ -1290,7 +1301,7 @@ import Foundation
     /// After the guide has been added to a view, it can participate in Auto Layout constraints with that view’s hierarchy.
     /// - Parameter guide: The layout guide to be added.
     public func addLayoutGuide(_ guide: NSLayoutGuide) {
-        fatalError("Not implemented yet")
+        layoutGuides.append(guide)
     }
     
     /// Removes the provided layout guide from the view.
@@ -1302,7 +1313,7 @@ import Foundation
     /// Layout guides cannot participate in Auto Layout constraints unless they are added by a view in the view hierarchy.
     /// - Parameter guide: The layout guide to be removed.
     public func removeLayoutGuide(_ guide: NSLayoutGuide) {
-        fatalError("Not implemented yet")
+        layoutGuides.removeAll { $0 == guide }
     }
 
     // MARK: - Aligning Views with Auto Layout
@@ -2055,6 +2066,11 @@ extension NSView : OpenCoreAnimation.CALayerDelegate {
     /// - Parameter layer: The layer whose contents need updating.
     public func display(_ layer: CALayer) {
         print("\(Self.self).\(#function)")
+        
+        if let context = NSGraphicsContext.current {
+            draw(layer, in: context.cgContext)
+            return
+        }
     }
 
     /// Tells the delegate to implement the display process using the layer’s context.

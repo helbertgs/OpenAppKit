@@ -1,6 +1,6 @@
 import Foundation
 
-@MainActor public struct NSUserInterfaceItemIdentifier: @preconcurrency RawRepresentable, Sendable {
+@MainActor public struct NSUserInterfaceItemIdentifier: Equatable, Hashable, @preconcurrency RawRepresentable, Sendable {
     
     /// The corresponding value of the raw type.
     public let rawValue: String

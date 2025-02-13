@@ -2,7 +2,7 @@ import Foundation
 import OpenCoreGraphics
 
 /// A rectangular area that can interact with Auto Layout.
-@MainActor public class NSLayoutGuide {
+@MainActor public class NSLayoutGuide: @preconcurrency Equatable, @preconcurrency Hashable {
 
     // MARK: - Working With Layout Guides
 
@@ -34,5 +34,18 @@ import OpenCoreGraphics
         self.identifier = identifier
         self.frame = frame
         self.owningView = owningView
+    }
+
+    // MARK: - Equatable
+
+    public static func == (lhs: NSLayoutGuide, rhs: NSLayoutGuide) -> Bool {
+        lhs.identifier == rhs.identifier && lhs.frame == rhs.frame
+    }
+
+    // MARK: - Hashable
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(identifier)
+        hasher.combine(frame)
     }
 }

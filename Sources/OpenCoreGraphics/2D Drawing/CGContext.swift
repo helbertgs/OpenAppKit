@@ -1,5 +1,5 @@
 import Foundation
-import OpenGLAD
+@preconcurrency import OpenGLAD
 
 /// An OpenGL drawing environment.
 /// 
@@ -7,9 +7,24 @@ import OpenGLAD
 /// A graphics context contains drawing parameters and all device-specific information needed to render the paint on a page to the destination, whether the destination is a window in an application, a bitmap image, a PDF document, or a printer.
 @MainActor public class CGContext {
 
+    private var _texture: GLuint = 0
+    private var _VAO: GLuint = 0
+    private var _VBO: GLuint = 0
+    private var _EBO: GLuint = 0
+    private var _shaderProgram: CGShaderProgram = .init()
+    private var _vertices: [GLfloat] = []
+    private var _indices: [GLuint] = []
+
     // MARK: - Creating Bitmap Graphics Contexts
 
     public init() {
+    }
+
+    deinit {
+        glad_glDeleteTextures(1, &_texture)
+        glad_glDeleteVertexArrays(1, &_VAO)
+        glad_glDeleteBuffers(1, &_VBO)
+        glad_glDeleteProgram(_shaderProgram.program)
     }
 
     // MARK: - Converting Between Coordinate Spaces.
@@ -78,6 +93,7 @@ import OpenGLAD
     /// The current path is not part of the graphics state. 
     /// Consequently, saving and restoring the graphics state has no effect on the current path.
     public func beginPath() {
+        path?.beginPath()
     }
 
     /// Begins a new subpath at the specified point.
@@ -86,6 +102,7 @@ import OpenGLAD
     /// The current point is set to this start point.
     /// - Parameter point: The point, in user space coordinates, at which to start a new subpath.
     public func move(to point: CGPoint) {
+        path?.move(to: point)
     }
 
     /// Appends a straight line segment from the current point to the specified point.
@@ -93,7 +110,7 @@ import OpenGLAD
     /// After adding the line segment, the current point is set to the endpoint of the line segment.
     /// - Parameter point: The location, in user space coordinates, for the end of the new line segment.
     public func addLine(to point: CGPoint) {
-
+        path?.addLine(to: point)
     }
 
     /// Adds a sequence of connected straight-line segments to the current path.
@@ -102,6 +119,7 @@ import OpenGLAD
     /// After calling this method, the path's current point is the last point in the array.
     /// - Parameter points: An array of values that specify the start and end points of the line segments to draw. Each point in the array specifies a position in user space. The first point in the array specifies the initial starting point.
     public func addLines(between points: [CGPoint]) {
+        path?.addLines(between: points)
     }
 
     /// Adds an ellipse that fits inside the specified rectangle.
@@ -114,6 +132,7 @@ import OpenGLAD
     /// The ellipse forms a complete subpath of the path—that is, the ellipse drawing starts with a move-to operation and ends with a close-subpath operation, with all moves oriented in the clockwise direction.
     /// - Parameter rect: A rectangle that defines the area for the ellipse to fit in.
     public func addEllipse(in rect: CGRect) {
+        path?.addEllipse(in: rect)
     }
 
     /// Adds an arc of a circle to the current path, specified with a radius and angles.
@@ -132,7 +151,8 @@ import OpenGLAD
     ///   - startAngle: The angle to the starting point of the arc, measured in radians from the positive x-axis.
     ///   - endAngle: The angle to the end point of the arc, measured in radians from the positive x-axis.
     ///   - clockwise: true to make a clockwise arc; false to make a counterclockwise arc.
-    public func addArc(center: CGPoint, radius: CGFloat, startAngle: CGFloat, endAngle: CGFloat, clockwise: Bool) {
+    public func addArc(center: CGPoint, radius: Double, startAngle: Double, endAngle: Double, clockwise: Bool) {
+        path?.addArc(center: center, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: clockwise)
     }
 
     /// Adds an arc of a circle to the current path, specified with a radius and two tangent lines.
@@ -147,7 +167,8 @@ import OpenGLAD
     ///   - tangent1End: The end point, in user space coordinates, for the first tangent line to be used in constructing the arc. (The start point for this tangent line is the path's current point.)
     ///   - tangent2End: The end point, in user space coordinates, for the second tangent line to be used in constructing the arc. (The start point for this tangent line is the tangent1End point.)
     ///   - radius: The radius of the arc, in user space coordinates.   
-    public func addArc(tangent1End: CGPoint, tangent2End: CGPoint, radius: CGFloat) {
+    public func addArc(tangent1End: CGPoint, tangent2End: CGPoint, radius: Double) {
+        path?.addArc(tangent1End: tangent1End, tangent2End: tangent2End, radius: radius)
     }
 
     /// Adds a cubic Bézier curve to the current path, with the specified end point and control points.
@@ -159,6 +180,7 @@ import OpenGLAD
     ///   - control1: The first control point of the curve, in user space coordinates.
     ///   - control2: The second control point of the curve, in user space coordinates.
     public func addCurve(to end: CGPoint, control1: CGPoint, control2: CGPoint) {
+        path?.addCurve(to: end, control1: control1, control2: control2)
     }
 
     /// Adds a quadratic Bézier curve to the current path, with the specified end point and control point.
@@ -169,6 +191,7 @@ import OpenGLAD
     ///   - end: The point, in user space coordinates, at which to end the curve.
     ///   - control: The control point of the curve, in user space coordinates.
     public func addQuadCurve(to end: CGPoint, control: CGPoint) {
+        path?.addQuadCurve(to: end, control: control)
     }
 
     /// Adds a previously created path object to the current path in a graphics context.
@@ -179,6 +202,7 @@ import OpenGLAD
     /// After the call completes, the start point and current point of the path are those of the last subpath in path.
     /// - Parameter path: A previously created path object.
     public func addPath(_ path: CGPath) {
+        self.path?.addPath(path)
     }
 
     /// Closes and terminates the current path’s subpath.
@@ -190,6 +214,7 @@ import OpenGLAD
     /// 
     /// If the current path is empty or the current subpath is already closed, this function does nothing.
     public func closePath() {
+        path?.closePath()
     }
 
     // MARK: - Examining the Current Graphics Path
@@ -293,7 +318,7 @@ import OpenGLAD
     /// - Parameters:
     ///   - rect: A rectangle, in user space coordinates.
     ///   - width: A value, in user space units, that is greater than zero. This value does not affect the line width values in the current graphics state.
-    public func stroke(_ rect: CGRect, width: CGFloat) {
+    public func stroke(_ rect: CGRect, width: Double) {
     }
 
     /// Strokes an ellipse that fits inside the specified rectangle.
@@ -329,6 +354,45 @@ import OpenGLAD
     ///   - byTiling: If true, this method fills the context's entire clipping region by tiling many copies of the image, and the rect parameter defines the origin and size of the tiling pattern.
     ///               If false (the default), this method draws a single copy of the image in the area defined by the rect parameter.
     public func draw(_ image: CGImage, in rect: CGRect, byTiling: Bool = false) {
+
+        _vertices = [
+            GLfloat(rect.minX), GLfloat(rect.minY), 0.0,
+            GLfloat(rect.maxX), GLfloat(rect.minY), 0.0,
+            GLfloat(rect.maxX), GLfloat(rect.maxY), 0.0,
+            GLfloat(rect.minX), GLfloat(rect.maxY), 0.0
+        ]
+
+        _indices = [
+            0, 1, 2,
+            2, 3, 0
+        ]
+
+        _shaderProgram.attach(.vertex)
+        _shaderProgram.attach(.fragment)
+        _shaderProgram.link()
+        _shaderProgram.flush()
+
+        glad_glGenVertexArrays(1, &_VAO)
+        glad_glGenBuffers(1, &_VBO)
+        glad_glGenBuffers(1, &_EBO)
+
+        _shaderProgram.use()
+
+        glad_glBindVertexArray(_VAO)
+
+        glad_glBindBuffer(GLenum(GL_ARRAY_BUFFER), _VBO)
+        glad_glBufferData(GLenum(GL_ARRAY_BUFFER), GLsizeiptr(MemoryLayout.size(ofValue: _vertices)), _vertices, GLenum(GL_STATIC_DRAW))
+
+        glad_glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), _EBO)
+        glad_glBufferData(GLenum(GL_ELEMENT_ARRAY_BUFFER), GLsizeiptr(MemoryLayout.size(ofValue: _indices)), _indices, GLenum(GL_STATIC_DRAW))
+
+        glad_glVertexAttribPointer(0, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLfloat>.size * 3), nil)
+        glad_glEnableVertexAttribArray(0)
+
+        glad_glBindBuffer(GLenum(GL_ARRAY_BUFFER), 0)
+
+        glad_glBindVertexArray(_VAO)
+        glad_glDrawElements(GLenum(GL_TRIANGLES), 6, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: 0))
     }
 
     // MARK: - Drawing Core Graphics Layers
@@ -379,21 +443,24 @@ import OpenGLAD
     /// For example, on iOS, a UIView applies a transformation to the graphics context that inverts the Y-axis (by multiplying it by -1). 
     /// Rotating the user coordinate system on coordinate system that was previously flipped results in a rotation in the opposite direction (that is, positive values appear to rotate the coordinate system in the clockwise direction).
     /// - Parameter angle: The angle, in radians, by which to rotate the coordinate space of the specified context. Positive values rotate counterclockwise and negative values rotate clockwise.)
-    public func rotate(by angle: CGFloat) {
+    public func rotate(by angle: Double) {
+        ctm = ctm.rotated(by: angle)
     }
 
     /// Changes the scale of the user coordinate system in a context.
     /// - Parameters:
     ///   - sx: The factor by which to scale the x-axis of the coordinate space of the specified context.
     ///   - sy: The factor by which to scale the y-axis of the coordinate space of the specified context.
-    public func scaleBy(x sx: CGFloat, y sy: CGFloat) {
+    public func scaleBy(x sx: Double, y sy: Double) {
+        ctm = ctm.scaledBy(x: sx, y: sy)
     }
 
     /// Changes the origin of the user coordinate system in a context.
     /// - Parameters:
     ///   - tx: The amount to displace the x-axis of the coordinate space, in units of the user space, of the specified context.
     ///   - ty: The amount to displace the y-axis of the coordinate space, in units of the user space, of the specified context.
-    public func translateBy(x tx: CGFloat, y ty: CGFloat) {
+    public func translateBy(x tx: Double, y ty: Double) {
+        ctm = ctm.translatedBy(x: tx, y: ty)
     }
 
     /// Transforms the user coordinate system in a context using a specified matrix.
@@ -403,6 +470,7 @@ import OpenGLAD
     /// The resulting CTM in the context is: CTMnew = transform * CTMcontext.
     /// - Parameter transform: The transformation matrix to apply to the specified context’s current transformation matrix.
     public func concatenate(_ transform: CGAffineTransform) {
+        ctm = ctm.concatenating(transform)
     }
 
     // MARK: - Saving and Restoring Graphics State
@@ -444,7 +512,5 @@ import OpenGLAD
     /// Compositing operations for images.
     public var blendMode: CGBlendMode = .normal
 
-    // MARK: - Managing a Bitmap Graphics Context
-
-    
+    // MARK: - Managing a Bitmap Graphics Context 
 }

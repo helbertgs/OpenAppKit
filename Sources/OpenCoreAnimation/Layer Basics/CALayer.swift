@@ -121,10 +121,11 @@ open class CALayer {
     /// Subclasses can override this method and use it to set the layer’s contents property directly. 
     /// You might do this if your custom layer subclass handles layer updates differently.
     open func display() {
+        print("\(Self.self).\(#function)")
         if let delegate {
             delegate.display(self)
         } else {
-            contents = CGImage()
+            contents == nil ? CGImage() : contents
         }
     }
 
@@ -137,6 +138,7 @@ open class CALayer {
     /// When drawing, all coordinates should be specified in points in the logical coordinate space.
     /// - Parameter context: The graphics context in which to draw the content. The context may be clipped to protect valid layer content.
     open func draw(in context: CGContext) {
+        print("\(Self.self).\(#function)")
         if let delegate {
             delegate.draw(self, in: context)
         }
@@ -401,6 +403,7 @@ open class CALayer {
     /// Renders in the coordinate space of the layer.
     /// - Parameter context: The graphics context to use to render the layer.
     public func render(in context: CGContext) {
+        print("\(Self.self).\(#function)")
         if let contents = contents as? CGImage {
             context.draw(contents, in: frame)
         }
@@ -628,7 +631,7 @@ open class CALayer {
 
     /// Returns a Boolean indicating whether the layer has been marked as needing an update.
     /// - Returns: true if the layer needs to be updated.
-    public private(set) var needsDisplay: Bool = false
+    public private(set) var needsDisplay: Bool = true
 
     /// Returns a Boolean indicating whether changes to the specified key require the layer to be redisplayed.
     /// 

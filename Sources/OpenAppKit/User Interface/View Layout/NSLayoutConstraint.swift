@@ -194,3 +194,29 @@ import Foundation
         self.firstAnchor = .init()
     }
 }
+
+extension NSLayoutConstraint : @preconcurrency Equatable {
+    public static func == (lhs: NSLayoutConstraint, rhs: NSLayoutConstraint) -> Bool {
+        lhs.firstItem === rhs.firstItem &&
+        lhs.firstAttribute == rhs.firstAttribute &&
+        lhs.relation == rhs.relation &&
+        lhs.secondItem === rhs.secondItem &&
+        lhs.secondAttribute == rhs.secondAttribute &&
+        lhs.multiplier == rhs.multiplier &&
+        lhs.constant == rhs.constant &&
+        lhs.priority == rhs.priority &&
+        lhs.identifier == rhs.identifier
+    }
+}
+
+extension NSLayoutConstraint : @preconcurrency Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(firstAttribute)
+        hasher.combine(relation)
+        hasher.combine(secondAttribute)
+        hasher.combine(multiplier)
+        hasher.combine(constant)
+        hasher.combine(priority)
+        hasher.combine(identifier)
+    }
+}
