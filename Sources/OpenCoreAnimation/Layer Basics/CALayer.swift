@@ -129,7 +129,8 @@ open class CALayer {
         if let delegate {
             delegate.display(self)
         } else {
-            contents == nil ? CGImage() : contents
+            contents = contents == nil ? CGImage() : contents
+            draw(in: CGContext())
         }
     }
 

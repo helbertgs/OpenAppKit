@@ -9,6 +9,7 @@ class CGShader {
     var shader: GLuint
 
     init(_ code: String, _ shaderType: ShaderType) {
+        print("\(Self.self).\(#function)")
         self.code = code
 
         self.shader = glad_glCreateShader(GLenum(shaderType.rawValue))
@@ -32,12 +33,13 @@ class CGShader {
     }
 
     deinit {
+        print("\(Self.self).\(#function)")
         glad_glDeleteShader(shader)
     }
 
     static var vertex: CGShader {
         return CGShader("""
-        #version 330 core
+        #version 330
         layout (location = 0) in vec3 aPos;
         void main() {
             gl_Position = vec4(aPos, 1.0);
@@ -47,10 +49,11 @@ class CGShader {
 
     static var fragment: CGShader {
         return CGShader("""
-        #version 330 core
+        #version 330
+        uniform vec4 ourColor;
         out vec4 FragColor;
         void main() {
-            FragColor = vec4(1.0, 0.5, 0.2, 1.0);
+            FragColor = ourColor;
         }
         """, .fragment)
     }

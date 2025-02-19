@@ -1567,12 +1567,7 @@ import Foundation
     /// Your implementation of this method should not call super.
     public func updateLayer() {
         print("\(Self.self).\(#function)")
-        if let layer = layer {
-            // layer.contents = NSImage(named: "NSView")?.cgImage
-            layer.displayIfNeeded()
-        } else {
-            print("Layer is nil")
-        }
+        layer?.displayIfNeeded()
     }
 
     /// Overridden by subclasses to draw the view’s image within the specified rectangle.
@@ -1731,7 +1726,11 @@ import Foundation
     public func display() {
         print("\(Self.self).\(#function)")
         // wantsUpdateLayer ? updateLayer() : draw(frame)
-        updateLayer()
+        // updateLayer()
+
+        if let context = NSGraphicsContext.current {
+            context.cgContext.draw(CGImage(), in: frame)                                                                                             
+        }
     }
 
     /// Acts as ``display()``, but confining drawing to a rectangular region of the view.
@@ -2074,6 +2073,8 @@ extension NSView : OpenCoreAnimation.CALayerDelegate {
     /// - Parameter layer: The layer whose contents need updating.
     public func display(_ layer: CALayer) {
         print("\(Self.self).\(#function)")
+
+        layer.frame = frame
         
         if let context = NSGraphicsContext.current {
             draw(layer, in: context.cgContext)

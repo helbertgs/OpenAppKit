@@ -108,7 +108,7 @@ import OpenGLFW
     /// - Parameter event: The event object to dispatch.
     public func sendEvent(_ event: NSEvent) {
         print("\(Self.self).\(#function)")
-        print("event: \(event)")
+        windows.forEach { $0.sendEvent(event) }
     }
 
     /// Adds a given event to the receiver’s event queue.

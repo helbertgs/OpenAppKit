@@ -355,28 +355,35 @@ import Foundation
     ///               If false (the default), this method draws a single copy of the image in the area defined by the rect parameter.
     public func draw(_ image: CGImage, in rect: CGRect, byTiling: Bool = false) {
         print("\(Self.self).\(#function)")
-        _vertices = [
-            GLfloat(rect.minX), GLfloat(rect.minY), 0.0,
-            GLfloat(rect.maxX), GLfloat(rect.minY), 0.0,
-            GLfloat(rect.maxX), GLfloat(rect.maxY), 0.0,
-            GLfloat(rect.minX), GLfloat(rect.maxY), 0.0
-        ]
-
-        _indices = [
-            0, 1, 2,
-            2, 3, 0
-        ]
 
         _shaderProgram.attach(.vertex)
         _shaderProgram.attach(.fragment)
         _shaderProgram.link()
         _shaderProgram.flush()
 
+        _vertices = [
+            // GLfloat(rect.minX), GLfloat(rect.minY), 0.0,
+            // GLfloat(rect.maxX), GLfloat(rect.minY), 0.0,
+            // GLfloat(rect.maxX), GLfloat(rect.maxY), 0.0,
+            // GLfloat(rect.minX), GLfloat(rect.maxY), 0.0
+            // Positions        
+            0.5,  0.5, 0.0,  // Top Right
+            0.5, -0.5, 0.0,  // Bottom Right
+            -0.5, -0.5, 0.0,  // Bottom Left
+            -0.5,  0.5, 0.0   // Top Left
+            
+        ]
+
+        _indices = [
+            // 0, 1, 2,
+            // 2, 3, 0
+            0, 1, 3,  // First Triangle
+            1, 2, 3   // Second Triangle
+        ]       
+
         glad_glGenVertexArrays(1, &_VAO)
         glad_glGenBuffers(1, &_VBO)
         glad_glGenBuffers(1, &_EBO)
-
-        _shaderProgram.use()
 
         glad_glBindVertexArray(_VAO)
 
@@ -390,6 +397,9 @@ import Foundation
         glad_glEnableVertexAttribArray(0)
 
         glad_glBindBuffer(GLenum(GL_ARRAY_BUFFER), 0)
+       
+        _shaderProgram.use()
+        _shaderProgram.setUniform("ourColor", CGColor(red: 1, green: 0, blue: 0, alpha: 1))
 
         glad_glBindVertexArray(_VAO)
         glad_glDrawElements(GLenum(GL_TRIANGLES), 6, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: 0))

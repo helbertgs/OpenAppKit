@@ -1,6 +1,6 @@
 import Foundation
 import OpenCoreGraphics
-import OpenGLAD
+@preconcurrency import OpenGLAD
 import OpenGLFW
 
 /// A window that an app displays on the screen.
@@ -37,6 +37,7 @@ public class NSWindow: NSResponder {
 
         super.init()
 
+        self.contentViewController?.nextResponder = self
         self.contentView?.window = self
         self._glfwCreateWindow()
     }
@@ -62,6 +63,7 @@ public class NSWindow: NSResponder {
 
         super.init()
 
+        self.contentViewController?.nextResponder = self
         self.contentView?.window = self
         self._glfwCreateWindow()
     }
@@ -77,8 +79,10 @@ public class NSWindow: NSResponder {
         self.contentViewController = contentViewController
         super.init()
 
+        self.contentViewController?.nextResponder = self
         self.contentView = self.contentViewController?.view
         self.contentView?.window = self
+        self.frame = self.contentView?.frame ?? .init(origin: .zero, size: .init(width: 800, height: 600))
         self._glfwCreateWindow()
     }
 
@@ -486,6 +490,7 @@ public class NSWindow: NSResponder {
     /// - Parameter sender: The window to remove.
     public func orderOut(_ sender: Any?) {
         print("\(Self.self).\(#function)")
+        NSApplication.shared.windows.removeAll { $0 === self }
     }
 
     /// Moves the window to the back of its level in the screen list, without changing either the key window or the main window.
@@ -798,6 +803,9 @@ public class NSWindow: NSResponder {
         // print("\(Self.self).\(#function)")
         
         if glfwWindowShouldClose(windowRef) == GLFW_FALSE {
+
+            glad_glClearColor(0.2, 0.3, 0.3, 1.0)
+            glad_glClear(GLenum(GL_COLOR_BUFFER_BIT))
 
             // Render Views
             contentView?.displayIfNeeded()
@@ -1417,14 +1425,14 @@ extension NSWindow {
 
 extension NSWindow {
     fileprivate func _glfwCreateWindow() {
-        guard let windowRef = glfwCreateWindow(200, 200, "Hello, World!", nil, nil) else {
+        guard let windowRef = glfwCreateWindow(Int32(frame.width), Int32(frame.height), "Hello, World!", nil, nil) else {
             fatalError("Fail to create a GLFW Window")
         }
 
         self.windowRef  = windowRef
         glfwMakeContextCurrent(self.windowRef)
 
-        if gladLoaderLoadGL() == GL_TRUE {
+        guard gladLoaderLoadGL() > 0 else {
             fatalError("Fail to init a GLAD")
         }
 

@@ -52,7 +52,7 @@ open class NSViewController: NSResponder {
     open func loadView() {
         print("\(Self.self).\(#function)")
         if view == nil {
-            self.view = .init(frame: .zero)
+            self.view = .init(frame: .init(origin: .zero, size: preferredContentSize))
         }
         isViewLoaded = true
         viewDidLoad()
@@ -150,7 +150,7 @@ open class NSViewController: NSResponder {
     /// 
     /// Set this property to express the desired size for a view controller’s view. 
     /// A parent view controller can consult the value of this property when performing layout.
-    open var preferredContentSize: OpenCoreGraphics.CGSize = .init()
+    open var preferredContentSize: OpenCoreGraphics.CGSize = .init(width: 800, height: 600)
 
     /// Called during Auto Layout constraint updating to enable the view controller to mediate the process.
     /// 
@@ -162,6 +162,7 @@ open class NSViewController: NSResponder {
     /// If you override this method, you must call this method on super at some point in your implementation or call the ``updateConstraints()`` method on the view controller’s view.
     public func updateViewConstraints() {
         print("\(Self.self).\(#function)")
+        view.updateConstraints()
     }
 
     /// Called just before the ``layout()`` method of the view controller’s view is called.
@@ -190,7 +191,7 @@ open class NSViewController: NSResponder {
     /// 
     /// You can add or remove child view controllers by using this property. 
     /// When you do, the ``addChild(_:)`` or ``removeFromParent()`` method gets called accordingly.
-    public var children: [NSViewController] = []
+    public private(set) var children: [NSViewController] = []
 
     /// A convenience method for adding a child view controller at the end of the ``children`` array.
     /// - Parameter childViewController: The view controller to be added to the end of the ``children`` array.

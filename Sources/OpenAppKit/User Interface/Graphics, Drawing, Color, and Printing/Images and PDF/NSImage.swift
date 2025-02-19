@@ -152,6 +152,7 @@ public typealias NSImageRep = AnyObject
     /// - Parameter size: The size of the image, measured in points.
     public init(size: OpenCoreGraphics.CGSize = .zero) {
         self.size = size
+        self.cgImage = .init()
     }
 
     // MARK: - Working with Representations of Images
