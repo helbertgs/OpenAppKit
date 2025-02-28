@@ -66,7 +66,7 @@ public class CGPath {
     ///   - startAngle: The angle to the starting point of the arc, measured in radians from the positive x-axis.
     ///   - endAngle: The angle to the end point of the arc, measured in radians from the positive x-axis.
     ///   - clockwise: true to make a clockwise arc; false to make a counterclockwise arc.
-    public func addArc(center: CGPoint, radius: Double, startAngle: Double, endAngle: Double, clockwise: Bool) {
+    public func addArc(center: CGPoint, radius: Float, startAngle: Float, endAngle: Float, clockwise: Bool) {
     }
 
     /// Adds an arc of a circle to the current path, specified with a radius and two tangent lines.
@@ -81,7 +81,7 @@ public class CGPath {
     ///   - tangent1End: The end point, in user space coordinates, for the first tangent line to be used in constructing the arc. (The start point for this tangent line is the path's current point.)
     ///   - tangent2End: The end point, in user space coordinates, for the second tangent line to be used in constructing the arc. (The start point for this tangent line is the tangent1End point.)
     ///   - radius: The radius of the arc, in user space coordinates.   
-    public func addArc(tangent1End: CGPoint, tangent2End: CGPoint, radius: Double) {
+    public func addArc(tangent1End: CGPoint, tangent2End: CGPoint, radius: Float) {
     }
 
     /// Adds a cubic Bézier curve to the current path, with the specified end point and control points.

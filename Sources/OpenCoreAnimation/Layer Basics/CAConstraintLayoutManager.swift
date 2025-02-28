@@ -1,4 +1,5 @@
 import Foundation
+import OpenCoreGraphics
 
 public class CAConstraintLayoutManager : CALayoutManager, @unchecked Sendable {
     public init() {
@@ -19,7 +20,7 @@ public class CAConstraintLayoutManager : CALayoutManager, @unchecked Sendable {
     /// Override to customize layer size.
     /// - Parameter layer: The layer whose size needs to be calculated.
     /// - Returns: The preferred size of the layer.
-    public func preferredSize(of layer: CALayer) -> CGSize {
+    public func preferredSize(of layer: CALayer) -> OpenCoreGraphics.CGSize {
         return .zero
     }
 }

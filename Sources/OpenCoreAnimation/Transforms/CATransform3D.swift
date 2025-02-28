@@ -11,7 +11,12 @@ public struct CATransform3D: BitwiseCopyable, Copyable, Equatable, Hashable, Sen
 
     /// The identity transform matrix.
     public static var identity: CATransform3D {
-        .init(m11: 1, m12: 0, m13: 0, m14: 0, m21: 0, m22: 1, m23: 0, m24: 0, m31: 0, m32: 0, m33: 1, m34: 0, m41: 0, m42: 0, m43: 0, m44: 1)
+        .init(
+            m11: 1, m12: 0, m13: 0, m14: 0, 
+            m21: 0, m22: 1, m23: 0, m24: 0, 
+            m31: 0, m32: 0, m33: 1, m34: 0, 
+            m41: 0, m42: 0, m43: 0, m44: 1
+        )
     }
     
     // MARK: - Instance Properties
@@ -81,5 +86,17 @@ public struct CATransform3D: BitwiseCopyable, Copyable, Equatable, Hashable, Sen
         self.m42 = m42
         self.m43 = m43
         self.m44 = m44
+    }
+
+    package static func ortho(_ left: Float, _ right: Float, _ top: Float, _ bottom: Float, near: Float, far: Float) -> CATransform3D {
+        .init(
+            m11: 2.0 / (right - left), 
+            m14: -(right + left)/(right - left),
+            m22: 2.0 / (top - bottom),
+            m24: -(top + bottom) / (top - bottom),
+            m33: -2.0 / (far - near),
+            m34: -(far + near) / (far - near),
+            m44: 1
+        )
     }
 }

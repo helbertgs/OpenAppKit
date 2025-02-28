@@ -826,10 +826,7 @@ public class NSWindow: NSResponder {
     /// NSWindow objects normally record which of their views need displaying and display them automatically on each pass through the event loop.
     public func displayIfNeeded() {
         if viewsNeedDisplay {
-            // print("\(Self.self).\(#function)")
-
             display()
-            // viewsNeedDisplay = false
         }
     }
 
@@ -919,6 +916,8 @@ public class NSWindow: NSResponder {
     /// This method is invoked automatically when a panel is placed on the screen by the ``runModal(for:)`` method of the ``NSApplication`` class.
     public func center() {
         print("\(Self.self).\(#function)")
+        var x = screen?.frame.midX ?? 0
+        var y = screen?.frame.maxY ?? 0
     }
 
     // MARK: - Closing Windows

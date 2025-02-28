@@ -9,10 +9,10 @@ public struct CGSize: Equatable, Hashable, Sendable {
     // MARK: - Geometric Properties
 
     /// A width value.
-    public var width: Double
+    public var width: Float
 
     /// A height value.
-    public var height: Double
+    public var height: Float
 
     // MARK: - Special Values
     
@@ -25,7 +25,7 @@ public struct CGSize: Equatable, Hashable, Sendable {
     /// - Parameters:
     ///   - width: A width value.
     ///   - height: A height value.
-    public init(width: Double = 0, height: Double = 0) {
+    public init(width: Float = 0, height: Float = 0) {
         self.width = width
         self.height = height
     }
@@ -35,8 +35,8 @@ public struct CGSize: Equatable, Hashable, Sendable {
     ///   - width: A width value.
     ///   - height: A height value.
     public init(width: Int, height: Int) {
-        self.width = Double(width)
-        self.height = Double(height)
+        self.width = Float(width)
+        self.height = Float(height)
     }
 
     /// Creates a size with specified as integer values.
@@ -44,8 +44,8 @@ public struct CGSize: Equatable, Hashable, Sendable {
     ///   - width: A width value.
     ///   - height: A height value.
     public init(width: Int32, height: Int32) {
-        self.width = Double(width)
-        self.height = Double(height)
+        self.width = Float(width)
+        self.height = Float(height)
     }
 
     // MARK: - Transforming Sizes
@@ -86,8 +86,8 @@ extension CGSize: Decodable {
     /// - Parameter decoder: The decoder to read data from.
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        width = try container.decode(Double.self, forKey: .width)
-        height = try container.decode(Double.self, forKey: .height)
+        width = try container.decode(Float.self, forKey: .width)
+        height = try container.decode(Float.self, forKey: .height)
     }
 }
 

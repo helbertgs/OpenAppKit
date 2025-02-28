@@ -1,4 +1,5 @@
 import Foundation
+import OpenGLFW
 @preconcurrency import OpenGLAD
 
 /// An OpenGL drawing environment.
@@ -11,7 +12,7 @@ import Foundation
     private var _VAO: GLuint = 0
     private var _VBO: GLuint = 0
     private var _EBO: GLuint = 0
-    private var _shaderProgram: CGShaderProgram = .init()
+    private var _shaderProgram: CGShader = .init()
     private var _vertices: [GLfloat] = []
     private var _indices: [GLuint] = []
 
@@ -24,13 +25,12 @@ import Foundation
         glad_glDeleteTextures(1, &_texture)
         glad_glDeleteVertexArrays(1, &_VAO)
         glad_glDeleteBuffers(1, &_VBO)
-        glad_glDeleteProgram(_shaderProgram.program)
     }
 
     // MARK: - Converting Between Coordinate Spaces.
 
     /// The affine transforms that maps the user space of the graphics context to the device space.
-    public var userSpaceToDeviceSpaceTransform: CGAffineTransform = .init()
+    public package(set) var userSpaceToDeviceSpaceTransform: CGAffineTransform = .init()
 
     /// Returns a point that is transformed from user space coordinates to device space coordinates.
     /// - Parameter point: The point, in user space coordinates, to transform.
@@ -151,7 +151,7 @@ import Foundation
     ///   - startAngle: The angle to the starting point of the arc, measured in radians from the positive x-axis.
     ///   - endAngle: The angle to the end point of the arc, measured in radians from the positive x-axis.
     ///   - clockwise: true to make a clockwise arc; false to make a counterclockwise arc.
-    public func addArc(center: CGPoint, radius: Double, startAngle: Double, endAngle: Double, clockwise: Bool) {
+    public func addArc(center: CGPoint, radius: Float, startAngle: Float, endAngle: Float, clockwise: Bool) {
         path?.addArc(center: center, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: clockwise)
     }
 
@@ -167,7 +167,7 @@ import Foundation
     ///   - tangent1End: The end point, in user space coordinates, for the first tangent line to be used in constructing the arc. (The start point for this tangent line is the path's current point.)
     ///   - tangent2End: The end point, in user space coordinates, for the second tangent line to be used in constructing the arc. (The start point for this tangent line is the tangent1End point.)
     ///   - radius: The radius of the arc, in user space coordinates.   
-    public func addArc(tangent1End: CGPoint, tangent2End: CGPoint, radius: Double) {
+    public func addArc(tangent1End: CGPoint, tangent2End: CGPoint, radius: Float) {
         path?.addArc(tangent1End: tangent1End, tangent2End: tangent2End, radius: radius)
     }
 
@@ -318,7 +318,7 @@ import Foundation
     /// - Parameters:
     ///   - rect: A rectangle, in user space coordinates.
     ///   - width: A value, in user space units, that is greater than zero. This value does not affect the line width values in the current graphics state.
-    public func stroke(_ rect: CGRect, width: Double) {
+    public func stroke(_ rect: CGRect, width: Float) {
     }
 
     /// Strokes an ellipse that fits inside the specified rectangle.
@@ -356,10 +356,10 @@ import Foundation
     public func draw(_ image: CGImage, in rect: CGRect, byTiling: Bool = false) {
         print("\(Self.self).\(#function)")
 
-        _shaderProgram.attach(.vertex)
-        _shaderProgram.attach(.fragment)
-        _shaderProgram.link()
-        _shaderProgram.flush()
+        // _shaderProgram.attach(.vertex)
+        // _shaderProgram.attach(.fragment)
+        // _shaderProgram.link()
+        // _shaderProgram.flush()
 
         _vertices = [
             // GLfloat(rect.minX), GLfloat(rect.minY), 0.0,
@@ -367,18 +367,15 @@ import Foundation
             // GLfloat(rect.maxX), GLfloat(rect.maxY), 0.0,
             // GLfloat(rect.minX), GLfloat(rect.maxY), 0.0
             // Positions        
-            0.5,  0.5, 0.0,  // Top Right
-            0.5, -0.5, 0.0,  // Bottom Right
+             0.5,  0.5, 0.0,  // Top Right
+             0.5, -0.5, 0.0,  // Bottom Right
             -0.5, -0.5, 0.0,  // Bottom Left
-            -0.5,  0.5, 0.0   // Top Left
-            
+            -0.5,  0.5, 0.0   // Top Left 
         ]
 
         _indices = [
-            // 0, 1, 2,
-            // 2, 3, 0
-            0, 1, 3,  // First Triangle
-            1, 2, 3   // Second Triangle
+            0, 1, 3,
+            1, 2, 3
         ]       
 
         glad_glGenVertexArrays(1, &_VAO)
@@ -388,12 +385,16 @@ import Foundation
         glad_glBindVertexArray(_VAO)
 
         glad_glBindBuffer(GLenum(GL_ARRAY_BUFFER), _VBO)
-        glad_glBufferData(GLenum(GL_ARRAY_BUFFER), GLsizeiptr(MemoryLayout.size(ofValue: _vertices)), _vertices, GLenum(GL_STATIC_DRAW))
+        _vertices.withUnsafeBytes {
+            glad_glBufferData(GLenum(GL_ARRAY_BUFFER), GLsizeiptr($0.count), $0.baseAddress, GLenum(GL_STATIC_DRAW))
+        }
 
         glad_glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), _EBO)
-        glad_glBufferData(GLenum(GL_ELEMENT_ARRAY_BUFFER), GLsizeiptr(MemoryLayout.size(ofValue: _indices)), _indices, GLenum(GL_STATIC_DRAW))
+        _indices.withUnsafeBytes {
+            glad_glBufferData(GLenum(GL_ELEMENT_ARRAY_BUFFER), GLsizeiptr($0.count), $0.baseAddress, GLenum(GL_STATIC_DRAW))
+        }
 
-        glad_glVertexAttribPointer(0, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLfloat>.size * 3), nil)
+        glad_glVertexAttribPointer(0, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLfloat>.stride * 3), nil)
         glad_glEnableVertexAttribArray(0)
 
         glad_glBindBuffer(GLenum(GL_ARRAY_BUFFER), 0)
@@ -402,7 +403,7 @@ import Foundation
         _shaderProgram.setUniform("ourColor", CGColor(red: 1, green: 0, blue: 0, alpha: 1))
 
         glad_glBindVertexArray(_VAO)
-        glad_glDrawElements(GLenum(GL_TRIANGLES), 6, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: 0))
+        glad_glDrawElements(GLenum(GL_TRIANGLES), 6, GLenum(GL_UNSIGNED_INT), nil)
     }
 
     // MARK: - Drawing Core Graphics Layers
@@ -440,7 +441,7 @@ import Foundation
     public var strokeColorSpace: CGColorSpace = .init()
 
     /// A value that specifies the opacity level.
-    public var alpha: Double = 0
+    public var alpha: Float = 0
 
     // MARK: - Working with the Current Transformation Matrix
 
@@ -453,7 +454,7 @@ import Foundation
     /// For example, on iOS, a UIView applies a transformation to the graphics context that inverts the Y-axis (by multiplying it by -1). 
     /// Rotating the user coordinate system on coordinate system that was previously flipped results in a rotation in the opposite direction (that is, positive values appear to rotate the coordinate system in the clockwise direction).
     /// - Parameter angle: The angle, in radians, by which to rotate the coordinate space of the specified context. Positive values rotate counterclockwise and negative values rotate clockwise.)
-    public func rotate(by angle: Double) {
+    public func rotate(by angle: Float) {
         ctm = ctm.rotated(by: angle)
     }
 
@@ -461,7 +462,7 @@ import Foundation
     /// - Parameters:
     ///   - sx: The factor by which to scale the x-axis of the coordinate space of the specified context.
     ///   - sy: The factor by which to scale the y-axis of the coordinate space of the specified context.
-    public func scaleBy(x sx: Double, y sy: Double) {
+    public func scaleBy(x sx: Float, y sy: Float) {
         ctm = ctm.scaledBy(x: sx, y: sy)
     }
 
@@ -469,7 +470,7 @@ import Foundation
     /// - Parameters:
     ///   - tx: The amount to displace the x-axis of the coordinate space, in units of the user space, of the specified context.
     ///   - ty: The amount to displace the y-axis of the coordinate space, in units of the user space, of the specified context.
-    public func translateBy(x tx: Double, y ty: Double) {
+    public func translateBy(x tx: Float, y ty: Float) {
         ctm = ctm.translatedBy(x: tx, y: ty)
     }
 

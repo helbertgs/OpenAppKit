@@ -42,7 +42,7 @@ public struct CGRect: Equatable, Hashable, Sendable {
     ///   - y: The y-coordinate of the rectangle.
     ///   - width: A width value.
     ///   - height: A height value.
-    public init(x: Double, y: Double, width: Double, height: Double) {
+    public init(x: Float, y: Float, width: Float, height: Float) {
         self.origin = .init(x: x, y: y)
         self.size = .init(width: width, height: height)
     }
@@ -61,28 +61,28 @@ public struct CGRect: Equatable, Hashable, Sendable {
     // MARK: - Calculated Geometric Properties
     
     /// Returns the height of a rectangle.
-    public var height: Double { size.height }
+    public var height: Float { size.height }
 
     /// Returns the width of a rectangle.
-    public var width: Double { size.width }
+    public var width: Float { size.width }
 
     /// Returns the smallest value for the x-coordinate of the rectangle.
-    public var minX: Double { origin.x }
+    public var minX: Float { origin.x }
 
     /// Returns the x- coordinate that establishes the center of a rectangle.
-    public var midX: Double { (minX + maxX) / 2 }
+    public var midX: Float { (minX + maxX) / 2 }
 
     /// Returns the largest value of the x-coordinate for the rectangle.
-    public var maxX: Double { origin.x + size.width }
+    public var maxX: Float { origin.x + size.width }
 
     /// Returns the smallest value for the y-coordinate of the rectangle.
-    public var minY: Double { origin.y }
+    public var minY: Float { origin.y }
 
     /// Returns the y-coordinate that establishes the center of the rectangle.
-    public var midY: Double { (minY + maxY) / 2 }
+    public var midY: Float { (minY + maxY) / 2 }
 
     /// Returns the largest value for the y-coordinate of the rectangle.
-    public var maxY: Double { origin.y + size.height }
+    public var maxY: Float { origin.y + size.height }
 }
 
 extension CGRect : CustomStringConvertible {

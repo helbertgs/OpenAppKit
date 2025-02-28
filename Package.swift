@@ -33,6 +33,7 @@ let package = Package(
             name: "OpenCoreGraphics",
             dependencies: [ 
                 .product(name: "OpenGLAD", package: "OpenGLAD"),
+                .product(name: "OpenGLFW", package: "OpenGLFW"),
                 .product(name: "OpenSTB", package: "OpenSTB")
             ]
         ),

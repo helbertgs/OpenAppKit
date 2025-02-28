@@ -1,8 +1,6 @@
 import Foundation
 
 /// An affine transformation matrix for use in drawing 2D graphics.
-/// 
-/// 
 public struct CGAffineTransform: BitwiseCopyable, Copyable, Codable, Equatable, Hashable, Sendable {
 
     // MARK: - Instance Properties
@@ -13,22 +11,22 @@ public struct CGAffineTransform: BitwiseCopyable, Copyable, Codable, Equatable, 
     }
 
     /// The entry at position [1,1] in the matrix.
-    public let a: Double
+    public let a: Float
 
     /// The entry at position [1,2] in the matrix.
-    public let b: Double
+    public let b: Float
 
     /// The entry at position [2,1] in the matrix.
-    public let c: Double
+    public let c: Float
 
     /// The entry at position [2,2] in the matrix.
-    public let d: Double
+    public let d: Float
 
     /// The entry at position [3,1] in the matrix.
-    public let tx: Double
+    public let tx: Float
 
     /// The entry at position [3,2] in the matrix.
-    public let ty: Double
+    public let ty: Float
 
     // MARK: - Type Properties
 
@@ -43,7 +41,7 @@ public struct CGAffineTransform: BitwiseCopyable, Copyable, Codable, Equatable, 
     /// - Parameter angle: The angle, in radians, by which this matrix rotates the coordinate system axes. 
     ///                    In iOS, a positive value specifies counterclockwise rotation and a negative value specifies clockwise rotation. 
     ///                    In macOS, a positive value specifies clockwise rotation and a negative value specifies counterclockwise rotation.
-    public init(rotationAngle angle: Double) {
+    public init(rotationAngle angle: Float) {
         self.a = cos(angle)
         self.b = sin(angle)
         self.c = -sin(angle)
@@ -56,7 +54,7 @@ public struct CGAffineTransform: BitwiseCopyable, Copyable, Codable, Equatable, 
     /// - Parameters:
     ///   - sx: The factor by which to scale the x-axis of the coordinate system.
     ///   - sy: The factor by which to scale the y-axis of the coordinate system.
-    public init(scaleX sx: Double, y sy: Double) {
+    public init(scaleX sx: Float, y sy: Float) {
         self.a = sx
         self.b = 0
         self.c = 0
@@ -69,7 +67,7 @@ public struct CGAffineTransform: BitwiseCopyable, Copyable, Codable, Equatable, 
     /// - Parameters:
     ///   - tx: The value by which to move the x-axis of the coordinate system.
     ///   - ty: The value by which to move the y-axis of the coordinate system.
-    public init(translationX tx: Double, y ty: Double) {
+    public init(translationX tx: Float, y ty: Float) {
         self.a = 1
         self.b = 0
         self.c = 0
@@ -79,7 +77,7 @@ public struct CGAffineTransform: BitwiseCopyable, Copyable, Codable, Equatable, 
     }
 
     /// Returns an affine transformation matrix constructed from values you provide.
-    public init(a: Double = 1, b: Double = 0, c: Double = 0, d: Double = 1, tx: Double = 0, ty: Double = 0) {
+    public init(a: Float = 1, b: Float = 0, c: Float = 0, d: Float = 1, tx: Float = 0, ty: Float = 0) {
         self.a = a
         self.b = b
         self.c = c
@@ -136,7 +134,7 @@ public struct CGAffineTransform: BitwiseCopyable, Copyable, Codable, Equatable, 
     /// The actual direction of rotation is dependent on the coordinate system orientation of the target platform, which is different in iOS and macOS.
     /// - Parameter angle: The angle, in radians, by which to rotate the affine transform.
     /// - Returns: A new affine transformation matrix.
-    public func rotated(by angle: Double) -> CGAffineTransform {
+    public func rotated(by angle: Float) -> CGAffineTransform {
         self.concatenating(CGAffineTransform(rotationAngle: angle))
     }
 
@@ -148,7 +146,7 @@ public struct CGAffineTransform: BitwiseCopyable, Copyable, Codable, Equatable, 
     ///   - sx: The value by which to scale x values of the affine transform.
     ///   - sy: The value by which to scale y values of the affine transform.
     /// - Returns: A new affine transformation matrix.
-    public func scaledBy(x sx: Double, y sy: Double) -> CGAffineTransform {
+    public func scaledBy(x sx: Float, y sy: Float) -> CGAffineTransform {
         self.concatenating(CGAffineTransform(scaleX: sx, y: sy))
     }
 
@@ -160,7 +158,7 @@ public struct CGAffineTransform: BitwiseCopyable, Copyable, Codable, Equatable, 
     ///   - tx: The value by which to move x values with the affine transform.
     ///   - ty: The value by which to move y values with the affine transform.
     /// - Returns: A new affine transformation matrix.
-    public func translatedBy(x tx: Double, y ty: Double) -> CGAffineTransform {
+    public func translatedBy(x tx: Float, y ty: Float) -> CGAffineTransform {
         self.concatenating(CGAffineTransform(translationX: tx, y: ty))
     }
 }

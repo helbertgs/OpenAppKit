@@ -6,10 +6,10 @@ public struct CGPoint: Equatable, Hashable, Sendable {
     // MARK: - Geometric Properties
 
     /// The x-coordinate of the point.
-    public var x: Double
+    public var x: Float
 
     /// The y-coordinate of the point.
-    public var y: Double
+    public var y: Float
 
     // MARK: - Special Values
     
@@ -22,7 +22,7 @@ public struct CGPoint: Equatable, Hashable, Sendable {
     /// - Parameters:
     ///   - x: The x-coordinate of the point.
     ///   - y: The y-coordinate of the point.
-    public init(x: Double = 0, y: Double = 0) {
+    public init(x: Float = 0, y: Float = 0) {
         self.x = x
         self.y = y
     }
@@ -32,8 +32,8 @@ public struct CGPoint: Equatable, Hashable, Sendable {
     ///   - x: The x-coordinate of the point.
     ///   - y: The y-coordinate of the point.
     public init(x: Int, y: Int) {
-        self.x = Double(x)
-        self.y = Double(y)
+        self.x = Float(x)
+        self.y = Float(y)
     }
 
     // MARK: - Transforming Points
@@ -74,8 +74,8 @@ extension CGPoint: Decodable {
     /// - Parameter decoder: The decoder to read data from.
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        x = try container.decode(Double.self, forKey: .x)
-        y = try container.decode(Double.self, forKey: .y)
+        x = try container.decode(Float.self, forKey: .x)
+        y = try container.decode(Float.self, forKey: .y)
     }
 }
 

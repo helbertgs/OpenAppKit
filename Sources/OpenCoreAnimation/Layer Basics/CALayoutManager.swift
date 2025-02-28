@@ -1,4 +1,5 @@
 import Foundation
+import OpenCoreGraphics
 
 /// Methods that allow an object to manage the layout of a layer and its sublayers.
 public protocol CALayoutManager {
@@ -16,5 +17,5 @@ public protocol CALayoutManager {
     /// Override to customize layer size.
     /// - Parameter layer: The layer whose size needs to be calculated.
     /// - Returns: The preferred size of the layer.
-    func preferredSize(of layer: CALayer) -> CGSize
+    func preferredSize(of layer: CALayer) -> OpenCoreGraphics.CGSize
 }

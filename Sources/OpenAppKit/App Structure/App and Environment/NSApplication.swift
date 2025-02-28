@@ -120,6 +120,7 @@ import OpenGLFW
     ///   - atStart: Specify true to add the event to the front of the queue; otherwise, specify false to add the event to the back of the queue.
     public func postEvent(_ event: NSEvent, atStart: Bool) {
         print("\(Self.self).\(#function)")
+        windows.forEach { $0.postEvent(event, atStart: atStart) }
     }
 
     /// Returns the next event matching a given mask, or nil if no such event is found before a specified expiration date.
@@ -172,6 +173,7 @@ import OpenGLFW
     public func terminate(_ sender: Any?) {
         print("\(Self.self).\(#function)")
         self.isRunning = false
+        NotificationCenter.default.post(name: NSApplication.willTerminateNotification, object: Any?)
     }
 
     /// Responds to ``NSTerminateLater`` once the app knows whether it can terminate.
@@ -285,6 +287,9 @@ import OpenGLFW
     /// - Parameter sender: 
     public func hide(_ sender: Any?) {
         print("\(Self.self).\(#function)")
+        NotificationCenter.default.post(name: NSApplication.willHideNotification, object: Any?)
+        miniaturizeAll(sender)
+        NotificationCenter.default.post(name: NSApplication.didHideNotification, object: Any?)
     }
 
     /// Restores hidden windows to the screen and makes the receiver active.
@@ -292,6 +297,8 @@ import OpenGLFW
     /// - Parameter sender: The object that sent the command.
     public func unhide(_ sender: Any?) {
         print("\(Self.self).\(#function)")
+        NotificationCenter.default.post(name: NSApplication.willUnhideNotification, object: Any?)
+        NotificationCenter.default.post(name: NSApplication.didUnhideNotification, object: Any?)
     }
 
     /// Restores hidden windows without activating their owner (the receiver).
@@ -299,7 +306,9 @@ import OpenGLFW
     /// When this method begins, it posts an ``willUnhideNotification`` to the default notification center. 
     /// If it completes successfully, it posts an ``didUnhideNotification``.
     public func unhideWithoutActivation() {
-        // print("\(Self.self).\(#function)")
+        print("\(Self.self).\(#function)")
+        NotificationCenter.default.post(name: NSApplication.didUnhideNotification, object: Any?)
+        NotificationCenter.default.post(name: NSApplication.willUnhideNotification, object: Any?)
     }
 
     // MARK: - Updating Windows
@@ -312,10 +321,9 @@ import OpenGLFW
     /// When this method begins, it posts an ``willUpdateNotification`` to the default notification center. 
     /// When it successfully completes, it posts an ``didUpdateNotification``.
     public func updateWindows() {
-        windows
-            .forEach { window in
-                window.update()
-            }
+        NotificationCenter.default.post(name: NSApplication.willUpdateNotification, object: Any?)
+        windows.forEach { $0.update() }
+        NotificationCenter.default.post(name: NSApplication.didUpdateNotification, object: Any?)
     }
 
     /// Sets whether the receiver’s windows need updating when the receiver has finished processing the current event.
@@ -334,6 +342,56 @@ import OpenGLFW
     
     /// The image used for the app’s icon.
     public private(set) var applicationIconImage: NSImage!
+
+    // MARK: Notifications
+
+    /// Posted immediately after the app becomes active.
+    public static let didBecomeActiveNotification = NSNotification.Name("didBecomeActiveNotification")
+
+    /// Posted when the configuration of the displays attached to the computer is changed.
+    public static let didChangeScreenParametersNotification = NSNotification.Name("didChangeScreenParametersNotification")
+
+    /// Posted at the end of the finishLaunching() method to indicate that the app has completed launching and is ready to run.
+    public static let didFinishLaunchingNotification = NSNotification.Name("didFinishLaunchingNotification")
+
+    /// Posted at the end of the hide(_:) method to indicate that the app is now hidden.
+    public static let didHideNotification = NSNotification.Name("didHideNotification")
+
+    /// Posted immediately after the app gives up its active status to another app.
+    public static let didResignActiveNotification = NSNotification.Name("didResignActiveNotification")
+
+    /// Posted at the end of the unhideWithoutActivation() method to indicate that the app is now visible.
+    public static let didUnhideNotification = NSNotification.Name("didUnhideNotification")
+
+    /// Posted at the end of the updateWindows() method to indicate that the app has finished updating its windows.
+    public static let didUpdateNotification = NSNotification.Name("didUpdateNotification")
+
+    /// Posted immediately before the app becomes active.
+    public static let willBecomeActiveNotification = NSNotification.Name("willBecomeActiveNotification")
+
+    /// Posted at the start of the finishLaunching() method to indicate that the app has completed its initialization process and is about to finish launching.
+    public static let willFinishLaunchingNotification = NSNotification.Name("willFinishLaunchingNotification")
+
+    /// Posted at the start of the hide(_:) method to indicate that the app is about to be hidden.
+    public static let willHideNotification = NSNotification.Name("willHideNotification")
+
+    /// Posted immediately before the app gives up its active status to another app.
+    public static let willResignActiveNotification = NSNotification.Name("willResignActiveNotification")
+
+    /// Sends a notification to termintate the app.
+    public static let willTerminateNotification = NSNotification.Name("willTerminateNotification")
+
+    /// Posted at the start of the unhideWithoutActivation() method to indicate that the app is about to become visible.
+    public static let willUnhideNotification = NSNotification.Name("willUnhideNotification")
+
+    /// Posted at the start of the updateWindows() method to indicate that the app is about to update its windows.
+    public static let willUpdateNotification = NSNotification.Name("willUpdateNotification")
+
+    /// Posted when the app has finished restoring windows.
+    public static let didFinishRestoringWindowsNotification = NSNotification.Name("didFinishRestoringWindowsNotification")
+
+    /// Posted when the app’s occlusion state changes.
+    public static let didChangeOcclusionStateNotification = NSNotification.Name("")  didChangeOcclusionStateNotification  
 }
 
 extension NSApplication {

@@ -20,6 +20,10 @@ import Foundation
         if wantsLayer {
             layer = makeBackingLayer()
             layer?.delegate = self
+
+            layer?.backgroundColor = CGColor(red: 1, green: 0, blue: 0, alpha: 1)
+            layer?.borderWidth = 2
+            layer?.borderColor = CGColor(red: 0, green: 1, blue: 0, alpha: 1)
         }
     }
 
@@ -726,7 +730,11 @@ import Foundation
     /// 
     /// Hiding the view that is the window’s current first responder causes the view’s next valid key view (nextValidKeyView) to become the new first responder. 
     /// A hidden view remains in the nextKeyView chain of views it was previously part of, but is ignored during keyboard navigation.
-    public var isHidden: Bool = false
+    public var isHidden: Bool = false {
+        didSet {
+            oldValue == true ? viewDidHide() : viewDidUnhide()
+        }
+    }
 
     /// A Boolean value indicating whether the view is hidden from sight because it, or one of its ancestors, is marked as hidden.
     /// 
@@ -739,7 +747,7 @@ import Foundation
     /// The view receives this message when its ``isHiddenOrHasHiddenAncestor`` property changes from false to true.
     ///  This happens when the view or an ancestor is marked as hidden, or when the view or an ancestor is inserted into a new view hierarchy.
     open func viewDidHide() {
-        fatalError("not implemented yet")
+        print("\(Self.self).\(#function)")
     }
 
     /// Invoked when the view is unhidden, either directly, or in response to an ancestor being unhidden
@@ -747,14 +755,14 @@ import Foundation
     /// The view receives this message when its ``isHiddenOrHasHiddenAncestor`` state goes from true to false.  
     /// This can happen when the view or an ancestor is marked as not hidden, or when the view or an ancestor is removed from its containing view hierarchy.
     open func viewDidUnhide() {
-        fatalError("not implemented yet")
+        print("\(Self.self).\(#function)")
     }
 
     // MARK: - Responding to Appearance Changes
 
     /// Informs the view that its effective appearance changed.
     open func viewDidChangeEffectiveAppearance() {
-        fatalError("not implemented yet")
+        print("\(Self.self).\(#function)")
     }
 
     /// Responds when the view’s backing store properties change.
@@ -762,7 +770,7 @@ import Foundation
     /// The view gets this message when the backing store scale or color space changes. 
     /// Provide an implementation if you need to swap assets or make other adjustments when a view’s backing store properties change.
     open func viewDidChangeBackingProperties() {
-        fatalError("not implemented yet")
+        print("\(Self.self).\(#function)")
     }
 
     // MARK: - Getting the Vibrancy Setting
@@ -805,7 +813,7 @@ import Foundation
     /// Subclasses that find the default behavior insufficient should only draw the focus ring shape.
     /// The ``NSView`` implementation of this method simply fills self.bounds.
     public func drawFocusRingMask() {
-        fatalError("not implemented yet")
+        print("\(Self.self).\(#function)")
     }
 
     /// Invoked to notify the view that the focus ring mask requires updating.
@@ -814,13 +822,13 @@ import Foundation
     /// It is assumed that if the view is marked as needing display, or is resized, its focus ring shape is likely to have changed, and there is no need for clients to explicitly send this message in such cases, they are handled automatically.
     /// If, however, a view is showing a focus ring around some part of its content (an NSImage, perhaps), and that content changes, the client must provide notification by invoking this method so that focusRingMaskBounds and drawFocusRingMask() will be invoked to redraw the focus ring.
     public func noteFocusRingMaskChanged() {
-        fatalError("not implemented yet")
+        print("\(Self.self).\(#function)")
     }
 
     /// Invalidates the area around the focus ring.
     /// - Parameter rect: The rectangle of the control or cell defining the area around the focus ring. rect will be expanded to include the focus ring for invalidation.
     public func setKeyboardFocusRingNeedsDisplay(_ rect: OpenCoreGraphics.CGRect) {
-        fatalError("not implemented yet")
+        print("\(Self.self).\(#function)")
     }
 
     /// Returns the default focus ring type.
@@ -998,7 +1006,6 @@ import Foundation
 
     // MARK: - Layout
     // MARK: - Managing the view’s content
-
 
     // MARK: - Respecting the View’s Safe Area
 
@@ -1357,7 +1364,8 @@ import Foundation
     /// - Parameter frame: The frame whose corresponding alignment rectangle is desired.
     /// - Returns: The alignment rectangle for the specified frame.
     public func alignmentRect(forFrame frame: OpenCoreGraphics.CGRect) -> OpenCoreGraphics.CGRect {
-        fatalError("Not implemented yet")
+        print("\(Self.self).\(#function)")
+        return .zero
     }
     
     /// Returns the view’s frame for a given alignment rectangle.
@@ -1372,7 +1380,8 @@ import Foundation
     /// - Parameter alignmentRect: The alignment rectangle whose corresponding frame is desired.
     /// - Returns: The frame for the specified alignment rectangle
     public func frame(forAlignmentRect alignmentRect: OpenCoreGraphics.CGRect) -> OpenCoreGraphics.CGRect {
-        fatalError("Not implemented yet")
+        print("\(Self.self).\(#function)")
+        return .zero
     }
 
     // MARK: - Triggering Auto Layout
@@ -1396,7 +1405,7 @@ import Foundation
     ///
     /// You must call ``super.layout()`` as part of your implementation.
     public func layout() {
-        fatalError("Not implemented yet")
+        print("\(Self.self).\(#function)")
     }
     
     /// Updates the layout of the receiving view and its subviews based on the current views and constraints.
@@ -1407,7 +1416,10 @@ import Foundation
     ///
     /// Subclasses should not override this method.
     public func layoutSubtreeIfNeeded() {
-        fatalError("Not implemented yet")
+        print("\(Self.self).\(#function)")
+        if needsLayout {
+            layout()
+        }
     }
     
     /// A Boolean value indicating whether the view’s constraints need to be updated.
@@ -1440,7 +1452,7 @@ import Foundation
     ///
     /// Call ``super.updateConstraints()`` as the final step in your implementation.
     public func updateConstraints() {
-        fatalError("Not implemented yet")
+        print("\(Self.self).\(#function)")
     }
     
     /// Updates the constraints for the receiving view and its subviews.
@@ -1450,7 +1462,10 @@ import Foundation
     ///
     /// Subclasses should not override this method.
     public func updateConstraintsForSubtreeIfNeeded() {
-        fatalError("Not implemented yet")
+        print("\(Self.self).\(#function)")
+        if needsUpdateConstraints {
+            updateConstraints()
+        }
     }
 
     // MARK: - Enabling and Disabling Constraints
@@ -1492,7 +1507,8 @@ import Foundation
     /// - Parameter orientation: The direction of the dimension for which the constraints should be found.
     /// - Returns: The constraints impacting the layout of the view for the specified orientation.
     public func constraintsAffectingLayout(for orientation: NSLayoutConstraint.Orientation) -> [NSLayoutConstraint] {
-        fatalError("Not implemented yet")
+        print("\(Self.self).\(#function)")
+        return []
     }
 
     /// Randomly changes the frame of a view with an ambiguous layout between the different valid values.
@@ -1503,7 +1519,7 @@ import Foundation
     /// This method should only be used for debugging constraint-based layout.
     /// No application should ship with calls to this method as part of its operation.
     public func exerciseAmbiguityInLayout() {
-        fatalError("Not implemented yet")
+        print("\(Self.self).\(#function)")
     }
 
     // MARK: - Resizing Subviews
@@ -1568,6 +1584,8 @@ import Foundation
     public func updateLayer() {
         print("\(Self.self).\(#function)")
         layer?.displayIfNeeded()
+        layer?.frame = frame
+        layer?.draw(in: .init())
     }
 
     /// Overridden by subclasses to draw the view’s image within the specified rectangle.
@@ -1592,6 +1610,7 @@ import Foundation
     ///
     /// - Important: If the view’s ``isOpaque`` property is ``true``, the view must completely fill the dirtyRect rectangle with opaque content.
     public func draw(_ dirtyRect: OpenCoreGraphics.CGRect) {
+        layer?.draw(in: .init())
     }
 
     /// A Boolean value that indicates whether the view, and its subviews, confine their drawing areas to the bounds of the view.
@@ -1639,7 +1658,7 @@ import Foundation
     /// It is optimized to efficiently reject any rectangle that lies outside the bounding box of the area that the view is being asked to draw in ``draw(_:)``.
     /// - Parameter rect: A rectangle defining a region of the view.
     public func needsToDraw(_ rect: NSRect) -> Bool {
-        fatalError("Not implemented yet")
+        draw(rect)
     }
 
     /// A Boolean value indicating whether OpenAppKit’s default clipping behavior is in effect.
@@ -1656,7 +1675,7 @@ import Foundation
     /// - Parameter rect: A rectangle defining the area of the view to be cached.
     /// - Returns: An autoreleased ``NSBitmapImageRep`` object or ``nil`` if the object could not be created.
     public func bitmapImageRepForCachingDisplay(in rect: OpenCoreGraphics.CGRect) -> NSBitmapImageRep? {
-        fatalError("Not implemented yet")
+        print("\(Self.self).\(#function)")
     }
 
     /// Draws the specified area of the view, and its descendants, into a provided bitmap-representation object.
@@ -1668,7 +1687,7 @@ import Foundation
     ///   - rect: A rectangle defining the region to be drawn into ``bitmapImageRep``.
     ///   - bitmapImageRep: An ``NSBitmapImageRep`` object. For pixel-format compatibility, bitmapImageRep should have been obtained from ``bitmapImageRepForCachingDisplay(in:)``.
     public func cacheDisplay(in rect: NSRect, to bitmapImageRep: NSBitmapImageRep) {
-        fatalError("Not implemented yet")
+        print("\(Self.self).\(#function)")
     }
 
     // MARK: - Drawing the View in Fullscreen Mode
@@ -1688,16 +1707,19 @@ import Foundation
     ///   - screen: The screen the view should cover.
     ///   - options: A dictionary of options for the mode. For possible keys, see Full Screen Mode Options.
     /// - Returns: ``true`` if the view was able to enter full screen mode, otherwise ``false``.
-    public func enterFullScreenMode(_ screen: NSScreen, withOptions options: [NSView.FullScreenModeOptionKey : Any]? = nil) -> Bool {
-        fatalError("Not implemented yet")
+    open func enterFullScreenMode(_ screen: NSScreen, withOptions options: [NSView.FullScreenModeOptionKey : Any]? = nil) -> Bool {
+        print("\(Self.self).\(#function)")
+        isInFullScreenMode = true
+        return true
     }
     
     /// Instructs the view to exit full screen mode.
     ///
     /// When the ``fullScreenModeApplicationPresentationOptions`` options is specified when ``enterFullScreenMode(_:withOptions:)`` is invoked, exiting full screen mode will restore the previously active ``presentationOptions``.
     /// - Parameter options: A dictionary of options for the mode. For possible keys, see Full Screen Mode Options.
-    public func exitFullScreenMode(options: [NSView.FullScreenModeOptionKey : Any]? = nil) {
-        fatalError("Not implemented yet")
+    open func exitFullScreenMode(options: [NSView.FullScreenModeOptionKey : Any]? = nil) {
+        print("\(Self.self).\(#function)")
+        isInFullScreenMode = false
     }
 
     // MARK: - Invalidating the View’s Content
@@ -1717,7 +1739,9 @@ import Foundation
     /// (View objects that need to redisplay before the event loop comes around can of course immediately be sent the appropriate display method.)
     /// - Parameter invalidRect: The rectangular region of the view to mark as invalid; it should be specified in the coordinate system of the view.
     public func setNeedsDisplay(_ invalidRect: OpenCoreGraphics.CGRect) {
-        fatalError("Not implemented yet")
+        print("\(Self.self).\(#function)")
+        needsDisplay = true
+        displayIfNeeded(invalidRect)
     }
 
     /// Displays the view and all its subviews if possible, invoking each of the NSView methods ``lockFocus()``, ``draw(_:)``, and ``unlockFocus()`` as necessary.
@@ -1725,24 +1749,26 @@ import Foundation
     /// If the view isn’t opaque, this method backs up the view hierarchy to the first opaque ancestor, calculates the portion of the opaque ancestor covered by the view, and begins displaying from there.
     public func display() {
         print("\(Self.self).\(#function)")
-        // wantsUpdateLayer ? updateLayer() : draw(frame)
-        // updateLayer()
-
-        if let context = NSGraphicsContext.current {
-            context.cgContext.draw(CGImage(), in: frame)                                                                                             
+        if wantsUpdateLayer {
+            updateLayer()
+            wantsUpdateLayer = false
         }
+
+        display(frame)
     }
 
     /// Acts as ``display()``, but confining drawing to a rectangular region of the view.
     /// - Parameter rect: A rectangle defining the region of the view to be redrawn; it should be specified in the coordinate system of the view.
     public func display(_ rect: OpenCoreGraphics.CGRect) {
-        fatalError("Not implemented yet")
+        print("\(Self.self).\(#function)")
+        draw(frame)
     }
 
     ///  Displays the view but confines drawing to a specified region and does not back up to the first opaque ancestor—it simply causes the view and its descendants to execute their drawing code.
     /// - Parameter rect: A rectangle defining the region of the view to be redrawn; it should be specified in the coordinate system of the view.
     public func displayIgnoringOpacity(_ rect: OpenCoreGraphics.CGRect) {
-        fatalError("Not implemented yet")
+        print("\(Self.self).\(#function)")
+        display(rect)
     }
 
     /// Causes the view and its descendants to be redrawn to the specified graphics context.
@@ -1762,7 +1788,8 @@ import Foundation
     ///   - rect: A rectangle defining the region of the view to be redrawn. It should be specified in the coordinate system of the view.
     ///   - context: The graphics context in which drawing will occur. See the discussion below for more about this parameter.
     public func displayIgnoringOpacity(_ rect: OpenCoreGraphics.CGRect, in context: NSGraphicsContext) {
-        fatalError("Not implemented yet")
+        print("\(Self.self).\(#function)")
+        display(rect)
     }
 
     /// Displays the view and all its subviews if any part of the view has been marked as needing display.
@@ -1770,27 +1797,27 @@ import Foundation
     /// This method invokes the ``NSView`` methods ``lockFocus()``, ``draw(_:)``, and ``unlockFocus()`` as necessary. 
     /// If the view isn’t opaque, this method backs up the view hierarchy to the first opaque ancestor, calculates the portion of the opaque ancestor covered by the view, and begins displaying from there.
     public func displayIfNeeded() {
-        if needsDisplay {
-            display()
-            needsDisplay = false
-        }
+        displayIfNeeded(frame)
     }
 
     /// Acts as ``displayIfNeeded()``, confining drawing to a specified region of the view.
     /// - Parameter rect: A rectangle defining the region to be redrawn. It should be specified in the coordinate system of the view.
     public func displayIfNeeded(_ rect: OpenCoreGraphics.CGRect) {
-        fatalError("Not implemented yet")
+        if needsDisplay {
+            display(frame)
+            needsDisplay = false
+        }
     }
 
     /// Acts as ``displayIfNeeded()``, except that this method doesn’t back up to the first opaque ancestor—it simply causes the view and its descendants to execute their drawing code.
     public func displayIfNeededIgnoringOpacity() {
-        fatalError("Not implemented yet")
+        displayIfNeeded(frame)
     }
 
     /// Acts as ``displayIfNeeded()``, but confining drawing to aRect and not backing up to the first opaque ancestor—it simply causes the view and its descendants to execute their drawing code.
     /// - Parameter rect: A rectangle defining the region to be redrawn. It should be specified in the coordinate system of the view.
     public func displayIfNeededIgnoringOpacity(_ rect: OpenCoreGraphics.CGRect) {
-        fatalError("Not implemented yet")
+        displayIfNeeded(rect)
     }
 
     /// Translates the display rectangles by the specified delta.

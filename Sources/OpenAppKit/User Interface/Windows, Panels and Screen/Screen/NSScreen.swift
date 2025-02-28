@@ -43,7 +43,7 @@ public class NSScreen: NSObject {
     /// The dimensions and location of the screen.
     public var frame: OpenCoreGraphics.CGRect {
         let videoMode: GLFWvidmode = glfwGetVideoMode(monitorRef).pointee
-        return .init(x: 0, y: 0, width: Double(videoMode.width), height: Double(videoMode.height))
+        return .init(x: 0, y: 0, width: Float(videoMode.width), height: Float(videoMode.height))
     }
 
     /// The device dictionary for the screen.
@@ -81,7 +81,7 @@ public class NSScreen: NSObject {
         var height: Int32 = 0
 
         glfwGetMonitorWorkarea(monitorRef, &x, &y, &width, &height)
-        return .init(x: Double(x), y: Double(y), width: Double(width), height: Double(height))
+        return .init(x: Float(x), y: Float(y), width: Float(width), height: Float(height))
     }
 
     /// The distances from the screen’s edges at which content isn’t obscured.

@@ -1,5 +1,6 @@
 import OpenCoreGraphics
 import Foundation
+@preconcurrency import OpenGLAD
 
 /// An object that manages image-based content and allows you to perform animations on that content.
 /// 
@@ -42,6 +43,12 @@ open class CALayer {
     public init(layer: Any) {
         print("\(Self.self).\(#function)")
         self.contents = CGImage()
+    }
+
+    deinit {
+        glad_glDeleteVertexArrays(1, &VAO)
+        glad_glDeleteBuffers(1, &VBO)
+        glad_glDeleteBuffers(1, &EBO)
     }
 
     // MARK: - Accessing Related Layer Objects
@@ -115,6 +122,22 @@ open class CALayer {
     /// The rectangle you specify is applied only after the contentsRect property has been applied to the image.
     public var contentsCenter: OpenCoreGraphics.CGRect = .init(x: 0, y: 0, width: 1, height: 1)
 
+    private var VBO: UInt32 = 0 
+    private var VAO: UInt32 = 0 
+    private var EBO: UInt32 = 0
+    private var shader: OpenCoreGraphics.CGShader?
+    private var vertices: [Float] = [
+         0.5,  0.5, 0.0,   // Top Right
+         0.5, -0.5, 0.0,   // Bottom Right
+        -0.5, -0.5, 0.0,  // Bottom Left
+        -0.5,  0.5, 0.0   // Top Left
+    ]
+    
+    private var indices: [UInt32] = [
+        0, 1, 3,  // Primeiro triângulo
+        1, 2, 3   // Segundo triângulo
+    ]
+
     /// Reloads the content of this layer.
     /// 
     /// Do not call this method directly. The layer calls this method at appropriate times to update the layer’s content. 
@@ -126,12 +149,40 @@ open class CALayer {
     /// You might do this if your custom layer subclass handles layer updates differently.
     open func display() {
         print("\(Self.self).\(#function)")
-        if let delegate {
-            delegate.display(self)
-        } else {
-            contents = contents == nil ? CGImage() : contents
-            draw(in: CGContext())
+        // if let delegate {
+        //     delegate.display(self)
+        // } else {
+        //     contents = contents == nil ? CGImage() : contents
+        //     draw(in: CGContext())
+        // }
+
+        shader = .init()
+
+        glad_glGenVertexArrays(1, &VAO)
+        glad_glGenBuffers(1, &VBO)
+        glad_glGenBuffers(1, &EBO)
+
+        glad_glBindVertexArray(VAO)
+
+        // VBO
+        glad_glBindBuffer(GLenum(GL_ARRAY_BUFFER), VBO)
+        vertices.withUnsafeBytes {
+            glad_glBufferData(GLenum(GL_ARRAY_BUFFER), GLsizeiptr($0.count), $0.baseAddress, GLenum(GL_STATIC_DRAW))
         }
+        
+        // EBO
+        glad_glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), EBO)
+        indices.withUnsafeBytes {
+            glad_glBufferData(GLenum(GL_ELEMENT_ARRAY_BUFFER), GLsizeiptr($0.count), $0.baseAddress, GLenum(GL_STATIC_DRAW))
+        }
+        
+        // Atributo de posição
+        glad_glVertexAttribPointer(0, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 3 * GLsizei(MemoryLayout<GLfloat>.stride), nil)
+        glad_glEnableVertexAttribArray(0)
+        
+        // Desvincula buffers
+        glad_glBindBuffer(GLenum(GL_ARRAY_BUFFER), 0)
+        glad_glBindVertexArray(0)
     }
 
     /// Draws the layer’s content using the specified graphics context.
@@ -144,9 +195,26 @@ open class CALayer {
     /// - Parameter context: The graphics context in which to draw the content. The context may be clipped to protect valid layer content.
     open func draw(in context: CGContext) {
         print("\(Self.self).\(#function)")
-        if let delegate {
-            delegate.draw(self, in: context)
+        // if let delegate {
+        //     delegate.draw(self, in: context)
+        // }
+
+        shader?.use()
+
+        if let backgroundColor {
+            shader?.setUniform("backgroundColor", backgroundColor)
         }
+
+        if let borderColor, borderWidth > 0 {
+            shader?.setUniform("borderColor", borderColor)
+            shader?.setUniform("borderWidth", borderWidth)
+        }
+
+        shader?.setUniform("rectPosition", OpenCoreGraphics.CGPoint(x: -0.5, y: 0.5))
+        shader?.setUniform("rectSize", OpenCoreGraphics.CGSize(width: 1, height: 1))
+
+        glad_glBindVertexArray(VAO)
+        glad_glDrawElements(GLenum(GL_TRIANGLES), 6, GLenum(GL_UNSIGNED_INT), nil)
     }
 
     // MARK: - Modifying the Layer’s Appearance
@@ -206,6 +274,13 @@ open class CALayer {
     /// 
     /// The default value of this property is 0.0.
     public var borderWidth: Float = 0
+
+    /// The color of the layer’s border. Animatable.
+    /// 
+    /// The default value of this property is an opaque black color.
+    /// The value of this property is retained using the Core Foundation retain/release semantics. 
+    /// This behavior occurs despite the fact that the property declaration appears to use the default assign semantics for object retention.
+    public var borderColor: CGColor? = .black
 
     /// The background color of the receiver.
     /// 
@@ -493,20 +568,24 @@ open class CALayer {
     /// 
     /// This property is set to the identity transform by default. 
     /// Any transformations you apply to the layer occur relative to the layer’s anchor point.
-    public var transform: CATransform3D = .init()
+    public var transform: CATransform3D = .identity
 
     /// Specifies the transform to apply to sublayers when rendering. 
     /// 
     /// You typically use this property to add perspective and other viewing effects to embedded layers. 
     /// You add perspective by setting the sublayer transform to the desired projection matrix. 
     /// The default value of this property is the identity transform.
-    public var sublayerTransform: CATransform3D = .init()
+    public var sublayerTransform: CATransform3D = .identity
 
     /// Returns an affine version of the layer’s transform.
     /// - Returns: The affine transform structure that corresponds to the value in the layer’s ``transform`` property.
     public func affineTransform() -> OpenCoreGraphics.CGAffineTransform {
         print("\(Self.self).\(#function)")
-        return .init()
+        return .init(
+            a:  transform.m11, b:  transform.m12, 
+            c:  transform.m21, d:  transform.m22, 
+            tx: transform.m14, ty: transform.m24
+        )
     }
 
     /// Sets the layer’s transform to the specified affine transform.
@@ -790,7 +869,12 @@ open class CALayer {
     /// - Returns: The layer’s preferred frame size.
     public func preferredFrameSize() -> OpenCoreGraphics.CGSize {
         print("\(Self.self).\(#function)")
-        fatalError("not implemented yet")
+        
+        if let layoutManager {
+            return layoutManager.preferredSize(of: self)
+        }
+
+        return bounds.size 
     }
 
     // MARK: - Managing Layer Constraints
