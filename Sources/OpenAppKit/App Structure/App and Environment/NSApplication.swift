@@ -391,7 +391,7 @@ import OpenGLFW
     public static let didFinishRestoringWindowsNotification = NSNotification.Name("didFinishRestoringWindowsNotification")
 
     /// Posted when the app’s occlusion state changes.
-    public static let didChangeOcclusionStateNotification = NSNotification.Name("")  didChangeOcclusionStateNotification  
+    public static let didChangeOcclusionStateNotification = NSNotification.Name("didChangeOcclusionStateNotification")
 }
 
 extension NSApplication {

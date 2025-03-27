@@ -1,11 +1,13 @@
 import Foundation
 import OpenSTB
+@preconcurrency import OpenGLAD
 
 /// A bitmap image or image mask.
 public class CGImage {
    
     // MARK: - Examining an Image
 
+    package var fbo: UInt32 = 0
     package var texture: UInt32 = 0
 
     /// Returns whether a bitmap image is an image mask.
@@ -14,24 +16,12 @@ public class CGImage {
     /// Returns the height of a bitmap image.
     /// 
     /// The height in pixels of the bitmap image (or image mask).
-    public var height: Int {
-        if let dataProvider = dataProvider {
-            return Int(dataProvider.height)
-        }
-
-        return 0
-    }
+    public var height: Int
 
     /// Returns the width of a bitmap image.
     /// 
     /// The width, in pixels, of the specified bitmap image (or image mask).
-    public var width: Int {
-        if let dataProvider = dataProvider {
-            return Int(dataProvider.width)
-        }
-
-        return 0
-    }
+    public var width: Int
 
     /// Returns the number of bits allocated for a single color component of a bitmap image.
     /// 
@@ -77,6 +67,27 @@ public class CGImage {
 
     /// Create an empty image.
     public init() {
+        glad_glGenFrameBuffers(1, &fbo)
+        glad_glBindFramebuffer(GLenum(GL_FRAMEBUFFER), fbo)
+        
+        glad_glGenTextures(1, &texture)
+        glad_glBindTexture(GLenum(GL_TEXTURE_2D), fbo)
+        glad_glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GLenum(GL_RGB), width, height, 0, GLenum(GL_RGB), GLenum(GL_UNSIGNED_BYTE), nil)
+
+        glad_glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GLenum(GL_LINEAR));
+        glad_glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GLenum(GL_LINEAR));
+        glad_glFramebufferTexture2D(GLenum(GL_FRAMEBUFFER), GLenum(GL_COLOR_ATTACHMENT0), GLenum(GL_TEXTURE_2D), texture, 0);
+
+        guard glad_glCheckFramebufferStatus(GLenum(GL_FRAMEBUFFER)) != GLenum(GL_FRAMEBUFFER_COMPLETE) else {
+            fatalError("Framebuffer error")
+        }
+
+        glad_glBindFramebuffer(GLenum(GL_FRAMEBUFFER), 0)
+    }
+
+    deinit {
+        glad_glDeleteFramebuffers(1, &fbo);
+        glad_glDeleteTextures(1, &texture);
     }
 
     /// Creates and returns an image representation object using the contents of the specified file.
